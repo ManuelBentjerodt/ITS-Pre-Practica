@@ -2,7 +2,7 @@ class Node {
     constructor(_coordinate){
 
         this.coordinate = _coordinate;  // array(x, y)
-        this.parent = false;            // node
+        this.parent = null;            // node
         this.attached = {
             childreanNodes: [],         // node
             vinculo: null,              // type: 'deslizante', 'empotrado', etc
@@ -19,7 +19,7 @@ class Node {
         this.parent = parentNode;
     }
 
-    addChildNode(node){
+    addChild(node){
         this.attached.childreanNodes.push(node);
     }
 
@@ -31,8 +31,8 @@ class Node {
         }
     }
 
-    addFuerza(magnitude, angle){
-        this.attached.fuerzas.push((magnitude, angle));
+    addFuerza(magnitud, angle){
+        this.attached.fuerzas.push((magnitud, angle));
     }
 
     addMomento(type, magnitud){
@@ -44,4 +44,6 @@ class Node {
     }
 
 }
+
+
 

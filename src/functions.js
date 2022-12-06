@@ -31,44 +31,6 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga"){
 
 
 //------------------------------------------------------Viga-----------------------------------------------//
-function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
-    let colorCircle = "red";
-    let dragg = true;
-    if(nameViga == "initialViga"){
-        colorCircle = "green";
-        dragg = false;
-    }
-    const group = new Konva.Group({draggable: false, name: nameViga});
-    const line = new Konva.Line({
-        name: "subElementoVigaLinea",
-        x: x0,
-        y: y0,
-        points: [0, 0, x1, y1],
-        strokeWidth: 5,
-        stroke: "black"
-    });
-
-    const circle1 = new Konva.Circle({
-        name: "subElementoVigaCirculo1",
-        x: x0,
-        y: y0,
-        radius: 5,
-        fill: colorCircle,
-        draggable: dragg
-    });
-
-    const circle2 = new Konva.Circle({
-        name: "subElementoVigaCirculo2",
-        x: x0 + x1,
-        y: y0 + y1,
-        radius: 5,
-        fill: "red",
-        draggable: true
-    });
-
-    group.add(line, circle1, circle2);
-    return group;
-}
 
 function newViga2(){
     let colorCircle = "red";
@@ -99,6 +61,44 @@ function newViga2(){
     
 
     group.add(line, circle);
+    return group;
+}
+function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
+    let colorCircle = "red";
+    let dragg = true;
+    if(nameViga == "initialViga"){
+        colorCircle = "green";
+        // dragg = false;
+    }
+    const group = new Konva.Group({draggable: false, name: nameViga});
+    const line = new Konva.Line({
+        name: "subElementoVigaLinea",
+        x: x0,
+        y: y0,
+        points: [0, 0, x1, y1],
+        strokeWidth: 5,
+        stroke: "black"
+    });
+
+    const circle1 = new Konva.Circle({
+        name: "subElementoVigaCirculo1",
+        x: x0,
+        y: y0,
+        radius: 5,
+        fill: colorCircle,
+        draggable: dragg
+    });
+
+    const circle2 = new Konva.Circle({
+        name: "subElementoVigaCirculo2",
+        x: x0 + x1,
+        y: y0 + y1,
+        radius: 5,
+        fill: "red",
+        draggable: true
+    });
+
+    group.add(line, circle1, circle2);
     return group;
 }
 
@@ -1620,4 +1620,9 @@ function showHints(){
         });
     })
     alert(txt);
+}
+
+function joinNodes(parent, child){
+    parent.addChild(child);
+    child.putParent(parent);
 }
