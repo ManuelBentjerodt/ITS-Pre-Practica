@@ -1226,21 +1226,21 @@ function replaceApoyos(){
                 createFuerza(`${magnitud}*sin(${angle}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (90 == angle){ //
-                createFuerza(`${magnitud}N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createFuerza(`${magnitud} N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (90 < angle && angle < 180){
                 createFuerza(`${magnitud}*cos(${angle - 90}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 createFuerza(`${magnitud}*sin(${angle - 90}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (180 == angle){ //
-                createFuerza(`${magnitud}N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createFuerza(`${magnitud} N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (180 < angle && angle < 270){
                 createFuerza(`${magnitud}*cos(${angle - 180}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 createFuerza(`${magnitud}*sin(${angle - 180}) N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (270 == angle){ //
-                createFuerza(`${magnitud}N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createFuerza(`${magnitud} N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (270 < angle && angle < 360){
                 createFuerza(`${magnitud}*cos(${360 - angle}) N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
