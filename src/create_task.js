@@ -57,14 +57,15 @@ const initialVigaCircle1 = initialViga.getChildren((node) => {return node.name()
 const initialVigaCircle2 = initialViga.getChildren((node) => {return node.name() === "subElementoVigaCirculo2"})[0];
 
 
-const originInitialViga = new Node(getElementPos(initialVigaCircle1))
-const secondNodeInitialViga = new Node(getElementPos(initialVigaCircle2))
+const originInitialViga = new Node(getElementPos(initialVigaCircle1));
+const secondNodeInitialViga = new Node(getElementPos(initialVigaCircle2));
+
+joinNodes(originInitialViga, secondNodeInitialViga);
 
 
-// dcl.addChildNode(secondNode);
-// secondNode.addParent(dcl);
 
-// console.log(dcl)
+const dcl = originInitialViga;
+console.log(dcl)
 
 listenCreateElement();
 listenDeleteElement();
