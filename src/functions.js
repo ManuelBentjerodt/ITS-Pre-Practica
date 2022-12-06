@@ -1621,3 +1621,4 @@ function showHints(){
     })
     alert(txt);
 }
+
