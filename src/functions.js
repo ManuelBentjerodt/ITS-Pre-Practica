@@ -14,7 +14,7 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga"){
         name: "subElementoViga",
         x: x0,
         y: y0,
-        radius: 5,
+        radius: nodeRadius,
         fill: "#CF6412",
         draggable: true
     });
@@ -67,7 +67,39 @@ function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) 
     });
 
     group.add(line, circle1, circle2);
-    return group
+    return group;
+}
+
+function newViga2(){
+    let colorCircle = "red";
+    let dragg = true;
+    if(nameViga == "initialViga"){
+        colorCircle = "green";
+        dragg = false;
+    }
+    const group = new Konva.Group({draggable: false, name: nameViga});
+    const line = new Konva.Line({
+        name: "subElementoVigaLinea",
+        x: x0,
+        y: y0,
+        points: [0, 0, x1, y1],
+        strokeWidth: 5,
+        stroke: "black"
+    });
+
+    const circle = new Konva.Circle({
+        name: "subElementoVigaCirculo",
+        x: x0,
+        y: y0,
+        radius: 5,
+        fill: colorCircle,
+        draggable: dragg
+    });
+
+    
+
+    group.add(line, circle);
+    return group;
 }
 
 function updateViga(viga, shadow){
@@ -185,8 +217,10 @@ function createViga(nameViga="viga"){
     // updateAll();
     moveVigasToTop();
   
-    return line
+    return line;
 }
+
+
 
 
 //------------------------------------------------------Vinculos externos-----------------------------------------------//
@@ -1093,11 +1127,32 @@ function listenCreateElement(){
             const mouseXY = roundXY(getXY());
             lastVigaNodeClick.x = mouseXY.x;
             lastVigaNodeClick.y = mouseXY.y;
+            lastNodeClick = new Node([lastVigaNodeClick.x, lastVigaNodeClick.y])
             
-            if (e.target.name() == "subElementoVigaCirculo1" || e.target.name() == "subElementoVigaCirculo2"){
+            if (e.target.name() == "subElementoVigaCirculo1"){
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
+
+                const parent = e.target.getParent();
+                const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo2"})[0];
+                const otherNodePosition =  getElementPos(otherNode);
+                // console.log(`node: ${getElementPos(e.target)} | other node: ${otherNodePosition}`)
+                
+
+            } else if (e.target.name() == "subElementoVigaCirculo2"){
+                panel.style.visibility = "visible";
+                movePanelTo(panel, mouseXY.x, mouseXY.y);
+
+                const parent = e.target.getParent();
+                const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo1"})[0]
+                const otherNodePosition =  getElementPos(otherNode);
+                // console.log(`node: ${getElementPos(e.target)} | other node: ${otherNodePosition}`)
+      
+
             }
+            console.log(lastNodeClick)
+
+            
         }
     });
 }

@@ -37,7 +37,6 @@ for (let j = 0; j <= heightStage / blockSnapSize; j++) {
 
 const divKonvaContainer = document.querySelector("#container");
 
-
 const panel = createPanel(400, 80);
 const delPanel = createDelPanel(0,0);
 
@@ -49,13 +48,29 @@ listenPanelMovement(delPanel);
 
 //------------------------------------------------------Elementos dcl-----------------------------------------------//
 const lastVigaNodeClick = {x: 0, y: 0};
+let lastNodeClick = null
 let lastElementClick = undefined;
+
 const initialViga = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
+
+const initialVigaCircle1 = initialViga.getChildren((node) => {return node.name() === "subElementoVigaCirculo1"})[0];
+const initialVigaCircle2 = initialViga.getChildren((node) => {return node.name() === "subElementoVigaCirculo2"})[0];
+
+
+const dcl = new Node(getElementPos(initialVigaCircle1))
+const secondNode = new Node(getElementPos(initialVigaCircle2))
+
+
+dcl.addChildNode(secondNode);
+secondNode.addParent(dcl);
+
+console.log(dcl)
 
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
 replaceApoyos();
 // listenSave();
+
 
 

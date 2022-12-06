@@ -5,4 +5,5 @@ let countpoyoNoDeslizante = 0;
 const blockSnapSize = 40;
 const widthStage = blockSnapSize * 36;
 const heightStage = blockSnapSize * 15;
+const nodeRadius = 5;
 const allDCLelements = [];
