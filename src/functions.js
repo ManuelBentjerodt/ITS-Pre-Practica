@@ -32,37 +32,6 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga"){
 
 //------------------------------------------------------Viga-----------------------------------------------//
 
-function newViga2(){
-    let colorCircle = "red";
-    let dragg = true;
-    if(nameViga == "initialViga"){
-        colorCircle = "green";
-        dragg = false;
-    }
-    const group = new Konva.Group({draggable: false, name: nameViga});
-    const line = new Konva.Line({
-        name: "subElementoVigaLinea",
-        x: x0,
-        y: y0,
-        points: [0, 0, x1, y1],
-        strokeWidth: 5,
-        stroke: "black"
-    });
-
-    const circle = new Konva.Circle({
-        name: "subElementoVigaCirculo",
-        x: x0,
-        y: y0,
-        radius: 5,
-        fill: colorCircle,
-        draggable: dragg
-    });
-
-    
-
-    group.add(line, circle);
-    return group;
-}
 function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
     let colorCircle = "red";
     let dragg = true;
@@ -77,7 +46,8 @@ function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) 
         y: y0,
         points: [0, 0, x1, y1],
         strokeWidth: 5,
-        stroke: "black"
+        stroke: "black",
+        id: Date.now()
     });
 
     const circle1 = new Konva.Circle({
@@ -86,7 +56,8 @@ function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) 
         y: y0,
         radius: 5,
         fill: colorCircle,
-        draggable: dragg
+        draggable: dragg,
+        id: Date.now()+1
     });
 
     const circle2 = new Konva.Circle({
@@ -95,7 +66,8 @@ function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) 
         y: y0 + y1,
         radius: 5,
         fill: "red",
-        draggable: true
+        draggable: true,
+        id: Date.now()+2
     });
 
     group.add(line, circle1, circle2);
@@ -216,8 +188,56 @@ function createViga(nameViga="viga"){
     delPanel.style.visibility = "hidden";
     // updateAll();
     moveVigasToTop();
-  
+    
+
+    
+
+
     return line;
+}
+
+function createViga2(){
+    const konvaElement = lastNodeClick;
+    const [x0, y0] = getElementPos(konvaElement);
+
+    const group = new Konva.Group({name: "viga2"});
+
+    const line = new Konva.Line({
+        name: "subElementoVigaLinea",
+        x: x0,
+        y: y0,
+        points: [0, 0, 3*blockSnapSize, 0],
+        strokeWidth: 5,
+        stroke: "black",
+        id: Date.now()
+    });
+
+    const circle = new Konva.Circle({
+        name: "subElementoVigaCirculo",
+        x: x0+3*blockSnapSize,
+        y: y0,
+        radius: 5,
+        fill: "red",
+        draggable: true,
+        id: Date.now() + 1
+    });
+
+    const node = new Node([x0, y0], id=circle.getAttr("id"));
+    const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
+    joinNodes(nodeParent, node)
+    
+    
+
+    group.add(line, circle)
+    layer.add(group)
+    // konvaElement.getParent().moveToTop()
+    konvaElement.moveUp()
+
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+    // updateAll();
+    moveVigasToTop();
+
 }
 
 
@@ -630,6 +650,7 @@ function createPanel(x0, y0){
     const btnBiela = createButton(widthPanel, heightPanelElement, "bielaBtn", "Biela", createBiela); 
     const btnFuerza = createButton(widthPanel, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle); 
     const btnMomento = createButton(widthPanel, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento);
+    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga2", createViga2, null);
 
     const containerFuerza = createContainer([btnFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle]);
     const containerCreateMomento = createContainer([btnMomento, inputCreateMomento]);
@@ -652,6 +673,7 @@ function createPanel(x0, y0){
     panel.appendChild(btnBiela);
     panel.appendChild(containerFuerza);
     panel.appendChild(containerCreateMomento);
+    panel.appendChild(btnViga2)
 
     return panel;
 }
@@ -1091,8 +1113,8 @@ function listenCreateElement(){
             const mouseXY = roundXY(getXY());
             lastVigaNodeClick.x = mouseXY.x;
             lastVigaNodeClick.y = mouseXY.y;
-            lastNodeClick = new Node([lastVigaNodeClick.x, lastVigaNodeClick.y])
-            
+            lastNodeClick = e.target;
+            console.log(lastNodeClick)
             if (e.target.name() == "subElementoVigaCirculo1"){
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
@@ -1100,9 +1122,7 @@ function listenCreateElement(){
                 const parent = e.target.getParent();
                 const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo2"})[0];
                 const otherNodePosition =  getElementPos(otherNode);
-                // console.log(`node: ${getElementPos(e.target)} | other node: ${otherNodePosition}`)
                 
-
             } else if (e.target.name() == "subElementoVigaCirculo2"){
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
@@ -1110,11 +1130,15 @@ function listenCreateElement(){
                 const parent = e.target.getParent();
                 const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo1"})[0]
                 const otherNodePosition =  getElementPos(otherNode);
-                // console.log(`node: ${getElementPos(e.target)} | other node: ${otherNodePosition}`)
-      
+                
+            } else if (e.target.name() == "subElementoVigaCirculo"){
+                panel.style.visibility = "visible";
+                movePanelTo(panel, mouseXY.x, mouseXY.y);
 
+            
             }
-            console.log(lastNodeClick)
+    
+            // console.log(dcl)
 
             
         }
@@ -1143,7 +1167,8 @@ function listenDeleteElement(){
                 name == "biela"                 ||
                 name == "fuerza"                ||
                 name == "momento-positivo"      ||
-                name == "momento-negativo"){
+                name == "momento-negativo"      ||
+                name == "viga2"){
                     const mouseXY = roundXY(getXY());
                     lastElementClick = element;
                     delPanel.style.visibility = "visible";
@@ -1624,5 +1649,5 @@ function showHints(){
 
 function joinNodes(parent, child){
     parent.addChild(child);
-    child.putParent(parent);
+    child.setParent(parent);
 }
