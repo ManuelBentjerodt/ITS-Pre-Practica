@@ -200,7 +200,7 @@ function createViga2(){
     const konvaElement = lastNodeClick;
     const [x0, y0] = getElementPos(konvaElement);
 
-    const group = new Konva.Group({});
+    const group = new Konva.Group({name: "viga2"});
 
     const line = new Konva.Line({
         name: "subElementoVigaLinea",
@@ -225,12 +225,13 @@ function createViga2(){
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
     joinNodes(nodeParent, node)
-
+    
     
 
     group.add(line, circle)
     layer.add(group)
-
+    // konvaElement.getParent().moveToTop()
+    konvaElement.moveUp()
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -1166,7 +1167,8 @@ function listenDeleteElement(){
                 name == "biela"                 ||
                 name == "fuerza"                ||
                 name == "momento-positivo"      ||
-                name == "momento-negativo"){
+                name == "momento-negativo"      ||
+                name == "viga2"){
                     const mouseXY = roundXY(getXY());
                     lastElementClick = element;
                     delPanel.style.visibility = "visible";

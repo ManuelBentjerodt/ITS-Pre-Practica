@@ -72,6 +72,15 @@ const dcl = originInitialViga;
 console.log(dcl)
 console.log(lineInitialViga);
 
+
+// delete dcl.parent
+// delete dcl.konvaObject
+// delete dcl.childreanNodes[0].parent
+// delete dcl.childreanNodes[0].konvaObject
+
+// const dclJSON = JSON.stringify(dcl)
+// console.log(dclJSON)
+
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
