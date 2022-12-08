@@ -39,7 +39,8 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
         colorCircle = "green";
         // dragg = false;
     }
-    const group = new Konva.Group({draggable: false, name: nameViga});
+    const idByDate = Date.now();
+    const group = new Konva.Group({draggable: false, name: nameViga, id: idByDate});
     const line = new Konva.Line({
         name: "subElementoVigaLinea",
         x: x0,
@@ -47,7 +48,7 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
         points: [0, 0, x1, y1],
         strokeWidth: 5,
         stroke: "black",
-        id: Date.now()
+        id: idByDate + 1
     });
 
     const circle1 = new Konva.Circle({
@@ -57,7 +58,7 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
         radius: 5,
         fill: colorCircle,
         draggable: dragg,
-        id: Date.now()+1
+        id: idByDate + 2
     });
 
     const circle2 = new Konva.Circle({
@@ -67,7 +68,7 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
         radius: 5,
         fill: "red",
         draggable: true,
-        id: Date.now()+2
+        id: idByDate + 3
     });
 
     group.add(line, circle1, circle2);
@@ -117,7 +118,7 @@ function updateViga(viga, shadow) {
 
         shadowList[0].position(vigaList[0].position());
         shadow.hide();
-        updateAll();
+        // updateAll();
     });
 
     vigaList[2].on("dragstart", () => {
@@ -157,7 +158,7 @@ function updateViga(viga, shadow) {
             y: shadowCircle2Pos.y
         });
         shadow.hide();
-        updateAll();
+        // updateAll();
     });
 }
 
@@ -181,6 +182,12 @@ function createViga(nameViga="viga") {
 
     layer.add(line, shadowLine);
    
+    const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"))
+    const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"))
+    originNode.konvaObjects.circle = line.getChildren()[1];
+    secondNode.konvaObjects.circle = line.getChildren()[2];
+    secondNode.setKonvaViga(line)
+    joinNodes(originNode, secondNode)
 
     updateViga(line, shadowLine);
     panel.style.visibility = "hidden";
@@ -192,7 +199,7 @@ function createViga(nameViga="viga") {
     
 
 
-    return line;
+    return originNode;
 }
 
 function createViga2() {
@@ -221,25 +228,116 @@ function createViga2() {
         draggable: true,
         id: idByDate + 2
     });
-
-    
-    
-    
+ 
     group.add(line, circle)
-    layer.add(group)
+
+    const shadowLine = createShadowViga(x0, y0, 3*blockSnapSize, 0, "shadowViga2");
+    shadowLine.hide()
+
+    layer.add(group, shadowLine)
 
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
     node.setKonvaViga(group)
-
+    node.konvaObjects.circle = circle;
     joinNodes(nodeParent, node)
-
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
+    
+    listenNodeMovement(group, shadowLine)
     moveVigasToTop();
 
+}
+
+
+function listenNodeMovement(konvaViga, shadow){
+    const shadowList = shadow.getChildren();
+    const vigaLine = konvaViga.getChildren()[0];
+    const vigaCircle = konvaViga.getChildren()[1];
+    const otherCircle = dcl.findNodeById(vigaCircle.getAttr("id")).parent.konvaObjects.circle;
+
+    otherCircle.on("dragstart", () => {
+        shadow.show();
+        shadow.moveToTop();
+    });
+
+    otherCircle.on("dragmove", () => {
+        const circle1Pos = otherCircle.getPosition();
+        const circle2Pos = vigaCircle.getPosition();
+        const shadowCircle1Pos = shadowList[1].getPosition();
+
+        vigaLine.position(circle1Pos);
+        vigaLine.points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
+
+        otherCircle.position({x: circle1Pos.x, y: circle1Pos.y});
+        shadowList[1].position({
+            x: Math.round(circle1Pos.x / blockSnapSize) * blockSnapSize,
+            y: Math.round(circle1Pos.y / blockSnapSize) * blockSnapSize
+        });
+
+        shadowList[0].position(circle2Pos);
+        shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
+    })
+
+    otherCircle.on("dragend", () => {
+        const circle2Pos = vigaCircle.getPosition();
+        const shadowCircle1Pos = shadowList[1].getPosition();
+
+        const newX = circle2Pos.x - shadowCircle1Pos.x;
+        const newY = circle2Pos.y - shadowCircle1Pos.y;
+
+        vigaLine.position(shadowCircle1Pos);
+        vigaLine.points([0, 0, newX, newY]);
+        otherCircle.position({
+            x: shadowCircle1Pos.x,
+            y: shadowCircle1Pos.y
+        });
+
+        shadowList[0].position(vigaLine.position());
+        shadow.hide();
+        
+    });
+
+    vigaCircle.on("dragstart", () => {
+        shadow.show();
+        shadow.moveToTop();
+        
+    });
+
+    vigaCircle.on("dragmove", () => {
+        const linePos = vigaLine.getPosition();
+        const circle2Pos = vigaCircle.getPosition();
+
+        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
+        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+
+        vigaLine.points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
+        shadowList[0].points([0, 0, newX, newY])
+
+        vigaCircle.position({x: circle2Pos.x, y: circle2Pos.y})
+        shadowList[2].position({
+            x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
+            y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
+        });
+    });
+
+    vigaCircle.on("dragend", () => {
+        const linePos = vigaLine.getPosition();
+        const circle2Pos = vigaCircle.getPosition();
+        const shadowCircle2Pos = shadowList[2].getPosition();
+
+        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
+        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+
+        vigaLine.points([0, 0, newX, newY])
+        vigaCircle.position({
+            x: shadowCircle2Pos.x,
+            y: shadowCircle2Pos.y
+        });
+        shadow.hide();
+       
+    });
 }
 
 

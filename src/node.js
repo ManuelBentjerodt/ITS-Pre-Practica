@@ -14,8 +14,11 @@ class Node {
             viga: null,
             vinculo: null,
             fuerzas: [],
-            momentos: []
+            momentos: [],
+            circle: null
         }
+
+
     }
 
     setId(id) {
@@ -33,7 +36,6 @@ class Node {
     addChild(node) {
         this.childreanNodes.push(node);
     }
-
 
     setVinculo(vinculo) {
         const types = new Set(["apoyoDeslizante", "apoyoNoDeslizante", "empotrado", "rotula", "biela"]);
