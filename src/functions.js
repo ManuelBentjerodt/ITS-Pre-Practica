@@ -159,6 +159,8 @@ function createViga2() {
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
     node.setKonvaViga(group)
+    node.konvaObjects.shadowViga = shadowLine
+    // nodeParent.konvaObjects.shadowViga = shadowLine
     node.konvaObjects.circle = circle;
     joinNodes(nodeParent, node)
 
@@ -1012,6 +1014,7 @@ function listenCreateElement() {
 function destroyAttachedKonvaElements(node){
     if(node.konvaObjects.viga) node.konvaObjects.viga.destroy();
     if(node.konvaObjects.vinculo) node.konvaObjects.vinculo.destroy();
+    if(node.konvaObjects.shadowViga) node.konvaObjects.shadowViga.destroy();
     
     node.konvaObjects.fuerzas.forEach(fuerza => {
         fuerza.destroy();
