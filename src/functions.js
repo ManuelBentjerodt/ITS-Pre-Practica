@@ -760,7 +760,7 @@ function createPanel(x0, y0) {
     const btnBiela = createButton(widthPanel, heightPanelElement, "bielaBtn", "Biela", createBiela); 
     const btnFuerza = createButton(widthPanel, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle); 
     const btnMomento = createButton(widthPanel, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento);
-    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga2", createViga2, null);
+    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga", createViga2, null);
 
     const containerFuerza = createContainer([btnFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle]);
     const containerCreateMomento = createContainer([btnMomento, inputCreateMomento]);
@@ -775,7 +775,8 @@ function createPanel(x0, y0) {
     topOfPanel.align = "center";
 
     panel.appendChild(topOfPanel);
-    panel.appendChild(btnViga);
+    // panel.appendChild(btnViga);
+    panel.appendChild(btnViga2)
     panel.appendChild(btnApoyoDeslizante);
     panel.appendChild(btnApoyoNoDeslizante)
     panel.appendChild(btnEmpotrado);
@@ -783,7 +784,6 @@ function createPanel(x0, y0) {
     panel.appendChild(btnBiela);
     panel.appendChild(containerFuerza);
     panel.appendChild(containerCreateMomento);
-    panel.appendChild(btnViga2)
 
     return panel;
 }
