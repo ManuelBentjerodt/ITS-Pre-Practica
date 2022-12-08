@@ -372,7 +372,7 @@ function createApoyoDeslizante() {
     group.add(triangle, base);
 
     paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=true);
-    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=false);
+    paintIfMouseOver(base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
 
     
     if(nodeParent.vinculo === null) {
