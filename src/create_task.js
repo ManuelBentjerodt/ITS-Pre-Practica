@@ -51,23 +51,9 @@ const lastVigaNodeClick = {x: 0, y: 0};
 let lastNodeClick = null
 let lastElementClick = undefined;
 
-const initialViga = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
-
-const initialVigaCircle1 = initialViga.getChildren((node) => {return node.name() === "subElementoVigaCirculo1"})[0];
-const initialVigaCircle2 = initialViga.getChildren((node) => {return node.name() === "subElementoVigaCirculo2"})[0];
-const initialVigaLine = initialViga.getChildren((node) => {return node.name() === "subElementoVigaLinea"})[0];
+const dcl = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
 
 
-const originInitialViga = new Node(getElementPos(initialVigaCircle1), id=initialVigaCircle1.getAttr("id"));
-const secondNodeInitialViga = new Node(getElementPos(initialVigaCircle2), id=initialVigaCircle2.getAttr("id"));
-const lineInitialViga = new Viga();
-
-originInitialViga.setKonvaViga(initialViga)
-
-lineInitialViga.setParents(originInitialViga, secondNodeInitialViga);
-joinNodes(originInitialViga, secondNodeInitialViga);
-
-const dcl = originInitialViga;
 
 // console.log(generateJSON(dcl))
 
