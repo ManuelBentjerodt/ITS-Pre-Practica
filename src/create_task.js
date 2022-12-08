@@ -62,7 +62,7 @@ const originInitialViga = new Node(getElementPos(initialVigaCircle1), id=initial
 const secondNodeInitialViga = new Node(getElementPos(initialVigaCircle2), id=initialVigaCircle2.getAttr("id"));
 const lineInitialViga = new Viga();
 
-originInitialViga.setKonvaObject(initialViga)
+originInitialViga.setKonvaViga(initialViga)
 
 lineInitialViga.setParents(originInitialViga, secondNodeInitialViga);
 joinNodes(originInitialViga, secondNodeInitialViga);
@@ -73,13 +73,6 @@ console.log(dcl)
 console.log(lineInitialViga);
 
 
-// delete dcl.parent
-// delete dcl.konvaObject
-// delete dcl.childreanNodes[0].parent
-// delete dcl.childreanNodes[0].konvaObject
-
-// const dclJSON = JSON.stringify(dcl)
-// console.log(dclJSON)
 
 listenCreateElement();
 listenDeleteElement();
