@@ -220,6 +220,8 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
             y: shadowCircle1Pos.y
         });
 
+        const newNodePos = [shadowCircle1Pos.x, shadowCircle1Pos.y];
+        dcl.findNodeById(otherCircle.getAttr("id")).setCoordinate(newNodePos);
         shadowList[0].position(vigaLine.position());
         shadow.hide();
         
@@ -261,6 +263,9 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
             x: shadowCircle2Pos.x,
             y: shadowCircle2Pos.y
         });
+
+        const newNodePos = [shadowCircle2Pos.x, shadowCircle2Pos.y];
+        dcl.findNodeById(vigaCircle.getAttr("id")).setCoordinate(newNodePos);
         shadow.hide();
        
     });

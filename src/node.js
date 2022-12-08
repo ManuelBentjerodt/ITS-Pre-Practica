@@ -25,7 +25,7 @@ class Node {
         this.id = id
     }
 
-    changeCoordinate(newCoordinate) {
+    setCoordinate(newCoordinate) {
         this.coordinate = newCoordinate;
     }
 
