@@ -695,9 +695,13 @@ function getOffset(element) {
 function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud=0, valAngle=0, element=0) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.style.backgroundColor = "yellow";
+    // btn.style.backgroundColor = "yellow";
+    // btn.style.background =  "url(prueba.png)";
+    btn.style.backgroundImage = "url(prueba.png)";
+    console.log("widdth panel es: "+ widthPanel)
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel  + "px";
+    btn.style.backgroundSize = "contain"; // todo en button
     btn.id = idNameText;
     btn.innerText = btnText;
     btn.addEventListener("dblclick", () => {
