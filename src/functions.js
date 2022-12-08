@@ -26,7 +26,7 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
     });
 
     group.add(line, circle1, circle2);
-             
+    layer.add(group);      
 
     return group
 }

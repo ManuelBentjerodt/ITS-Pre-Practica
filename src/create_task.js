@@ -52,7 +52,7 @@ let lastNodeClick = null
 let lastElementClick = undefined;
 
 const [dcl, group] = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
-const shadowLine = createShadowViga(3*blockSnapSize, 0, 8*blockSnapSize, 8*blockSnapSize, "shadowInitialViga");
+const shadowLine = createShadowViga(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialViga");
 shadowLine.hide();
 listenNodeMovement(group, shadowLine, "initialViga")
 
