@@ -29,6 +29,11 @@ class Node {
     }
 
 
+    getChildren(){
+        return this.childreanNodes
+    }
+
+
     addVinculo(vinculo){
         const types = new Set(["deslizante", "noDeslizante", "empotrado", "rotula", "biela"]);
         if (vinculo in types){
@@ -72,6 +77,11 @@ class Node {
                 }
             });
         }
+
+
+
+
+
 
         console.log("could not find element... returning null");
         return null;
