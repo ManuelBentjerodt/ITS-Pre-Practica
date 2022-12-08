@@ -10,3 +10,5 @@ const allDCLelements = [];
 
 const nfillc = "#0000FF";
 const nstrokec = "#0000FF";
+const shadowFill = "#CF6412";
+const shadowStroke = "#FF7B17";
