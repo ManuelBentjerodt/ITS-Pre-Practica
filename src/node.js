@@ -1,5 +1,5 @@
 class Node {
-    constructor(_coordinate, id=Date.now()){
+    constructor(_coordinate, id=Date.now()) {
         this.id = id
         this.coordinate = _coordinate;  // array(x, y)
         this.parent = null;            // node
@@ -12,61 +12,57 @@ class Node {
         this.konvaObject = null;
     }
 
-    setId(id){
+    setId(id) {
         this.id = id
     }
 
-    changeCoordinate(newCoordinate){
+    changeCoordinate(newCoordinate) {
         this.coordinate = newCoordinate;
     }
 
-    setParent(parentNode){
+    setParent(parentNode) {
         this.parent = parentNode;
     }
 
-    addChild(node){
+    addChild(node) {
         this.childreanNodes.push(node);
     }
 
 
-    addVinculo(vinculo){
-        const types = new Set(["deslizante", "noDeslizante", "empotrado", "rotula", "biela"]);
-        if (vinculo in types){
-            this.vinculo.push(vinculo);
+    setVinculo(vinculo) {
+        const types = new Set(["apoyoDeslizante", "apoyoNoDeslizante", "empotrado", "rotula", "biela"]);
+        if (types.has(vinculo)) {
+            this.vinculo = vinculo;
         }
     }
 
-    addFuerza(magnitud, angle){
-        this.fuerzas.push((magnitud, angle));
+    addFuerza(magnitud, angle) {
+        this.fuerzas.push([magnitud, angle]);
     }
 
-    addMomento(type, magnitud){
-        if (type === "positivo"){
-            this.momentos.positivos.push(magnitud);
-        } else if (type === "negativo"){
-            this.momentos.negativos.push(magnitud);
-        }
+    addMomento(magnitud) {
+        this.momentos.push(magnitud)
     }
 
-    setKonvaObject(object){
+    setKonvaObject(object) {
         this.konvaObject = object;
     }
 
-    findNodeById(_id, root=this){
+    findNodeById(_id, root=this) {
         const queue = [];
         queue.push(root);
 
         const discovered = [];
         discovered.push(root);
 
-        while (queue.length){
+        while (queue.length) {
             let actual = queue.shift();
             
-            if (actual.id == _id){
+            if (actual.id == _id) {
                 return actual;
             }
             actual.childreanNodes.forEach( child => {
-                if (!(child in discovered)){
+                if (!(discovered.includes(child))) {
                     discovered.push(child)
                     queue.push(child)
                 }
@@ -77,21 +73,42 @@ class Node {
         return null;
 
     }
+
+    getAllDecendents(root=this) {
+        const queue = [];
+        queue.push(root);
+
+        const discovered = [];
+        
+        while (queue.length) {
+            let actual = queue.shift();
+
+            
+            actual.childreanNodes.forEach( child => {
+                if (!(discovered.includes(child))) {
+                    discovered.push(child);
+                    queue.push(child);
+                }
+            });
+        }
+
+        return discovered;
+    }
     
 }
 
 
 class Viga {
-    constructor(){
+    constructor() {
         this.parents = [];
     }
 
-    setParents(node1, node2){
+    setParents(node1, node2) {
         this.parents = [node1, node2];
     }
 }
 
-// function joinNodes(parent, child){
+// function joinNodes(parent, child) {
 //     parent.addChild(child);
 //     child.setParent(parent);
 // }
@@ -105,7 +122,10 @@ class Viga {
 // joinNodes(n2,n3)
 // joinNodes(n3,n4)
 // joinNodes(n1,n3)
+// const l =[n1]
+// console.log(l.includes(n1))
 
+// console.log(n1.getAllDecendents(n2))
 
 
 // console.log(n1.findNodeById(0))
