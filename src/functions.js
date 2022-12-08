@@ -101,7 +101,7 @@ function createViga(nameViga="viga") {
     secondNode.setKonvaViga(line)
     joinNodes(originNode, secondNode)
 
-    updateViga(line, shadowLine);
+    
     listenNodeMovement(line, shadowLine, "initialViga")
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
