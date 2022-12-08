@@ -67,10 +67,10 @@ originInitialViga.setKonvaViga(initialViga)
 lineInitialViga.setParents(originInitialViga, secondNodeInitialViga);
 joinNodes(originInitialViga, secondNodeInitialViga);
 
-
 const dcl = originInitialViga;
-console.log(dcl)
-console.log(lineInitialViga);
+
+// console.log(generateJSON(dcl))
+
 
 
 
