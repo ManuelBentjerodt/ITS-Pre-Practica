@@ -692,18 +692,19 @@ function getOffset(element) {
 
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
-function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud=0, valAngle=0, element=0) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud=0, valAngle=0, element=0,image) {
     const btn = document.createElement("button");
     btn.type = "button";
     // btn.style.backgroundColor = "yellow";
     // btn.style.background =  "url(prueba.png)";
-    btn.style.backgroundImage = "url(prueba.png)";
-    console.log("widdth panel es: "+ widthPanel)
+    btn.style.backgroundImage = image;
+    console.log("widdth boton es: "+ widthPanel)
+    console.log("alto boton: "+heightPanel)
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel  + "px";
-    btn.style.backgroundSize = "contain"; // todo en button
+    btn.style.backgroundSize = "cover"; // todo en button
     btn.id = idNameText;
-    btn.innerText = btnText;
+    // btn.innerText = btnText;
     btn.addEventListener("dblclick", () => {
 
         if (idNameText == "vigaBtn") {
@@ -762,7 +763,9 @@ function createContainer(list) {
 
 function createPanel(x0, y0) {
     const widthPanel = 200;
-    const heightPanel = 350;
+    const heightPanel = 200;
+    // const widthPanel = 350;
+    // const heightPanel = 200;
     const colorPanel = "#DDDDDD";
 
     const heightPanelElement = heightPanel / 8;
@@ -785,15 +788,26 @@ function createPanel(x0, y0) {
 
     const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel, heightPanelElement);
 
-    const btnViga = createButton(widthPanel, heightPanelElement, "vigaBtn", "Viga", createViga, null);
-    const btnApoyoDeslizante = createButton(widthPanel, heightPanelElement, "apoyoDeslizanteBtn", "Apoyo deslizante", createApoyoDeslizante); 
-    const btnApoyoNoDeslizante = createButton(widthPanel, heightPanelElement, "apoyoNoDeslizanteBtn", "Apoyo no deslizante", createApoyoNoDeslizante); 
-    const btnEmpotrado = createButton(widthPanel, heightPanelElement, "empotradoBtn", "Empotrado", createEmpotrado); 
-    const btnRotula = createButton(widthPanel, heightPanelElement, "rotulaBtn", "Rotula", createRotula);
-    const btnBiela = createButton(widthPanel, heightPanelElement, "bielaBtn", "Biela", createBiela); 
-    const btnFuerza = createButton(widthPanel, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle); 
-    const btnMomento = createButton(widthPanel, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento);
-    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga", createViga2, null);
+
+    const imgApoyoDesilzante = "url(apoyodeslizante.png)"
+    const imgApoyo = "url(apoyo.png)"
+    const imgBiela = "url(biela.png)"
+    const imgRotula= "url(rotula.png)"
+    const imgApMomento = "url(momento.png)"
+    const imgFuerza = "url(fuerza.png)"
+    const imgEmpotrado = "url(empotrado.png)"
+    const imgViga = "url(vigaFoto.png)"
+
+
+    const btnViga = createButton(widthPanel/2, heightPanelElement, "vigaBtn", "Viga", createViga, null);
+    const btnApoyoDeslizante = createButton(widthPanel/2, heightPanelElement, "apoyoDeslizanteBtn", "Apoyo deslizante", createApoyoDeslizante,null,null,null,imgApoyoDesilzante ); 
+    const btnApoyoNoDeslizante = createButton(widthPanel/2, heightPanelElement, "apoyoNoDeslizanteBtn", "Apoyo no deslizante", createApoyoNoDeslizante,null,null,null, imgApoyo); 
+    const btnEmpotrado = createButton(widthPanel/2, heightPanelElement, "empotradoBtn", "Empotrado", createEmpotrado,null,null,null, imgEmpotrado); 
+    const btnRotula = createButton(widthPanel/2, heightPanelElement, "rotulaBtn", "Rotula", createRotula,null,null,null, imgRotula);
+    const btnBiela = createButton(widthPanel/2, heightPanelElement, "bielaBtn", "Biela", createBiela,null,null,null, imgApoyoDesilzante); 
+    const btnFuerza = createButton(widthPanel/2, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle,null,imgFuerza); 
+    const btnMomento = createButton(widthPanel/2, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento,null,null, imgApMomento);
+    const btnViga2 = createButton(widthPanel/2, heightPanelElement, "viga2btn", "Viga", createViga2, null,null,null,imgViga);
 
     const containerFuerza = createContainer([btnFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle]);
     const containerCreateMomento = createContainer([btnMomento, inputCreateMomento]);
