@@ -9,7 +9,13 @@ class Node {
         this.fuerzas = [],                // array(magnitud, angle)
         this.momentos = []                // magnitud   
         
-        this.konvaObject = null;
+
+        this.konvaObjects = {
+            viga: null,
+            vinculo: null,
+            fuerzas: [],
+            momentos: []
+        }
     }
 
     setId(id) {
@@ -36,6 +42,10 @@ class Node {
         }
     }
 
+    deleteVinculo(){
+        this.vinculo = null;
+    }
+
     addFuerza(magnitud, angle) {
         this.fuerzas.push([magnitud, angle]);
     }
@@ -44,9 +54,24 @@ class Node {
         this.momentos.push(magnitud)
     }
 
-    setKonvaObject(object) {
-        this.konvaObject = object;
+
+
+    setKonvaViga(object){
+        this.konvaObjects.viga = object;
     }
+
+    setKonvaVinculo(object){
+        this.konvaObjects.vinculo = object
+    }
+
+    addKonvaFuerza(object){
+        this.konvaObjects.fuerzas.push(object)
+    }
+
+    addKonvaMomento(object){
+        this.konvaObjects.fuerzas.push(object)
+    }
+
 
     findNodeById(_id, root=this) {
         const queue = [];
