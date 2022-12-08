@@ -222,16 +222,18 @@ function createViga2() {
         id: idByDate + 2
     });
 
-    const node = new Node([x0, y0], id=circle.getAttr("id"));
-    const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
-    joinNodes(nodeParent, node)
     
     
-
+    
     group.add(line, circle)
     layer.add(group)
-    // konvaElement.getParent().moveToTop()
-    konvaElement.moveUp()
+
+    const node = new Node([x0, y0], id=circle.getAttr("id"));
+    const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
+    node.setKonvaViga(group)
+
+    joinNodes(nodeParent, node)
+
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -268,16 +270,19 @@ function createEmpotrado() {
     const l2 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
     const l3 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
     //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
+    
+    group.add(base, l1, l2, l3);
 
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("empotrado");
+        nodeParent.setKonvaVinculo(group)
+   
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         return;
     }
 
-    group.add(base, l1, l2, l3);
     layer.add(group);
 
     panel.style.visibility = "hidden";
@@ -320,16 +325,17 @@ function createApoyoDeslizante() {
         stroke: "black",
     });
 
+    group.add(triangle, base);
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("apoyoDeslizante");
+        nodeParent.setKonvaVinculo(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         return;
     }
     
-    group.add(triangle, base);
     layer.add(group);
     
     panel.style.visibility = "hidden";
@@ -363,16 +369,17 @@ function createApoyoNoDeslizante() {
         strokeWidth: 4,
     });
 
+    group.add(triangle);
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("apoyoNoDeslizante");
+        nodeParent.setKonvaVinculo(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         return;
     }
 
-    group.add(triangle);
     layer.add(group);
     
     panel.style.visibility = "hidden";
@@ -403,16 +410,17 @@ function createRotula() {
         name: "subElement Rotula"
     });
 
+    group.add(circle);
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("rotula");
+        nodeParent.setKonvaVinculo(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         return;
     }
     
-    group.add(circle);
     layer.add(group);
 
     panel.style.visibility = "hidden";
@@ -457,16 +465,18 @@ function createBiela() {
         y: 0
     });
 
+    group.add(line, circle1, circle2);
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("biela");
+        nodeParent.setKonvaVinculo(group)
+
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         return;
     }
     
-    group.add(line, circle1, circle2);
     layer.add(group);
 
     panel.style.visibility = "hidden";
@@ -517,18 +527,18 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
         fill: color
     });
 
-
     group.add(arrow, magnitudValue);
-    layer.add(group);
-
+    
     layerForPaint.add(group);
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
         nodeParent.addFuerza(parseFloat(magnitud), parseFloat(angle));
+        nodeParent.addKonvaFuerza(group)
         group.setAttr("id", konvaElement.getAttr("id"))    
     }
-
+    
+    layer.add(group);
     
     
     panel.style.visibility = "hidden";
@@ -594,14 +604,16 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
     });
 
     group.add(arrow, magnitudValue)
-    layerForPaint.add(group);
-
+    
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
         nodeParent.addMomento(parseFloat(magnitud)); 
+        nodeParent.addKonvaMomento(group);
         group.setAttr("id", konvaElement.getAttr("id"));
     }
+    
+    layerForPaint.add(group);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -908,6 +920,18 @@ function listenCreateElement() {
 }
 
 
+function destroyAttachedKonvaElements(node){
+    if(node.konvaObjects.viga) node.konvaObjects.viga.destroy();
+    if(node.konvaObjects.vinculo) node.konvaObjects.vinculo.destroy();
+    
+    node.konvaObjects.fuerzas.forEach(fuerza => {
+        fuerza.destroy();
+    })
+    node.konvaObjects.momentos.forEach(momento => {
+        momento.destroy();
+    })
+}
+
 function deleteElement(element) {
     if (element.name() === "viga2") {
         const node = dcl.findNodeById(element.getAttr("id")+2) //element es el group del objeto, 
@@ -917,13 +941,21 @@ function deleteElement(element) {
         })
         parentNode.childreanNodes.splice(idx, 1)
 
+        node.getAllDecendents().forEach(decendent => {
+            destroyAttachedKonvaElements(decendent);
+            delete decendent;
+        })
+
+        destroyAttachedKonvaElements(node);
+        delete node;
+
     } else {
         const node = dcl.findNodeById(element.getAttr("id"))
         const apoyos = new Set(["apoyoDeslizante", "apoyoNoDeslizante", "empotrado", "rotula", "biela"]);
 
         if (apoyos.has(element.name())) {
-            node.setApoyo(null);
-            
+            node.deleteVinculo();
+
         } else if (element.name() === "fuerza"){
             const tuple = element.getAttr("tension")
             const floatTuple = [parseFloat(tuple[0]), parseFloat(tuple[1])];
