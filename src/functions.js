@@ -1,4 +1,4 @@
-function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga"){
+function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
     const group = new Konva.Group({name: nameShadow});
     const line = new Konva.Line({
         name: "subElementoViga",
@@ -26,20 +26,23 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga"){
     });
 
     group.add(line, circle1, circle2);
+             
+
     return group
 }
 
 
 //------------------------------------------------------Viga-----------------------------------------------//
 
-function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
+function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
     let colorCircle = "red";
     let dragg = true;
-    if(nameViga == "initialViga"){
+    if(nameViga == "initialViga") {
         colorCircle = "green";
         // dragg = false;
     }
-    const group = new Konva.Group({draggable: false, name: nameViga});
+    const idByDate = Date.now();
+    const group = new Konva.Group({draggable: false, name: nameViga, id: idByDate});
     const line = new Konva.Line({
         name: "subElementoVigaLinea",
         x: x0,
@@ -47,7 +50,7 @@ function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) 
         points: [0, 0, x1, y1],
         strokeWidth: 5,
         stroke: "black",
-        id: Date.now()
+        id: idByDate + 1
     });
 
     const circle1 = new Konva.Circle({
@@ -57,7 +60,7 @@ function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) 
         radius: 5,
         fill: colorCircle,
         draggable: dragg,
-        id: Date.now()+1
+        id: idByDate + 2
     });
 
     const circle2 = new Konva.Circle({
@@ -67,241 +70,26 @@ function newViga(x0, y0, x1, y1, nameViga="viga"){ //parte en el punto (x0, y0) 
         radius: 5,
         fill: "red",
         draggable: true,
-        id: Date.now()+2
+        id: idByDate + 3
     });
 
     group.add(line, circle1, circle2);
+
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    paintIfMouseOver(circle1, "#00FF00", nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
+    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
+    
     return group;
 }
 
-function updateViga(viga, shadow){
-    const vigaList = viga.getChildren(); //0 linea de konva 1: circulo 1 2: ciruclo 2
-    const shadowList = shadow.getChildren();
-    vigaList[1].on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
-        viga.moveToTop();
-    });
-
-    vigaList[1].on("dragmove", () => {
-        const circle1Pos = vigaList[1].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle1Pos = shadowList[1].getPosition();
-
-        vigaList[0].position(circle1Pos);
-        vigaList[0].points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
-
-        vigaList[1].position({x: circle1Pos.x, y: circle1Pos.y});
-        shadowList[1].position({
-            x: Math.round(circle1Pos.x / blockSnapSize) * blockSnapSize,
-            y: Math.round(circle1Pos.y / blockSnapSize) * blockSnapSize
-        });
-
-        shadowList[0].position(circle2Pos);
-        shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
-    })
-
-    vigaList[1].on("dragend", () => {
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle1Pos = shadowList[1].getPosition();
-
-        const newX = circle2Pos.x - shadowCircle1Pos.x;
-        const newY = circle2Pos.y - shadowCircle1Pos.y;
-
-        vigaList[0].position(shadowCircle1Pos);
-        vigaList[0].points([0, 0, newX, newY]);
-        vigaList[1].position({
-            x: shadowCircle1Pos.x,
-            y: shadowCircle1Pos.y
-        });
-
-        shadowList[0].position(vigaList[0].position());
-        shadow.hide();
-        updateAll();
-    });
-
-    vigaList[2].on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
-        viga.moveToTop();
-    });
-
-    vigaList[2].on("dragmove", () => {
-        const linePos = vigaList[0].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-
-        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
-        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
-
-        vigaList[0].points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
-        shadowList[0].points([0, 0, newX, newY])
-
-        vigaList[2].position({x: circle2Pos.x, y: circle2Pos.y})
-        shadowList[2].position({
-            x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
-            y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
-        });
-    });
-
-    vigaList[2].on("dragend", () => {
-        const linePos = vigaList[0].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle2Pos = shadowList[2].getPosition();
-
-        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
-        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
-
-        vigaList[0].points([0, 0, newX, newY])
-        vigaList[2].position({
-            x: shadowCircle2Pos.x,
-            y: shadowCircle2Pos.y
-        });
-        shadow.hide();
-        updateAll();
-    });
-}
-
-
-
-
-
-
-
-
-function updateViga2(node){
-
-    
-    console.log("Ola");
-    const vigaList = node.getChildren(); //0 linea de konva 1: circulo 1 2: ciruclo 2
-    console.log("Los children son : PLAOODSLOFDLSOLFDSOL "+vigalist)
-
-    const shadowList = shadow.getChildren();
-    vigaList[1].on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
-        viga.moveToTop();
-    });
-
-    vigaList[1].on("dragmove", () => {
-        const circle1Pos = vigaList[1].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle1Pos = shadowList[1].getPosition();
-
-        vigaList[0].position(circle1Pos);
-        vigaList[0].points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
-
-        vigaList[1].position({x: circle1Pos.x, y: circle1Pos.y});
-        shadowList[1].position({
-            x: Math.round(circle1Pos.x / blockSnapSize) * blockSnapSize,
-            y: Math.round(circle1Pos.y / blockSnapSize) * blockSnapSize
-        });
-
-        shadowList[0].position(circle2Pos);
-        shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
-    })
-
-    vigaList[1].on("dragend", () => {
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle1Pos = shadowList[1].getPosition();
-
-        const newX = circle2Pos.x - shadowCircle1Pos.x;
-        const newY = circle2Pos.y - shadowCircle1Pos.y;
-
-        vigaList[0].position(shadowCircle1Pos);
-        vigaList[0].points([0, 0, newX, newY]);
-        vigaList[1].position({
-            x: shadowCircle1Pos.x,
-            y: shadowCircle1Pos.y
-        });
-
-        shadowList[0].position(vigaList[0].position());
-        shadow.hide();
-        updateAll();
-    });
-
-    vigaList[2].on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
-        viga.moveToTop();
-    });
-
-    vigaList[2].on("dragmove", () => {
-        const linePos = vigaList[0].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-
-        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
-        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
-
-        vigaList[0].points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
-        shadowList[0].points([0, 0, newX, newY])
-
-        vigaList[2].position({x: circle2Pos.x, y: circle2Pos.y})
-        shadowList[2].position({
-            x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
-            y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
-        });
-    });
-
-    vigaList[2].on("dragend", () => {
-        const linePos = vigaList[0].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle2Pos = shadowList[2].getPosition();
-
-        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
-        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
-
-        vigaList[0].points([0, 0, newX, newY])
-        vigaList[2].position({
-            x: shadowCircle2Pos.x,
-            y: shadowCircle2Pos.y
-        });
-
-
-
-
-
-
-        shadow.hide();
-        updateAll();
-
-
-
-    });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function createViga(nameViga="viga"){
+function createViga(nameViga="viga") {
     let x0 = lastVigaNodeClick.x
     let y0 = lastVigaNodeClick.y
     const y1 = 0;
     const x1 = blockSnapSize * 3;
 
     let nameShadow = "shadow-viga";
-    if (nameViga == "initialViga"){
+    if (nameViga == "initialViga") {
         x0 = blockSnapSize * 8;
         y0 = blockSnapSize * 8;
         nameShadow = "shadow-initialViga"
@@ -313,24 +101,30 @@ function createViga(nameViga="viga"){
 
     layer.add(line, shadowLine);
    
-    allDCLelements.push(line);
+    const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"))
+    const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"))
+    originNode.konvaObjects.circle = line.getChildren()[1];
+    secondNode.konvaObjects.circle = line.getChildren()[2];
+    secondNode.setKonvaViga(line)
+    joinNodes(originNode, secondNode)
 
-    updateViga(line, shadowLine);
+    
+    listenNodeMovement(line, shadowLine, "initialViga")
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateAll();
     moveVigasToTop();
 
-    return line;
+    return originNode;
 }
 
-
-function createViga2(){
+function createViga2() {
     const konvaElement = lastNodeClick;
     const [x0, y0] = getElementPos(konvaElement);
 
-    const group = new Konva.Group({name: "viga2"});
+    const idByDate = Date.now();
 
+    const group = new Konva.Group({name: "viga2", id: idByDate});
     const line = new Konva.Line({
         name: "subElementoVigaLinea",
         x: x0,
@@ -338,7 +132,7 @@ function createViga2(){
         points: [0, 0, 3*blockSnapSize, 0],
         strokeWidth: 5,
         stroke: "black",
-        id: Date.now()
+        id: idByDate + 1
     });
 
     const circle = new Konva.Circle({
@@ -348,28 +142,140 @@ function createViga2(){
         radius: 5,
         fill: "red",
         draggable: true,
-        id: Date.now() + 1
+        id: idByDate + 2
     });
+ 
+    group.add(line, circle)
+   
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
+    // paintIfMouseOver(line)
+
+    const shadowLine = createShadowViga(x0, y0, 3*blockSnapSize, 0, "shadowViga2");
+    shadowLine.hide()
+
+    layer.add(group, shadowLine)
 
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
+    node.setKonvaViga(group)
+    node.konvaObjects.circle = circle;
     joinNodes(nodeParent, node)
-    
-    
-
-    group.add(line, circle)
-    layer.add(group)
-    // konvaElement.getParent().moveToTop()
-    konvaElement.moveUp()
-    node.setKonvaObject(group)
-
-    updateViga2(node)
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
+    
+    listenNodeMovement(group, shadowLine, "viga2")
     moveVigasToTop();
 
+}
+
+
+function listenNodeMovement(konvaViga, shadow, typeOfViga){
+    let shadowList;
+    let vigaLine;
+    let vigaCircle;
+    let otherCircle;
+
+    if (typeOfViga === "viga2"){
+        shadowList = shadow.getChildren();
+        vigaLine = konvaViga.getChildren()[0];
+        vigaCircle = konvaViga.getChildren()[1];
+        otherCircle = dcl.findNodeById(vigaCircle.getAttr("id")).parent.konvaObjects.circle;
+
+    } else {
+        shadowList = shadow.getChildren();
+        vigaLine = konvaViga.getChildren()[0];
+        vigaCircle = konvaViga.getChildren()[2];
+        otherCircle = konvaViga.getChildren()[1];
+    }
+
+    otherCircle.on("dragstart", () => {
+        shadow.show();
+        shadow.moveToTop();
+    });
+
+    otherCircle.on("dragmove", () => {
+        const circle1Pos = otherCircle.getPosition();
+        const circle2Pos = vigaCircle.getPosition();
+        const shadowCircle1Pos = shadowList[1].getPosition();
+
+        vigaLine.position(circle1Pos);
+        vigaLine.points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
+
+        otherCircle.position({x: circle1Pos.x, y: circle1Pos.y});
+        shadowList[1].position({
+            x: Math.round(circle1Pos.x / blockSnapSize) * blockSnapSize,
+            y: Math.round(circle1Pos.y / blockSnapSize) * blockSnapSize
+        });
+
+        shadowList[0].position(circle2Pos);
+        shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
+    })
+
+    otherCircle.on("dragend", () => {
+        const circle2Pos = vigaCircle.getPosition();
+        const shadowCircle1Pos = shadowList[1].getPosition();
+
+        const newX = circle2Pos.x - shadowCircle1Pos.x;
+        const newY = circle2Pos.y - shadowCircle1Pos.y;
+
+        vigaLine.position(shadowCircle1Pos);
+        vigaLine.points([0, 0, newX, newY]);
+        otherCircle.position({
+            x: shadowCircle1Pos.x,
+            y: shadowCircle1Pos.y
+        });
+
+        const newNodePos = [shadowCircle1Pos.x, shadowCircle1Pos.y];
+        dcl.findNodeById(otherCircle.getAttr("id")).setCoordinate(newNodePos);
+        shadowList[0].position(vigaLine.position());
+        shadow.hide();
+        
+    });
+
+    vigaCircle.on("dragstart", () => {
+        shadow.show();
+        shadow.moveToTop();
+        
+    });
+
+    vigaCircle.on("dragmove", () => {
+        const linePos = vigaLine.getPosition();
+        const circle2Pos = vigaCircle.getPosition();
+
+        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
+        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+
+        vigaLine.points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
+        shadowList[0].points([0, 0, newX, newY])
+
+        vigaCircle.position({x: circle2Pos.x, y: circle2Pos.y})
+        shadowList[2].position({
+            x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
+            y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
+        });
+    });
+
+    vigaCircle.on("dragend", () => {
+        const linePos = vigaLine.getPosition();
+        const circle2Pos = vigaCircle.getPosition();
+        const shadowCircle2Pos = shadowList[2].getPosition();
+
+        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
+        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+
+        vigaLine.points([0, 0, newX, newY])
+        vigaCircle.position({
+            x: shadowCircle2Pos.x,
+            y: shadowCircle2Pos.y
+        });
+
+        const newNodePos = [shadowCircle2Pos.x, shadowCircle2Pos.y];
+        dcl.findNodeById(vigaCircle.getAttr("id")).setCoordinate(newNodePos);
+        shadow.hide();
+       
+    });
 }
 
 
@@ -378,14 +284,17 @@ function createViga2(){
 
 
 //------------------------------------------------------Vinculos externos-----------------------------------------------//
-function createEmpotrado(){
+function createEmpotrado() {
     countEmpotrado += 1;
+    const konvaElement = lastNodeClick;
+    const idKonvaElement = konvaElement.getAttr("id")
+    const nodeParent = dcl.findNodeById(idKonvaElement);
 
     const x0 = lastVigaNodeClick.x;
     const y0 = lastVigaNodeClick.y;
     const large = blockSnapSize;
 
-    const group = new Konva.Group({id: "e" + countEmpotrado, name: "empotrado", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "empotrado", x: x0, y: y0});
     const base = new Konva.Line({
         name: "subElemento Empotrado",
         x: 0,
@@ -399,10 +308,24 @@ function createEmpotrado(){
     const l2 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
     const l3 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
     //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
-
+    
     group.add(base, l1, l2, l3);
+    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l1, nfillc, nstrokec, l1.getAttr("fill"), l1.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup=true);
+
+    if(nodeParent.vinculo === null) {
+        nodeParent.setVinculo("empotrado");
+        nodeParent.setKonvaVinculo(group)
+   
+    } else {
+        panel.style.visibility = "hidden";
+        delPanel.style.visibility = "hidden";
+        return;
+    }
+
     layer.add(group);
-    allDCLelements.push(group);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -412,14 +335,18 @@ function createEmpotrado(){
 }
 
 
-function createApoyoDeslizante(){
+function createApoyoDeslizante() {
     countApoyoDeslizante += 1;
+    
+    const konvaElement = lastNodeClick;
+    const idKonvaElement = konvaElement.getAttr("id")
+    const nodeParent = dcl.findNodeById(idKonvaElement);
 
     const x0 = lastVigaNodeClick.x
     const y0 = lastVigaNodeClick.y
     const large = 20; //blockSnapSize / 2;
 
-    const group = new Konva.Group({id: "ad" + countApoyoDeslizante, name: "apoyo-deslizante", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "apoyoDeslizante", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({    
         name: "subElemento ApoyoDeslizante",
         x: 0,
@@ -441,9 +368,22 @@ function createApoyoDeslizante(){
     });
 
     group.add(triangle, base);
-    layer.add(group);
-    allDCLelements.push(group);
 
+    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=false);
+
+    
+    if(nodeParent.vinculo === null) {
+        nodeParent.setVinculo("apoyoDeslizante");
+        nodeParent.setKonvaVinculo(group)
+    } else {
+        panel.style.visibility = "hidden";
+        delPanel.style.visibility = "hidden";
+        return;
+    }
+    
+    layer.add(group);
+    
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateAll();
@@ -452,14 +392,18 @@ function createApoyoDeslizante(){
 }
 
 
-function createApoyoNoDeslizante(){
+function createApoyoNoDeslizante() {
     countpoyoNoDeslizante += 1;
     
+    const konvaElement = lastNodeClick;
+    const idKonvaElement = konvaElement.getAttr("id")
+    const nodeParent = dcl.findNodeById(idKonvaElement);
+
     const x0 = lastVigaNodeClick.x
     const y0 = lastVigaNodeClick.y
     const large = 20; //blockSnapSize / 2;
 
-    const group = new Konva.Group({id: "an" + countpoyoNoDeslizante, name: "apoyo-no-deslizante", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "apoyoNoDeslizante", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({
         name: "subElemento ApoyoNoDeslizante",
         x: 0,
@@ -472,9 +416,20 @@ function createApoyoNoDeslizante(){
     });
 
     group.add(triangle);
-    layer.add(group);
-    allDCLelements.push(group);
 
+    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=false);
+
+    if(nodeParent.vinculo === null) {
+        nodeParent.setVinculo("apoyoNoDeslizante");
+        nodeParent.setKonvaVinculo(group)
+    } else {
+        panel.style.visibility = "hidden";
+        delPanel.style.visibility = "hidden";
+        return;
+    }
+
+    layer.add(group);
+    
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateAll();
@@ -484,11 +439,15 @@ function createApoyoNoDeslizante(){
 
 
 //------------------------------------------------------Vinculos internos-----------------------------------------------//
-function createRotula(){
+function createRotula() {
     const x0 = lastVigaNodeClick.x
     const y0 = lastVigaNodeClick.y
 
-    const group = new Konva.Group({name: "rotula", x: x0, y: y0});
+    const konvaElement = lastNodeClick;
+    const idKonvaElement = konvaElement.getAttr("id")
+    const nodeParent = dcl.findNodeById(idKonvaElement);
+
+    const group = new Konva.Group({id: idKonvaElement, name: "rotula", x: x0, y: y0});
     const circle = new Konva.Circle({
         x: 0,
         y: 0,
@@ -500,8 +459,19 @@ function createRotula(){
     });
 
     group.add(circle);
+
+    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"), paintGroup=false);
+
+    if(nodeParent.vinculo === null) {
+        nodeParent.setVinculo("rotula");
+        nodeParent.setKonvaVinculo(group)
+    } else {
+        panel.style.visibility = "hidden";
+        delPanel.style.visibility = "hidden";
+        return;
+    }
+    
     layer.add(group);
-    allDCLelements.push(group);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -511,11 +481,16 @@ function createRotula(){
 }
 
 
-function createBiela(){
+function createBiela() {
     const x0 = lastVigaNodeClick.x
     const y0 = lastVigaNodeClick.y
+    
+    const konvaElement = lastNodeClick;
+    const idKonvaElement = konvaElement.getAttr("id")
+    const nodeParent = dcl.findNodeById(idKonvaElement);
+    
 
-    const group = new Konva.Group({name: "biela", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "biela", x: x0, y: y0});
     const large = blockSnapSize;
     const line = new Konva.Line({
         name: "subElemento Biela",
@@ -535,14 +510,27 @@ function createBiela(){
         strokeWidth: 4,
     });
     const circle2 = circle1.clone({
-        // name: "cricle2",
         x: 0+large,
         y: 0
     });
 
     group.add(line, circle1, circle2);
+
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"), paintGroup=false);
+    paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"), paintGroup=true);
+    
+    if(nodeParent.vinculo === null) {
+        nodeParent.setVinculo("biela");
+        nodeParent.setKonvaVinculo(group)
+
+    } else {
+        panel.style.visibility = "hidden";
+        delPanel.style.visibility = "hidden";
+        return;
+    }
+    
     layer.add(group);
-    allDCLelements.push(group);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -553,7 +541,7 @@ function createBiela(){
 
 
 //------------------------------------------------------Fuerzas y momentos-----------------------------------------------//
-function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForPaint=layer, aux="aux"){
+function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForPaint=layer, aux="aux") {
     let x0lastPos = lastVigaNodeClick.x
     let y0lasPos = lastVigaNodeClick.y
     
@@ -565,7 +553,7 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
     const lx = large * Math.cos(angle * Math.PI / 180)
     const ly = large * Math.sin(angle * Math.PI / 180)
 
-    if (color != "black"){
+    if (color != "black") {
         x0lastPos = x0;
         y0lasPos = y0;
         txt = valMagnitud
@@ -592,14 +580,22 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
         fill: color
     });
 
-
     group.add(arrow, magnitudValue);
-    layer.add(group);
     layerForPaint.add(group);
-    if (color == "black"){
-        allDCLelements.push(group);
-    }
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
     
+    if (color == "black") {
+        const konvaElement = lastNodeClick;
+        const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
+        nodeParent.addFuerza(parseFloat(magnitud), parseFloat(angle));
+        nodeParent.addKonvaFuerza(group)
+        group.setAttr("id", konvaElement.getAttr("id"))    
+    }
+
+    // layer.add(group);
+
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateEquations();
@@ -608,14 +604,14 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
     return group;
 }
 
-function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forEmpotrado=false){
+function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forEmpotrado=false) {
     let x0lastPos = lastVigaNodeClick.x
     let y0lastPos = lastVigaNodeClick.y
 
     let magnitud = val;
     let txt = magnitud + " Nm";
 
-    if (color != "black"){
+    if (color != "black") {
         x0lastPos = x0;
         y0lastPos = y0;
     }
@@ -624,14 +620,14 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
     const positiveList = [17.68, 17.68, 18.63, 16.67, 19.53, 15.61, 20.36, 14.5, 21.14, 13.35, 21.85, 12.15, 22.49, 10.92, 23.06, 9.66, 23.56, 8.36, 23.99, 7.04, 24.34, 5.7, 24.62, 4.34, 24.82, 2.97, 24.95, 1.59, 25.0, 0.2, 24.97, -1.19, 24.87, -2.57, 24.69, -3.95, 24.43, -5.31, 24.1, -6.66, 23.69, -7.99, 23.21, -9.29, 22.66, -10.57, 22.04, -11.81, 21.35, -13.01, 20.59, -14.18, 19.77, -15.3, 18.89, -16.37, 17.96, -17.39, 16.96, -18.36, 15.92, -19.28, 14.82, -20.13, 13.68, -20.92, 12.5, -21.65, 11.28, -22.31, 10.02, -22.9, 8.74, -23.42, 7.42, -23.87, 6.09, -24.25, 4.73, -24.55, 3.36, -24.77, 1.98, -24.92, 0.59, -24.99, -0.79, -24.99, -2.18, -24.9, -3.56, -24.75, -4.93, -24.51, -6.28, -24.2, -7.61, -23.81, -8.92, -23.35, -10.2, -22.82, -11.46, -22.22, -12.67, -21.55, -13.85, -20.81, -14.98, -20.01, -16.07, -19.15, -17.11, -18.23, -18.09, -17.25, -19.02, -16.22, -19.89, -15.14, -20.7, -14.01, -21.45, -12.84, -22.13, -11.63, -22.74, -10.39, -23.28, -9.11, -23.75, -7.8, -24.15, -6.47, -24.47, -5.12, -24.72, -3.75, -24.89, -2.38, -24.98, -0.99, -25.0, 0.4, -24.94, 1.78, -24.8, 3.16, -24.58, 4.54, -24.3, 5.89, -23.93, 7.23, -23.49, 8.55, -22.98, 9.84, -22.4, 11.1, -21.75, 12.33, -21.03, 13.52, -20.25, 14.66, -19.4, 15.76, -18.5, 16.82, -17.54, 17.82, -16.52, 18.76, -15.45, 19.65, -14.34, 20.48, -13.18, 21.24, -11.98, 21.94, -10.74, 22.57, -9.48, 23.13, -8.18, 23.63, -6.85, 24.04, -5.51, 24.39, -4.15, 24.65, -2.77, 24.85, -1.39, 24.96, -0.0, 25.0]
     const negativeList = [-17.68, 17.68, -18.63, 16.67, -19.53, 15.61, -20.36, 14.5, -21.14, 13.35, -21.85, 12.15, -22.49, 10.92, -23.06, 9.66, -23.56, 8.36, -23.99, 7.04, -24.34, 5.7, -24.62, 4.34, -24.82, 2.97, -24.95, 1.59, -25.0, 0.2, -24.97, -1.19, -24.87, -2.57, -24.69, -3.95, -24.43, -5.31, -24.1, -6.66, -23.69, -7.99, -23.21, -9.29, -22.66, -10.57, -22.04, -11.81, -21.35, -13.01, -20.59, -14.18, -19.77, -15.3, -18.89, -16.37, -17.96, -17.39, -16.96, -18.36, -15.92, -19.28, -14.82, -20.13, -13.68, -20.92, -12.5, -21.65, -11.28, -22.31, -10.02, -22.9, -8.74, -23.42, -7.42, -23.87, -6.09, -24.25, -4.73, -24.55, -3.36, -24.77, -1.98, -24.92, -0.59, -24.99, 0.79, -24.99, 2.18, -24.9, 3.56, -24.75, 4.93, -24.51, 6.28, -24.2, 7.61, -23.81, 8.92, -23.35, 10.2, -22.82, 11.46, -22.22, 12.67, -21.55, 13.85, -20.81, 14.98, -20.01, 16.07, -19.15, 17.11, -18.23, 18.09, -17.25, 19.02, -16.22, 19.89, -15.14, 20.7, -14.01, 21.45, -12.84, 22.13, -11.63, 22.74, -10.39, 23.28, -9.11, 23.75, -7.8, 24.15, -6.47, 24.47, -5.12, 24.72, -3.75, 24.89, -2.38, 24.98, -0.99, 25.0, 0.4, 24.94, 1.78, 24.8, 3.16, 24.58, 4.54, 24.3, 5.89, 23.93, 7.23, 23.49, 8.55, 22.98, 9.84, 22.4, 11.1, 21.75, 12.33, 21.03, 13.52, 20.25, 14.66, 19.4, 15.76, 18.5, 16.82, 17.54, 17.82, 16.52, 18.76, 15.45, 19.65, 14.34, 20.48, 13.18, 21.24, 11.98, 21.94, 10.74, 22.57, 9.48, 23.13, 8.18, 23.63, 6.85, 24.04, 5.51, 24.39, 4.15, 24.65, 2.77, 24.85, 1.39, 24.96, 0.0, 25.0]
     
-    if (magnitud < 0){
+    if (magnitud < 0) {
         listOfPoints = negativeList;
 
-    } else if (magnitud > 0){
+    } else if (magnitud > 0) {
         listOfPoints = positiveList;
 
     } else {
-        if (color != "black"){
+        if (color != "black") {
             x0lastPos = x0;
             y0lastPos = y0;
             listOfPoints = positiveList;
@@ -663,10 +659,19 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
     });
 
     group.add(arrow, magnitudValue)
-    layerForPaint.add(group);
-    if (color == "black"){
-        allDCLelements.push(group);
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+
+    if (color == "black") {
+        const konvaElement = lastNodeClick;
+        const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
+        nodeParent.addMomento(parseFloat(magnitud)); 
+        nodeParent.addKonvaMomento(group);
+        group.setAttr("id", konvaElement.getAttr("id"));
     }
+
+    layerForPaint.add(group);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -687,7 +692,7 @@ function getOffset(element) {
 
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
-function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud=0, valAngle=0, element=0){
+function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud=0, valAngle=0, element=0) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.style.backgroundColor = "yellow";
@@ -697,24 +702,24 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction
     btn.innerText = btnText;
     btn.addEventListener("dblclick", () => {
 
-        if (idNameText == "vigaBtn"){
+        if (idNameText == "vigaBtn") {
             execFunction();
-        } else if (idNameText == "fuerzaBtn"){
+        } else if (idNameText == "fuerzaBtn") {
             execFunction(valMagnitud.value, valAngle.value);
-        } else if(idNameText == "momentoBtn"){
+        } else if(idNameText == "momentoBtn") {
             execFunction(valMagnitud.value)
-        } else if(idNameText == "deleteElementBtn"){
+        } else if(idNameText == "deleteElementBtn") {
             execFunction(element);
         } else {
             execFunction();
         }
-        updateAll();
+        //updateAll();
     });
     return btn;
 }
 
 
-function createInputMagnitud(idParam, widthPanel, heightPanel){
+function createInputMagnitud(idParam, widthPanel, heightPanel) {
     const input = document.createElement("input");
     input.type = "number";
     input.setAttribute("id", idParam);
@@ -726,7 +731,7 @@ function createInputMagnitud(idParam, widthPanel, heightPanel){
 }
 
 
-function createInputAngle(idParam, widthPanel, heightPanel){
+function createInputAngle(idParam, widthPanel, heightPanel) {
     const input = document.createElement("input");
     input.type = "number";
     input.setAttribute("id", idParam);
@@ -740,7 +745,7 @@ function createInputAngle(idParam, widthPanel, heightPanel){
 }
 
 
-function createContainer(list){
+function createContainer(list) {
     const container= document.createElement("div");
     container.style.display = "flex";
     list.forEach(element => {
@@ -751,7 +756,7 @@ function createContainer(list){
 }
 
 
-function createPanel(x0, y0){
+function createPanel(x0, y0) {
     const widthPanel = 200;
     const heightPanel = 350;
     const colorPanel = "#DDDDDD";
@@ -784,7 +789,7 @@ function createPanel(x0, y0){
     const btnBiela = createButton(widthPanel, heightPanelElement, "bielaBtn", "Biela", createBiela); 
     const btnFuerza = createButton(widthPanel, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle); 
     const btnMomento = createButton(widthPanel, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento);
-    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga2", createViga2, null);
+    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga", createViga2, null);
 
     const containerFuerza = createContainer([btnFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle]);
     const containerCreateMomento = createContainer([btnMomento, inputCreateMomento]);
@@ -799,7 +804,8 @@ function createPanel(x0, y0){
     topOfPanel.align = "center";
 
     panel.appendChild(topOfPanel);
-    panel.appendChild(btnViga);
+    // panel.appendChild(btnViga);
+    panel.appendChild(btnViga2)
     panel.appendChild(btnApoyoDeslizante);
     panel.appendChild(btnApoyoNoDeslizante)
     panel.appendChild(btnEmpotrado);
@@ -807,13 +813,12 @@ function createPanel(x0, y0){
     panel.appendChild(btnBiela);
     panel.appendChild(containerFuerza);
     panel.appendChild(containerCreateMomento);
-    panel.appendChild(btnViga2)
 
     return panel;
 }
 
 
-function listenPanelMovement(panel){
+function listenPanelMovement(panel) {
     let mousePosition;
     let isDown = false;
     let offset = [0, 0];
@@ -846,11 +851,11 @@ function listenPanelMovement(panel){
 }
 
 
-function movePanelTo(panelParam, x, y){
-    if (panelParam == panel){
+function movePanelTo(panelParam, x, y) {
+    if (panelParam == panel) {
         panelParam.style.left = getOffset(divKonvaContainer).left + x + "px";
         panelParam.style.top  = getOffset(divKonvaContainer).top + y + "px";
-    } else if (panelParam == delPanel){
+    } else if (panelParam == delPanel) {
         panelParam.style.left = getOffset(divKonvaContainer).left + x - panelParam.offsetWidth + "px";
         panelParam.style.top  = getOffset(divKonvaContainer).top + y + "px";
     }
@@ -858,9 +863,9 @@ function movePanelTo(panelParam, x, y){
 }
 
 
-function getXY(){
+function getXY() {
     const mouseXY = stage.getPointerPosition();
-    if (mouseXY){
+    if (mouseXY) {
         return {x: mouseXY.x, y: mouseXY.y};
     } else {
         console.log("Fallo en getXY()");
@@ -869,7 +874,7 @@ function getXY(){
 }
 
 
-function roundXY(mouseXY){
+function roundXY(mouseXY) {
     const {x, y} = mouseXY;
     const X = Math.round(x / blockSnapSize) * blockSnapSize;
     const Y = Math.round(y / blockSnapSize) * blockSnapSize;
@@ -878,7 +883,7 @@ function roundXY(mouseXY){
 
 
 //------------------------------------------------------Puntaje-----------------------------------------------//
-function createScorePanel(x0, y0){
+function createScorePanel(x0, y0) {
     const widthPanel = 240;
     const heightPanel = 40;
     const colorPanel = "#DDDDDD";
@@ -926,330 +931,23 @@ function createScorePanel(x0, y0){
     return panel;
 }
 
-
-function calculateScore(){
-    let result = 0;
-    allDCLelements.some((element) =>{
-        if (element.name() == "rotula"){
-            result += 9;
-        } else if (element.name() == "biela"){
-            result += 4;
-        } else if (element.name() == "empotrado"){
-            result += 4;
-        } else if (element.name() == "apoyo-no-deslizante"){
-            result += 3;
-        } else if (element.name() == "apoyo-deslizante"){
-            result += 1;
-        } else if (element.name() == "fuerza-distribuida"){
-            result += 3;
-        } else if (element.name() == "fuerza-en-angulo"){
-            result += 4;
-        } else if (element.name() == "fuerza-ortogonal"){
-            result += 2;
-        } else if (element.name() == "momento-positivo"){
-            result += 1;
-        } else if (element.name() == "momento-negativo"){
-            result += 1;
-        } else if (element.name() == "fuerza"){
-            result += 2;
-        }
-
-    });
-
-    return result;
-}
-
-
-function calcuateCategory(){
-    console.log("en calculateCategory")
-    let result = 0;
-    allDCLelements.some((element) =>{
-        if (element.name() == "rotula" || element.name() == "biela"){
-            result = 4; 
-            return;
-
-        } else if (result < 4 && (element.name() == "fuerza-distribuida")){
-            result = 3;
-            return;
-
-        } else if (result < 3 && (element.name() == "fuerza")){
-            const magnitud = element.getAttr("tension")[1];
-            
-            if (magnitud != "0" && magnitud != "90" && magnitud != "180" && magnitud != "270"){
-                result = 2
-
-            } else {
-                result = 1;
-            }
-            return;
-        }
-    });
-    return result;
-}
-
-
-function updateScorePanel(){
-    if(!resolvingTask){
-        let category = calcuateCategory();
-        let score = calculateScore();
-        scorePanel.querySelector("#valueCategory").innerText = category;
-        scorePanel.querySelector("#valueScore").innerHTML = score;
-    }
-}
-
-
-//------------------------------------------------------Ecuaciones-----------------------------------------------//
-function createEquationsPanel(){
-    const panel = document.createElement("div");
-
-    const equationFxDiv = document.createElement("div");
-    equationFxDiv.id = "fx";
-    const contentFx = document.createElement("h4");
-    contentFx.innerText = "ΣFx:" + " = 0";
-    equationFxDiv.appendChild(contentFx);
-
-    const equationFyDiv = document.createElement("div");
-    equationFyDiv.id = "fy";
-    const contentFy = document.createElement("h4");
-    contentFy.innerText = "ΣFy:" + " = 0";
-    equationFyDiv.appendChild(contentFy);
-
-    const equationMoDiv = document.createElement("div");
-    equationMoDiv.id = "mo";
-    const contentMo = document.createElement("h4");
-    contentMo.innerText = "ΣMo:" + " = 0";
-    equationMoDiv.appendChild(contentMo);
-
-    panel.appendChild(equationFxDiv);
-    panel.appendChild(equationFyDiv);
-    panel.appendChild(equationMoDiv);
-
-    return panel;
-}
-
-
-function degToRad(deg){
+function degToRad(deg) {
     return deg * Math.PI / 180;
 }
 
 
-// function updateEquations(){
-//     if (!resolvingTask){
-//         let textFx = "ΣFx: ";
-//         let textFy = "ΣFy: ";
-//         let textMo = "ΣMo: ";
-    
-//         const inital = stage.find(element => {return element.name() == "initialViga"})[0];
-//         const origin = inital.getChildren((child) => { return child.name() == "subElementoVigaCirculo1"})[0];
-//         const originXY = {x: origin.getAttr("x"), y: origin.getAttr("y")};
-    
-//         allDCLelements.forEach((element) => {
-//             const posXY = {x: element.getAttr("x"), y: element.getAttr("y")};
-//             const diff = {x: posXY.x - originXY.x, y: posXY.y - originXY.y};
-    
-//             if(element.name() == "fuerza"){
-//                 const tension = element.getAttr("tension");
-//                 const magnitud = parseInt(tension[0]);
-//                 const angle = parseInt(tension[1]);
-    
-//                 if(0 == angle){
-//                     textFx += `- ${magnitud}N`;
-//                     if (diff.y > 0){
-//                         textMo +=  `- ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}N`;
-//                     } else if (diff.y < 0){
-//                         textMo +=  `+ ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}N`;
-//                     }
-//                 } else if (0 < angle && angle < 90){
-//                     textFx += `- ${magnitud}*cos(${angle})N`;
-//                     textFy += `- ${magnitud}*sin(${angle})N`;
-//                     if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
-//                         console.log("fuerza y el brazo tienen la misma pendiente");
-//                     } else {
-//                         if (diff.x > 0){
-//                             textMo += `- ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${angle})`
-//                         } else if (diff.x < 0){
-//                             textMo += `+ ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${angle})`
-//                         }
-//                         if (diff.y > 0){
-//                             textMo += `- ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${angle})N`
-//                         } else if (diff.y < 0){
-//                             textMo += `+ ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${angle})N`
-//                         } 
-//                     }
-            
-//                 } else if (90 == angle){
-//                     textFy += `- ${magnitud}N`;
-//                     if (diff.x > 0){
-//                         textMo +=  `+ ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}N`;
-//                     } else if (diff.x < 0){
-//                         textMo +=  `+ ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}N`;
-//                     }
-    
-//                 } else if (90 < angle && angle < 180){
-//                     textFx += `+ ${magnitud}*cos(${180 - angle})N`;
-//                     textFy += `- ${magnitud}*sin(${180 - angle})N`;
-//                     if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
-//                         console.log("fuerza y el brazo tienen la misma pendiente");
-//                     } else {
-//                         if (diff.x > 0){
-//                             textMo += `- ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${angle - 90})N`
-//                         } else if (diff.x < 0){
-//                             textMo += `+ ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${angle - 90})N`
-//                         }
-//                         if (diff.y > 0){
-//                             textMo += `+ ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${angle - 90})N`
-//                         } else if (diff.y < 0){
-//                             textMo += `- ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${angle - 90})N`
-//                         } 
-//                     }
-                    
-//                 } else if (180 == angle){
-//                     textFx += `+ ${magnitud}N`;
-//                     if (diff.y > 0){
-//                         textMo +=  `+ ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}N`;
-//                     } else if (diff.y < 0){
-//                         textMo +=  `- ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}N`;
-//                     }
-//                 } else if (180 < angle && angle < 270){
-//                     textFx += `+ ${magnitud}*cos(${angle - 180})N`;
-//                     textFy += `+ ${magnitud}*sin(${angle - 180})N`;
-//                     if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
-//                         console.log("fuerza y el brazo tienen la misma pendiente");
-//                     } else {
-//                         if (diff.x > 0){
-//                             textMo += `+ ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${angle - 180})N`
-//                         } else if (diff.x < 0){
-//                             textMo += `- ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${angle - 180})N`
-//                         }
-//                         if (diff.y > 0){
-//                             textMo += `+ ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${angle - 180})N`
-//                         } else if (diff.y < 0){
-//                             textMo += `- ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${angle - 180})N`
-//                         } 
-//                     }
-                    
-//                 } else if (270 == angle){
-//                     textFy += `+ ${magnitud}N`;
-//                     if (diff.x > 0){
-//                         textMo +=  `+ ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}N`;
-//                     } else if (diff.x < 0){
-//                         textMo +=  `- ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}N`;
-//                     }
-//                 } else if (270 < angle && angle < 360){
-//                     textFx += `- ${magnitud}*cos(${360 - angle})N`;
-//                     textFy += `+ ${magnitud}*sin(${360 - angle})N`;
-//                     if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
-//                         console.log("fuerza y el brazo tienen la misma pendiente");
-//                     } else {
-//                         if (diff.x > 0){
-//                             textMo += `+ ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${360 - angle})N`
-//                         } else if (diff.x < 0){
-//                             textMo += `- ${Math.abs(diff.x)/blockSnapSize}m*${magnitud}*sin(${360 - angle})N`
-//                         }
-//                         if (diff.y > 0){
-//                             textMo += `- ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${360 - angle})N`
-//                         } else if (diff.y < 0){
-//                             textMo += `+ ${Math.abs(diff.y)/blockSnapSize}m*${magnitud}*cos(${360 - angle})N`
-//                         } 
-//                     }
-                    
-//                 }
-    
-//                 // textMo += `${magnitud}*(${Math.abs(diff.y)/blockSnapSize}*cos(${angle}) - ${Math.abs(diff.x)/blockSnapSize}*sin(${angle}))`
-    
-//             } else if (element.name() == "empotrado" ){
-//                 textFx +=  `+ F${element.getAttr("id")}_x`;
-//                 textFy +=  `+ F${element.getAttr("id")}_y`;
-    
-//                 if (diff.x > 0){
-//                     textMo +=  `+ ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_y`;
-//                 } else if (diff.x < 0){
-//                     textMo +=  `- ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_y`;
-//                 }
-    
-//                 if (diff.y > 0){
-//                     textMo +=  `+ ${Math.abs(diff.y)/blockSnapSize}m*F${element.getAttr("id")}_x`;
-//                 } else if (diff.y < 0){
-//                     textMo +=  `- ${Math.abs(diff.y)/blockSnapSize}m*F${element.getAttr("id")}_x`;
-//                 }
-//                 textMo +=  `+ M${element.getAttr("id")}`;
-    
-//             } else if (element.name() == "apoyo-deslizante" ){
-//                 textFy +=  `+ F${element.getAttr("id")}_y`;
-    
-//                 if (diff.x > 0){
-//                     textMo +=  `+ ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_y`;
-//                 } else if (diff.x < 0){
-//                     textMo +=  `- ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_y`;
-//                 }
-    
-    
-//             } else if (element.name() == "apoyo-no-deslizante" ){
-//                 textFx +=  `+ F${element.getAttr("id")}_x`;
-//                 textFy +=  `+ F${element.getAttr("id")}_y`;
-    
-//                 if (diff.x > 0){
-//                     textMo +=  `+ ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_y`;
-//                 } else if (diff.x < 0){
-//                     textMo +=  `- ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_y`;
-//                 }
-    
-//                 if (diff.y > 0){
-//                     textMo +=  `+ ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_x`;
-//                 } else if (diff.y < 0){
-//                     textMo +=  `- ${Math.abs(diff.x)/blockSnapSize}m*F${element.getAttr("id")}_x`;
-//                 }id_draw
-    
-    
-//             } else if (element.name() == "momento-positivo"){
-//                 const tension = element.getAttr("tension");
-//                 textMo += `+ ${tension}Nm`;
-    
-//             } else if (element.name() == "momento-negativo"){
-//                 const tension = element.getAttr("tension");
-//                 textMo += `- ${tension}Nm`;
-//             }
-//         });
-//         textFx += "= 0";
-//         textFy += "= 0";
-//         textMo += "= 0";
-//         const fx = document.querySelector("#fx");
-//         const fy = document.querySelector("#fy");
-//         const mo = document.querySelector("#mo");
-//         fx.innerText = textFx;
-//         fy.innerText = textFy;
-//         mo.innerText = textMo;
-//     }
-// }
-
-
-// function listenSave(){
-//     stage.on("mouseout", (e) => {
-//         document.querySelector("#id_draw").value = stage.toJSON();
-//         document.querySelector("#id_dcl").value = stage2.toJSON();
-//         document.querySelector("#id_category").value = document.querySelector("#valueCategory").innerText;
-//         document.querySelector("#id_level_points").value = document.querySelector("#valueScore").innerText;
-  
-//     });
-// }
-
-// function listenSaveStudent(){
-//     stage.on("mouseout", (e) => {
-//         document.querySelector("#id_student_draw").value = stage.toJSON();
-//     });
-// }
-
-
-
-function listenCreateElement(){
+function listenCreateElement() {
     stage.on("dblclick", (e) => {
         if (e.target != stage && e.target) {
             const mouseXY = roundXY(getXY());
             lastVigaNodeClick.x = mouseXY.x;
             lastVigaNodeClick.y = mouseXY.y;
             lastNodeClick = e.target;
-            console.log(lastNodeClick)
-            if (e.target.name() == "subElementoVigaCirculo1"){
+            const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            console.log(nodeParent)
+            console.log(e.target.getParent())
+            // console.log(lastNodeClick)
+            if (e.target.name() == "subElementoVigaCirculo1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
@@ -1257,7 +955,7 @@ function listenCreateElement(){
                 const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo2"})[0];
                 const otherNodePosition =  getElementPos(otherNode);
                 
-            } else if (e.target.name() == "subElementoVigaCirculo2"){
+            } else if (e.target.name() == "subElementoVigaCirculo2") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
@@ -1265,7 +963,7 @@ function listenCreateElement(){
                 const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo1"})[0]
                 const otherNodePosition =  getElementPos(otherNode);
                 
-            } else if (e.target.name() == "subElementoVigaCirculo"){
+            } else if (e.target.name() == "subElementoVigaCirculo") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
@@ -1280,29 +978,74 @@ function listenCreateElement(){
 }
 
 
-function deleteElement(element){
-    idx = allDCLelements.indexOf(element);;
-    allDCLelements.splice(idx, 1);
+function destroyAttachedKonvaElements(node){
+    if(node.konvaObjects.viga) node.konvaObjects.viga.destroy();
+    if(node.konvaObjects.vinculo) node.konvaObjects.vinculo.destroy();
+    
+    node.konvaObjects.fuerzas.forEach(fuerza => {
+        fuerza.destroy();
+    })
+    node.konvaObjects.momentos.forEach(momento => {
+        momento.destroy();
+    })
+}
+
+function deleteElement(element) {
+    if (element.name() === "viga2") {
+        const node = dcl.findNodeById(element.getAttr("id")+2) //element es el group del objeto, 
+        const parentNode = node.parent
+        const idx = parentNode.childreanNodes.findIndex(child => {
+            child.id === node.id
+        })
+        parentNode.childreanNodes.splice(idx, 1)
+
+        node.getAllDecendents().forEach(decendent => {
+            destroyAttachedKonvaElements(decendent);
+            delete decendent;
+        })
+
+        destroyAttachedKonvaElements(node);
+        delete node;
+
+    } else {
+        const node = dcl.findNodeById(element.getAttr("id"))
+        const apoyos = new Set(["apoyoDeslizante", "apoyoNoDeslizante", "empotrado", "rotula", "biela"]);
+
+        if (apoyos.has(element.name())) {
+            node.deleteVinculo();
+
+        } else if (element.name() === "fuerza"){
+            const tuple = element.getAttr("tension")
+            const floatTuple = [parseFloat(tuple[0]), parseFloat(tuple[1])];
+            const idx = idxForceInNode(node.fuerzas, floatTuple)
+            node.fuerzas.splice(idx, 1)
+
+        } else if (element.name() === "momento"){
+            const val = parseFloat(element.getAttr("tension"))
+            const idx = node.momentos.indexOf(val)
+            node.momentos.splice(idx, 1)
+        }
+    }
+
     element.destroy();
     delete element;
 }
 
 
-function listenDeleteElement(){
+function listenDeleteElement() {
     stage.on("dblclick", (e) => {
-        if (e.target && e.target.getParent()){
+        if (e.target && e.target.getParent()) {
             const element = e.target.getParent();
             const name = element.name();
             if (name == "viga"                  ||
-                name == "apoyo-deslizante"      ||
-                name == "apoyo-no-deslizante"   ||
+                name == "apoyoDeslizante"       ||
+                name == "apoyoNoDeslizante"     ||
                 name == "empotrado"             ||
                 name == "rotula"                ||
                 name == "biela"                 ||
                 name == "fuerza"                ||
-                name == "momento-positivo"      ||
-                name == "momento-negativo"      ||
-                name == "viga2"){
+                name == "momento"               ||
+                name == "viga2") {
                     const mouseXY = roundXY(getXY());
                     lastElementClick = element;
                     delPanel.style.visibility = "visible";
@@ -1313,7 +1056,7 @@ function listenDeleteElement(){
 }
 
 
-function listenHiddePanels(){
+function listenHiddePanels() {
     stage.on("click", () => {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
@@ -1321,8 +1064,8 @@ function listenHiddePanels(){
 }
 
 
-function updateAll(){
-    if (!resolvingTask){
+function updateAll() {
+    if (!resolvingTask) {
         // updateEquations();
         // updateScorePanel();
         replaceApoyos();
@@ -1330,8 +1073,8 @@ function updateAll(){
 }
 
 
-function replaceApoyos(){
-    if (!resolvingTask){
+function replaceApoyos() {
+    if (!resolvingTask) {
         stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
 
         let layer2 = stage2.find(element => {
@@ -1339,7 +1082,7 @@ function replaceApoyos(){
         })[0];
     
         const apoyosDeslizantes = layer2.find(element => {
-            return element.name() == "apoyo-deslizante";
+            return element.name() == "apoyoDeslizante";
         });
         apoyosDeslizantes.forEach((item) => {
             const posXY = {x: item.getAttr("x"), y: item.getAttr("y")}
@@ -1348,7 +1091,7 @@ function replaceApoyos(){
         })
     
         const apoyosNoDeslizantes = layer2.find(element => {
-            return element.name() == "apoyo-no-deslizante";
+            return element.name() == "apoyoNoDeslizante";
         });
         apoyosNoDeslizantes.forEach((item) => {
             const posXY = {x: item.getAttr("x"), y: item.getAttr("y")}
@@ -1377,31 +1120,31 @@ function replaceApoyos(){
             const angle = item.getAttr("tension")[1];
             const angleRad = angle * Math.PI / 180;
         
-            if(0 == angle){ //
+            if(0 == angle) { //
                 createFuerza(`${magnitud} N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
-            } else if (0 < angle && angle < 90){ //
+            } else if (0 < angle && angle < 90) { //
                 createFuerza(`${magnitud}*cos(${angle}) N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 createFuerza(`${magnitud}*sin(${angle}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
-            } else if (90 == angle){ //
+            } else if (90 == angle) { //
                 createFuerza(`${magnitud} N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
-            } else if (90 < angle && angle < 180){
+            } else if (90 < angle && angle < 180) {
                 createFuerza(`${magnitud}*cos(${angle - 90}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 createFuerza(`${magnitud}*sin(${angle - 90}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
-            } else if (180 == angle){ //
+            } else if (180 == angle) { //
                 createFuerza(`${magnitud} N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
-            } else if (180 < angle && angle < 270){
+            } else if (180 < angle && angle < 270) {
                 createFuerza(`${magnitud}*cos(${angle - 180}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 createFuerza(`${magnitud}*sin(${angle - 180}) N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
-            } else if (270 == angle){ //
+            } else if (270 == angle) { //
                 createFuerza(`${magnitud} N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
-            } else if (270 < angle && angle < 360){
+            } else if (270 < angle && angle < 360) {
                 createFuerza(`${magnitud}*cos(${360 - angle}) N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 createFuerza(`${magnitud}*sin(${360 - angle}) N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
@@ -1422,16 +1165,16 @@ function replaceApoyos(){
 }
 
 
-function updateCounts(){
+function updateCounts() {
     stage.find( (element) => { 
        if (element.name() == "empotrado") countEmpotrado += 1;
-       else if (element.name() == "apoyo-deslizante") countApoyoDeslizante += 1;
+       else if (element.name() == "apoyoDeslizante") countApoyoDeslizante += 1;
        else if (element.name() == "empotrado") countEmpotrado += 1;
     });
 }
 
 
-function moveVigasToTop(){
+function moveVigasToTop() {
     // const vigas = layer.getChildren(element => {
     //     return element.name() == "viga";
     // });
@@ -1446,14 +1189,14 @@ function moveVigasToTop(){
 }
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
-function delElement(){
+function delElement() {
     deleteElement(lastElementClick);
     delPanel.style.visibility = "hidden";
     panel.style.visibility = "hidden";
 }
 
 
-function createDelPanel(x0=0, y0=0){
+function createDelPanel(x0=0, y0=0) {
     const widthPanel = 150;
     const heightPanel = 60;
     const colorPanel = "#DDDDDD";
@@ -1480,7 +1223,7 @@ function createDelPanel(x0=0, y0=0){
 }
 
 
-function createHashElements(stage){
+function createHashElements(stage) {
     const hash = {
         initialViga: [],
         vigas: [],
@@ -1499,34 +1242,34 @@ function createHashElements(stage){
     })[0];
 
     layer.getChildren().forEach(element => {
-        if (element.name() == "initialViga"){
+        if (element.name() == "initialViga") {
             hash.initialViga.push(element);
 
-        } else if (element.name() == "viga"){
+        } else if (element.name() == "viga") {
             hash.vigas.push(element);
 
-        } else if (element.name() == "apoyo-deslizante"){
+        } else if (element.name() == "apoyoDeslizante") {
             hash.apoyosDeslizantes.push(element);
 
-        } else if (element.name() == "apoyo-no-deslizante"){
+        } else if (element.name() == "apoyoNoDeslizante") {
             hash.apoyosNoDeslizantes.push(element);
 
-        } else if (element.name() == "empotrado"){
+        } else if (element.name() == "empotrado") {
             hash.empotrados.push(element);
 
-        } else if (element.name() == "biela"){
+        } else if (element.name() == "biela") {
             hash.bielas.push(element);
 
-        } else if (element.name() == "rotula"){
+        } else if (element.name() == "rotula") {
             hash.rotulas.push(element);
 
-        } else if (element.name() == "fuerza"){
+        } else if (element.name() == "fuerza") {
             hash.fuerzas.push(element);
 
-        } else if (element.name() == "momento-positivo"){
+        } else if (element.name() == "momento-positivo") {
             hash.momentosPositivos.push(element);
 
-        } else if (element.name() == "momento-negativo"){
+        } else if (element.name() == "momento-negativo") {
             hash.momentosNegativos.push(element);
         }
     });
@@ -1534,7 +1277,7 @@ function createHashElements(stage){
     return hash;
 }
 
-function getStartEndViga(viga){
+function getStartEndViga(viga) {
     const circle1 = viga.getChildren()[1];
     const circle2 = viga.getChildren()[2];
     const c1x = circle1.getAttr("x");
@@ -1545,7 +1288,7 @@ function getStartEndViga(viga){
     return {start: [c1x, c1y], end: [c2x, c2y]};
 }
 
-function getElementPos(element){
+function getElementPos(element) {
     const X = element.getAttr("x");
     const Y = element.getAttr("y");
 
@@ -1553,18 +1296,18 @@ function getElementPos(element){
     return {x: X, y: Y};
 }
 
-function comparePositions(list1, list2){
+function comparePositions(list1, list2) {
     console.log("ACA en compare position")
     console.log(list1)
     console.log(list2)
     return JSON.stringify(list1) === JSON.stringify(list2);
 }
 
-function comparefuerzas(tension1, tension2){
+function comparefuerzas(tension1, tension2) {
     return JSON.stringify(tension1) === JSON.stringify(tension2);
 }
 
-function hashOfErros(){
+function hashOfErros() {
     return {
         ERRORinitialViga: new Set(),
         ERRORvigas: new Set(),
@@ -1580,7 +1323,7 @@ function hashOfErros(){
 
 }
 
-function compare(stage1, stage2){ //stage1 student  stage2 solution
+function compare(stage1, stage2) { //stage1 student  stage2 solution
     ERRORS = hashOfErros();
 
     const hashElementsStage1 = createHashElements(stage1);
@@ -1593,7 +1336,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
     const initViga2Pos = getStartEndViga(initViga2);
 
     let verifyedInitialViga = true;
-    if (comparePositions(initViga1Pos.end, initViga2Pos.end)){ //comparamos que la viga inicial este bien posicionada
+    if (comparePositions(initViga1Pos.end, initViga2Pos.end)) { //comparamos que la viga inicial este bien posicionada
         console.log("Viga inicial bien posicionada!");
     } else {
         console.log("Viga inicial mal posicionada!");
@@ -1608,7 +1351,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let verify = false;
         hashElementsStage2.vigas.forEach(viga2 => {
             let viga2Pos = getStartEndViga(viga2);
-            if (comparePositions(viga1Pos.start, viga2Pos.start) && comparePositions(viga1Pos.end, viga2Pos.end)){
+            if (comparePositions(viga1Pos.start, viga2Pos.start) && comparePositions(viga1Pos.end, viga2Pos.end)) {
                 console.log("LOL Estoy dentro de la condicion")
                 verify = true;
             }
@@ -1624,7 +1367,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let verify = false;
         hashElementsStage2.apoyosDeslizantes.forEach(ad2 => {
             let ad2Pos = getElementPos(ad2);
-            if (comparePositions(ad1Pos, ad2Pos)){
+            if (comparePositions(ad1Pos, ad2Pos)) {
                 verify = true;
             }
         });
@@ -1639,7 +1382,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let verify = false;
         hashElementsStage2.apoyosNoDeslizantes.forEach(and2 => {
             let and2Pos = getElementPos(and2);
-            if (comparePositions(and1Pos, and2Pos)){
+            if (comparePositions(and1Pos, and2Pos)) {
                 verify = true;
             }
         });
@@ -1654,7 +1397,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let verify = false;
         hashElementsStage2.empotrados.forEach(e2 => {
             let e2Pos = getElementPos(e2);
-            if (comparePositions(e1Pos, e2Pos)){
+            if (comparePositions(e1Pos, e2Pos)) {
                 verify = true;
             }
         });
@@ -1669,7 +1412,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let verify = false;
         hashElementsStage2.rotulas.forEach(r2 => {
             let r2Pos = getElementPos(r2);
-            if (comparePositions(r1Pos, r2Pos)){
+            if (comparePositions(r1Pos, r2Pos)) {
                 verify = true;
             }
         });
@@ -1684,7 +1427,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let verify = false;
         hashElementsStage2.bielas.forEach(b2 => {
             let b2Pos = getElementPos(b2);
-            if (comparePositions(b1Pos, b2Pos)){
+            if (comparePositions(b1Pos, b2Pos)) {
                 verify = true;
             }
         });
@@ -1700,8 +1443,8 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let aux = false;
         hashElementsStage2.bielas.forEach(mn2 => {
             let mn2Pos = getElementPos(mn2);
-            if (comparePositions(mn1Pos, mn2Pos)){
-                if (mn1.getAttr("tension") == mn2.getAttr("tension")){
+            if (comparePositions(mn1Pos, mn2Pos)) {
+                if (mn1.getAttr("tension") == mn2.getAttr("tension")) {
                     verify = true;
                 } else {
                     ERRORS.ERRORmomentosNegativos.add("OJO: Atencion con la magnitud de algun momento negativo");
@@ -1721,8 +1464,8 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let aux = false;
         hashElementsStage2.momentosPositivos.forEach(mp2 => {
             let mp2Pos = getElementPos(mp2);
-            if (comparePositions(mp1Pos, mp2Pos)){
-                if (mp1.getAttr("tension") == mp2.getAttr("tension")){
+            if (comparePositions(mp1Pos, mp2Pos)) {
+                if (mp1.getAttr("tension") == mp2.getAttr("tension")) {
                     verify = true;
                 } else {
                     ERRORS.ERRORmomentosPositivos.add("OJO: Atencion con la magnitud de algun momento positivo");
@@ -1742,8 +1485,8 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
         let aux = false;
         hashElementsStage2.fuerzas.forEach(f2 => {
             let f2Pos = getElementPos(f2);
-            if (comparePositions(f1Pos, f2Pos)){
-                if (comparefuerzas(f1.getAttr("tension"), f2.getAttr("tension"))){
+            if (comparePositions(f1Pos, f2Pos)) {
+                if (comparefuerzas(f1.getAttr("tension"), f2.getAttr("tension"))) {
                     verify = true;
                 } else {
                     ERRORS.ERRORfuerzas.add("OJO: Atencion con la magnitud o angulo de algun fuerza");
@@ -1769,7 +1512,7 @@ function compare(stage1, stage2){ //stage1 student  stage2 solution
 
 }
 
-function showHints(){
+function showHints() {
     compare(stage, stageSolution);
     let txt = "";
     console.log(ERRORS)
@@ -1781,11 +1524,57 @@ function showHints(){
     alert(txt);
 }
 
-function joinNodes(parent, child){
+function joinNodes(parent, child) {
     parent.addChild(child);
     child.setParent(parent);
 }
 
+function idxForceInNode(nodeForces, myForce){
+    for(let i = 0; i < nodeForces.length; i++){
+        if(nodeForces[i][0] == myForce[0] && nodeForces[i][1] == myForce[1]){
+            return i;
+        }
+    }
+    console.log("index not found")
+    return;
+}
+
+function removeAttributesForJSON(node){
+    delete node.parent;
+    delete node.konvaObjects;
+
+}
+
+function generateJSON(dclStructure){
+    // const copy = Object.assign(Object.create(Object.getPrototypeOf(dclStructure)), dclStructure)
+    const copy = dclStructure.clone()
+    copy.getAllDecendents().forEach(descendent => {
+        removeAttributesForJSON(descendent);
+    });
+    removeAttributesForJSON(copy);
+
+    return JSON.stringify(copy);
+}
 
 
+function paintElement(element, fillc, strokec, paintGroup){
+    if (element.getAttr("fill")) element.setAttr("fill", fillc)
+    if (element.getAttr("stroke")) element.setAttr("stroke", strokec)
 
+    if (paintGroup){
+        element.getParent().getChildren().forEach(e => {
+            if (e.getAttr("fill")) e.setAttr("fill", fillc)
+            if (e.getAttr("stroke")) e.setAttr("stroke", strokec)
+        })
+    }
+}
+
+function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup=false){
+    element.on("mouseenter", () => {
+        paintElement(element, nfillc, nstrokec, paintGroup)
+    })
+
+    element.on("mouseleave", () => {
+        paintElement(element, ofillc, ostrokec, paintGroup)
+    })
+}
