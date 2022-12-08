@@ -26,6 +26,8 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
     });
 
     group.add(line, circle1, circle2);
+             
+
     return group
 }
 
@@ -72,6 +74,11 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
     });
 
     group.add(line, circle1, circle2);
+
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    paintIfMouseOver(circle1, "#00FF00", nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
+    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
+    
     return group;
 }
 
@@ -143,6 +150,10 @@ function createViga2() {
     });
  
     group.add(line, circle)
+   
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
+    // paintIfMouseOver(line)
 
     const shadowLine = createShadowViga(x0, y0, 3*blockSnapSize, 0, "shadowViga2");
     shadowLine.hide()
@@ -301,6 +312,10 @@ function createEmpotrado() {
     //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
     
     group.add(base, l1, l2, l3);
+    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l1, nfillc, nstrokec, l1.getAttr("fill"), l1.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup=true);
 
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("empotrado");
@@ -355,6 +370,10 @@ function createApoyoDeslizante() {
     });
 
     group.add(triangle, base);
+
+    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=false);
+
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("apoyoDeslizante");
@@ -399,7 +418,9 @@ function createApoyoNoDeslizante() {
     });
 
     group.add(triangle);
-    
+
+    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=false);
+
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("apoyoNoDeslizante");
         nodeParent.setKonvaVinculo(group)
@@ -440,7 +461,9 @@ function createRotula() {
     });
 
     group.add(circle);
-    
+
+    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"), paintGroup=false);
+
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("rotula");
         nodeParent.setKonvaVinculo(group)
@@ -489,12 +512,15 @@ function createBiela() {
         strokeWidth: 4,
     });
     const circle2 = circle1.clone({
-        // name: "cricle2",
         x: 0+large,
         y: 0
     });
 
     group.add(line, circle1, circle2);
+
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"), paintGroup=false);
+    paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"), paintGroup=true);
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("biela");
@@ -557,8 +583,11 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
     });
 
     group.add(arrow, magnitudValue);
-    
     layerForPaint.add(group);
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
@@ -566,10 +595,9 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
         nodeParent.addKonvaFuerza(group)
         group.setAttr("id", konvaElement.getAttr("id"))    
     }
-    
-    layer.add(group);
-    
-    
+
+    // layer.add(group);
+
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateEquations();
@@ -633,7 +661,10 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
     });
 
     group.add(arrow, magnitudValue)
-    
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
@@ -1527,3 +1558,25 @@ function generateJSON(dclStructure){
     return JSON.stringify(copy);
 }
 
+
+function paintElement(element, fillc, strokec, paintGroup){
+    if (element.getAttr("fill")) element.setAttr("fill", fillc)
+    if (element.getAttr("stroke")) element.setAttr("stroke", strokec)
+
+    if (paintGroup){
+        element.getParent().getChildren().forEach(e => {
+            if (e.getAttr("fill")) e.setAttr("fill", fillc)
+            if (e.getAttr("stroke")) e.setAttr("stroke", strokec)
+        })
+    }
+}
+
+function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup=false){
+    element.on("mouseenter", () => {
+        paintElement(element, nfillc, nstrokec, paintGroup)
+    })
+
+    element.on("mouseleave", () => {
+        paintElement(element, ofillc, ostrokec, paintGroup)
+    })
+}
