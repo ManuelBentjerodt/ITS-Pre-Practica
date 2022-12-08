@@ -612,7 +612,7 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
         nodeParent.addKonvaMomento(group);
         group.setAttr("id", konvaElement.getAttr("id"));
     }
-    
+
     layerForPaint.add(group);
 
     panel.style.visibility = "hidden";
@@ -1479,5 +1479,22 @@ function idxForceInNode(nodeForces, myForce){
     }
     console.log("index not found")
     return;
+}
+
+function removeAttributesForJSON(node){
+    delete node.parent;
+    delete node.konvaObjects;
+
+}
+
+function generateJSON(dclStructure){
+    // const copy = Object.assign(Object.create(Object.getPrototypeOf(dclStructure)), dclStructure)
+    const copy = dclStructure.clone()
+    copy.getAllDecendents().forEach(descendent => {
+        removeAttributesForJSON(descendent);
+    });
+    removeAttributesForJSON(copy);
+
+    return JSON.stringify(copy);
 }
 
