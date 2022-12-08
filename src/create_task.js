@@ -51,9 +51,10 @@ const lastVigaNodeClick = {x: 0, y: 0};
 let lastNodeClick = null
 let lastElementClick = undefined;
 
-const dcl = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
-
-
+const [dcl, group] = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
+const shadowLine = createShadowViga(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialViga");
+shadowLine.hide();
+listenNodeMovement(group, shadowLine, "initialViga")
 
 // console.log(generateJSON(dcl))
 

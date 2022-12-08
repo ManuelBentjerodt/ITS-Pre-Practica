@@ -8,5 +8,7 @@ const heightStage = blockSnapSize * 15;
 const nodeRadius = 5;
 const allDCLelements = [];
 
-const nfillc = "#0000AA";
+const nfillc = "#0000FF";
 const nstrokec = "#0000FF";
+const shadowFill = "#CF6412";
+const shadowStroke = "#FF7B17";

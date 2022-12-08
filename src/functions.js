@@ -26,7 +26,7 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
     });
 
     group.add(line, circle1, circle2);
-             
+    layer.add(group);      
 
     return group
 }
@@ -85,8 +85,8 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
 function createViga(nameViga="viga") {
     let x0 = lastVigaNodeClick.x
     let y0 = lastVigaNodeClick.y
-    const y1 = 0;
     const x1 = blockSnapSize * 3;
+    const y1 = 0;
 
     let nameShadow = "shadow-viga";
     if (nameViga == "initialViga") {
@@ -96,10 +96,10 @@ function createViga(nameViga="viga") {
     }
 
     const line = newViga(x0, y0, x1, y1, nameViga);
-    const shadowLine = createShadowViga(x0, y0, x1, y1, nameShadow);
-    shadowLine.hide();
+    // const shadowLine = createShadowViga(x0, y0, x1, y1, nameShadow);
+    // shadowLine.hide();
 
-    layer.add(line, shadowLine);
+    layer.add(line);
    
     const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"))
     const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"))
@@ -109,17 +109,13 @@ function createViga(nameViga="viga") {
     joinNodes(originNode, secondNode)
 
     
-    listenNodeMovement(line, shadowLine, "initialViga")
+    // listenNodeMovement(line, shadowLine, "initialViga")
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateAll();
     moveVigasToTop();
     
-
-    
-
-
-    return originNode;
+    return [originNode, line];
 }
 
 function createViga2() {
@@ -163,6 +159,8 @@ function createViga2() {
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
     node.setKonvaViga(group)
+    node.konvaObjects.shadowViga = shadowLine
+    // nodeParent.konvaObjects.shadowViga = shadowLine
     node.konvaObjects.circle = circle;
     joinNodes(nodeParent, node)
 
@@ -172,9 +170,24 @@ function createViga2() {
     listenNodeMovement(group, shadowLine, "viga2")
     moveVigasToTop();
 
+    return group;
 }
 
-
+function moveElementsAttached(element, newPosition){
+    if (element.konvaObjects.vinculo){
+        element.konvaObjects.vinculo.position(newPosition);
+    }
+    if (element.konvaObjects.fuerzas.length){
+        element.konvaObjects.fuerzas.forEach(fuerza => {
+            fuerza.position(newPosition);
+        })   
+    }
+    if (element.konvaObjects.momentos.length){
+        element.konvaObjects.momentos.forEach(momento => {
+            momento.position(newPosition);
+        })   
+    }
+}
 function listenNodeMovement(konvaViga, shadow, typeOfViga){
     let shadowList;
     let vigaLine;
@@ -193,6 +206,10 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
         vigaCircle = konvaViga.getChildren()[2];
         otherCircle = konvaViga.getChildren()[1];
     }
+
+
+    const nodeVigaCircle = dcl.findNodeById(vigaCircle.getAttr("id"));
+    const nodeOtherCircle = dcl.findNodeById(otherCircle.getAttr("id"));
 
     otherCircle.on("dragstart", () => {
         shadow.show();
@@ -215,6 +232,8 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
 
         shadowList[0].position(circle2Pos);
         shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
+       
+        moveElementsAttached(nodeOtherCircle, otherCircle.position());
     })
 
     otherCircle.on("dragend", () => {
@@ -235,6 +254,8 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
         dcl.findNodeById(otherCircle.getAttr("id")).setCoordinate(newNodePos);
         shadowList[0].position(vigaLine.position());
         shadow.hide();
+
+        moveElementsAttached(nodeOtherCircle, otherCircle.position());
         
     });
 
@@ -259,6 +280,8 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
             x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
             y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
         });
+
+        moveElementsAttached(nodeVigaCircle, vigaCircle.position());
     });
 
     vigaCircle.on("dragend", () => {
@@ -278,6 +301,8 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
         const newNodePos = [shadowCircle2Pos.x, shadowCircle2Pos.y];
         dcl.findNodeById(vigaCircle.getAttr("id")).setCoordinate(newNodePos);
         shadow.hide();
+
+        moveElementsAttached(nodeVigaCircle, vigaCircle.position());
        
     });
 }
@@ -286,8 +311,13 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
 
 
 //------------------------------------------------------Vinculos externos-----------------------------------------------//
-function createEmpotrado() {
-    countEmpotrado += 1;
+function createEmpotrado(shadow=false) {
+    let colorStroke;
+    if (shadow){
+        colorStroke = shadowStroke;
+    }
+    colorStroke = "black"
+
     const konvaElement = lastNodeClick;
     const idKonvaElement = konvaElement.getAttr("id")
     const nodeParent = dcl.findNodeById(idKonvaElement);
@@ -303,15 +333,16 @@ function createEmpotrado() {
         y: 0,
         points: [-large/2, 0, large/2, 0],
         strokeWidth: 5,
-        stroke: "black"
+        stroke: colorStroke
     });
 
-    const l1 = new Konva.Line({name: "subElemento Empotrado", x: -large/2, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
-    const l2 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
-    const l3 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
-    //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
+    const l1 = new Konva.Line({name: "subElemento Empotrado", x: -large/2, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l2 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l3 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
     
     group.add(base, l1, l2, l3);
+
     paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
     paintIfMouseOver(l1, nfillc, nstrokec, l1.getAttr("fill"), l1.getAttr("stroke"), paintGroup=true);
     paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup=true);
@@ -372,7 +403,7 @@ function createApoyoDeslizante() {
     group.add(triangle, base);
 
     paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=true);
-    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=false);
+    paintIfMouseOver(base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
 
     
     if(nodeParent.vinculo === null) {
@@ -783,7 +814,7 @@ function createPanel(x0, y0) {
 
     const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel, heightPanelElement);
 
-    const btnViga = createButton(widthPanel, heightPanelElement, "vigaBtn", "Viga", createViga, null);
+    // const btnViga = createButton(widthPanel, heightPanelElement, "vigaBtn", "Viga", createViga, null);
     const btnApoyoDeslizante = createButton(widthPanel, heightPanelElement, "apoyoDeslizanteBtn", "Apoyo deslizante", createApoyoDeslizante); 
     const btnApoyoNoDeslizante = createButton(widthPanel, heightPanelElement, "apoyoNoDeslizanteBtn", "Apoyo no deslizante", createApoyoNoDeslizante); 
     const btnEmpotrado = createButton(widthPanel, heightPanelElement, "empotradoBtn", "Empotrado", createEmpotrado); 
@@ -983,6 +1014,7 @@ function listenCreateElement() {
 function destroyAttachedKonvaElements(node){
     if(node.konvaObjects.viga) node.konvaObjects.viga.destroy();
     if(node.konvaObjects.vinculo) node.konvaObjects.vinculo.destroy();
+    if(node.konvaObjects.shadowViga) node.konvaObjects.shadowViga.destroy();
     
     node.konvaObjects.fuerzas.forEach(fuerza => {
         fuerza.destroy();

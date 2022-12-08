@@ -12,10 +12,12 @@ class Node {
 
         this.konvaObjects = {
             viga: null,
+            shadowViga: null,
             vinculo: null,
             fuerzas: [],
             momentos: [],
             circle: null
+            
         }
 
 
