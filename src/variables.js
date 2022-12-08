@@ -7,3 +7,6 @@ const widthStage = blockSnapSize * 36;
 const heightStage = blockSnapSize * 15;
 const nodeRadius = 5;
 const allDCLelements = [];
+
+const nfillc = "#0000AA";
+const nstrokec = "#0000FF";

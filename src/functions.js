@@ -26,6 +26,8 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
     });
 
     group.add(line, circle1, circle2);
+             
+
     return group
 }
 
@@ -72,96 +74,13 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
     });
 
     group.add(line, circle1, circle2);
+
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    paintIfMouseOver(circle1, "#00FF00", nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
+    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
+    
     return group;
 }
-
-function updateViga(viga, shadow) {
-    const vigaList = viga.getChildren();
-    const shadowList = shadow.getChildren();
-    vigaList[1].on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
-        viga.moveToTop();
-    });
-
-    vigaList[1].on("dragmove", () => {
-        const circle1Pos = vigaList[1].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle1Pos = shadowList[1].getPosition();
-
-        vigaList[0].position(circle1Pos);
-        vigaList[0].points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
-
-        vigaList[1].position({x: circle1Pos.x, y: circle1Pos.y});
-        shadowList[1].position({
-            x: Math.round(circle1Pos.x / blockSnapSize) * blockSnapSize,
-            y: Math.round(circle1Pos.y / blockSnapSize) * blockSnapSize
-        });
-
-        shadowList[0].position(circle2Pos);
-        shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
-    })
-
-    vigaList[1].on("dragend", () => {
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle1Pos = shadowList[1].getPosition();
-
-        const newX = circle2Pos.x - shadowCircle1Pos.x;
-        const newY = circle2Pos.y - shadowCircle1Pos.y;
-
-        vigaList[0].position(shadowCircle1Pos);
-        vigaList[0].points([0, 0, newX, newY]);
-        vigaList[1].position({
-            x: shadowCircle1Pos.x,
-            y: shadowCircle1Pos.y
-        });
-
-        shadowList[0].position(vigaList[0].position());
-        shadow.hide();
-        // updateAll();
-    });
-
-    vigaList[2].on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
-        viga.moveToTop();
-    });
-
-    vigaList[2].on("dragmove", () => {
-        const linePos = vigaList[0].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-
-        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
-        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
-
-        vigaList[0].points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
-        shadowList[0].points([0, 0, newX, newY])
-
-        vigaList[2].position({x: circle2Pos.x, y: circle2Pos.y})
-        shadowList[2].position({
-            x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
-            y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
-        });
-    });
-
-    vigaList[2].on("dragend", () => {
-        const linePos = vigaList[0].getPosition();
-        const circle2Pos = vigaList[2].getPosition();
-        const shadowCircle2Pos = shadowList[2].getPosition();
-
-        const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
-        const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
-
-        vigaList[0].points([0, 0, newX, newY])
-        vigaList[2].position({
-            x: shadowCircle2Pos.x,
-            y: shadowCircle2Pos.y
-        });
-        shadow.hide();
-        // updateAll();
-    });
-}
-
 
 function createViga(nameViga="viga") {
     let x0 = lastVigaNodeClick.x
@@ -189,7 +108,8 @@ function createViga(nameViga="viga") {
     secondNode.setKonvaViga(line)
     joinNodes(originNode, secondNode)
 
-    updateViga(line, shadowLine);
+    
+    listenNodeMovement(line, shadowLine, "initialViga")
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateAll();
@@ -230,6 +150,10 @@ function createViga2() {
     });
  
     group.add(line, circle)
+   
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
+    // paintIfMouseOver(line)
 
     const shadowLine = createShadowViga(x0, y0, 3*blockSnapSize, 0, "shadowViga2");
     shadowLine.hide()
@@ -245,17 +169,30 @@ function createViga2() {
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     
-    listenNodeMovement(group, shadowLine)
+    listenNodeMovement(group, shadowLine, "viga2")
     moveVigasToTop();
 
 }
 
 
-function listenNodeMovement(konvaViga, shadow){
-    const shadowList = shadow.getChildren();
-    const vigaLine = konvaViga.getChildren()[0];
-    const vigaCircle = konvaViga.getChildren()[1];
-    const otherCircle = dcl.findNodeById(vigaCircle.getAttr("id")).parent.konvaObjects.circle;
+function listenNodeMovement(konvaViga, shadow, typeOfViga){
+    let shadowList;
+    let vigaLine;
+    let vigaCircle;
+    let otherCircle;
+
+    if (typeOfViga === "viga2"){
+        shadowList = shadow.getChildren();
+        vigaLine = konvaViga.getChildren()[0];
+        vigaCircle = konvaViga.getChildren()[1];
+        otherCircle = dcl.findNodeById(vigaCircle.getAttr("id")).parent.konvaObjects.circle;
+
+    } else {
+        shadowList = shadow.getChildren();
+        vigaLine = konvaViga.getChildren()[0];
+        vigaCircle = konvaViga.getChildren()[2];
+        otherCircle = konvaViga.getChildren()[1];
+    }
 
     otherCircle.on("dragstart", () => {
         shadow.show();
@@ -294,6 +231,8 @@ function listenNodeMovement(konvaViga, shadow){
             y: shadowCircle1Pos.y
         });
 
+        const newNodePos = [shadowCircle1Pos.x, shadowCircle1Pos.y];
+        dcl.findNodeById(otherCircle.getAttr("id")).setCoordinate(newNodePos);
         shadowList[0].position(vigaLine.position());
         shadow.hide();
         
@@ -335,6 +274,9 @@ function listenNodeMovement(konvaViga, shadow){
             x: shadowCircle2Pos.x,
             y: shadowCircle2Pos.y
         });
+
+        const newNodePos = [shadowCircle2Pos.x, shadowCircle2Pos.y];
+        dcl.findNodeById(vigaCircle.getAttr("id")).setCoordinate(newNodePos);
         shadow.hide();
        
     });
@@ -370,6 +312,10 @@ function createEmpotrado() {
     //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: "black"});
     
     group.add(base, l1, l2, l3);
+    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l1, nfillc, nstrokec, l1.getAttr("fill"), l1.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup=true);
 
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("empotrado");
@@ -424,6 +370,10 @@ function createApoyoDeslizante() {
     });
 
     group.add(triangle, base);
+
+    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup=false);
+
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("apoyoDeslizante");
@@ -468,7 +418,9 @@ function createApoyoNoDeslizante() {
     });
 
     group.add(triangle);
-    
+
+    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=false);
+
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("apoyoNoDeslizante");
         nodeParent.setKonvaVinculo(group)
@@ -509,7 +461,9 @@ function createRotula() {
     });
 
     group.add(circle);
-    
+
+    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"), paintGroup=false);
+
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("rotula");
         nodeParent.setKonvaVinculo(group)
@@ -558,12 +512,15 @@ function createBiela() {
         strokeWidth: 4,
     });
     const circle2 = circle1.clone({
-        // name: "cricle2",
         x: 0+large,
         y: 0
     });
 
     group.add(line, circle1, circle2);
+
+    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"), paintGroup=false);
+    paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"), paintGroup=true);
     
     if(nodeParent.vinculo === null) {
         nodeParent.setVinculo("biela");
@@ -626,8 +583,11 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
     });
 
     group.add(arrow, magnitudValue);
-    
     layerForPaint.add(group);
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
@@ -635,10 +595,9 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
         nodeParent.addKonvaFuerza(group)
         group.setAttr("id", konvaElement.getAttr("id"))    
     }
-    
-    layer.add(group);
-    
-    
+
+    // layer.add(group);
+
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     // updateEquations();
@@ -702,7 +661,10 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
     });
 
     group.add(arrow, magnitudValue)
-    
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup=true);
+
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
@@ -829,7 +791,7 @@ function createPanel(x0, y0) {
     const btnBiela = createButton(widthPanel, heightPanelElement, "bielaBtn", "Biela", createBiela); 
     const btnFuerza = createButton(widthPanel, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle); 
     const btnMomento = createButton(widthPanel, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento);
-    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga2", createViga2, null);
+    const btnViga2 = createButton(widthPanel, heightPanelElement, "viga2btn", "Viga", createViga2, null);
 
     const containerFuerza = createContainer([btnFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle]);
     const containerCreateMomento = createContainer([btnMomento, inputCreateMomento]);
@@ -844,7 +806,8 @@ function createPanel(x0, y0) {
     topOfPanel.align = "center";
 
     panel.appendChild(topOfPanel);
-    panel.appendChild(btnViga);
+    // panel.appendChild(btnViga);
+    panel.appendChild(btnViga2)
     panel.appendChild(btnApoyoDeslizante);
     panel.appendChild(btnApoyoNoDeslizante)
     panel.appendChild(btnEmpotrado);
@@ -852,7 +815,6 @@ function createPanel(x0, y0) {
     panel.appendChild(btnBiela);
     panel.appendChild(containerFuerza);
     panel.appendChild(containerCreateMomento);
-    panel.appendChild(btnViga2)
 
     return panel;
 }
@@ -1596,3 +1558,25 @@ function generateJSON(dclStructure){
     return JSON.stringify(copy);
 }
 
+
+function paintElement(element, fillc, strokec, paintGroup){
+    if (element.getAttr("fill")) element.setAttr("fill", fillc)
+    if (element.getAttr("stroke")) element.setAttr("stroke", strokec)
+
+    if (paintGroup){
+        element.getParent().getChildren().forEach(e => {
+            if (e.getAttr("fill")) e.setAttr("fill", fillc)
+            if (e.getAttr("stroke")) e.setAttr("stroke", strokec)
+        })
+    }
+}
+
+function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup=false){
+    element.on("mouseenter", () => {
+        paintElement(element, nfillc, nstrokec, paintGroup)
+    })
+
+    element.on("mouseleave", () => {
+        paintElement(element, ofillc, ostrokec, paintGroup)
+    })
+}
