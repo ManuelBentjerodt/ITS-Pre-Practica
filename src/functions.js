@@ -704,6 +704,7 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction
     btn.style.height = heightPanel  + "px";
     btn.style.backgroundSize = "cover"; // todo en button
     btn.id = idNameText;
+    
     // btn.innerText = btnText;
     btn.addEventListener("dblclick", () => {
 
@@ -763,7 +764,7 @@ function createContainer(list) {
 
 function createPanel(x0, y0) {
     const widthPanel = 200;
-    const heightPanel = 200;
+    const heightPanel = 210;
     // const widthPanel = 350;
     // const heightPanel = 200;
     const colorPanel = "#DDDDDD";
@@ -781,6 +782,8 @@ function createPanel(x0, y0) {
     panel.style.border = "40px";
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1000";
+    
+    
     // panel.style.visibility = "visible";
 
     const inputCreateFuerzaMagnitud = createInputMagnitud("input-create-fuerza", widthPanel, heightPanelElement);
@@ -797,14 +800,14 @@ function createPanel(x0, y0) {
     const imgFuerza = "url(fuerza.png)"
     const imgEmpotrado = "url(empotrado.png)"
     const imgViga = "url(vigaFoto.png)"
-
+    const imgDelete = "url(delete.png)"
 
     const btnViga = createButton(widthPanel/2, heightPanelElement, "vigaBtn", "Viga", createViga, null);
     const btnApoyoDeslizante = createButton(widthPanel/2, heightPanelElement, "apoyoDeslizanteBtn", "Apoyo deslizante", createApoyoDeslizante,null,null,null,imgApoyoDesilzante ); 
     const btnApoyoNoDeslizante = createButton(widthPanel/2, heightPanelElement, "apoyoNoDeslizanteBtn", "Apoyo no deslizante", createApoyoNoDeslizante,null,null,null, imgApoyo); 
     const btnEmpotrado = createButton(widthPanel/2, heightPanelElement, "empotradoBtn", "Empotrado", createEmpotrado,null,null,null, imgEmpotrado); 
     const btnRotula = createButton(widthPanel/2, heightPanelElement, "rotulaBtn", "Rotula", createRotula,null,null,null, imgRotula);
-    const btnBiela = createButton(widthPanel/2, heightPanelElement, "bielaBtn", "Biela", createBiela,null,null,null, imgApoyoDesilzante); 
+    const btnBiela = createButton(widthPanel/2, heightPanelElement, "bielaBtn", "Biela", createBiela,null,null,null, imgBiela); 
     const btnFuerza = createButton(widthPanel/2, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle,null,imgFuerza); 
     const btnMomento = createButton(widthPanel/2, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento,null,null, imgApMomento);
     const btnViga2 = createButton(widthPanel/2, heightPanelElement, "viga2btn", "Viga", createViga2, null,null,null,imgViga);
@@ -818,7 +821,7 @@ function createPanel(x0, y0) {
     topOfPanel.style.backgroundColor = colorPanel;
     topOfPanel.style.border = "2px";
     topOfPanel.style.borderBlockColor = "black";
-    topOfPanel.innerText = "Panel ";
+    topOfPanel.innerText = "Elementos ";
     topOfPanel.align = "center";
 
     panel.appendChild(topOfPanel);
@@ -1213,11 +1216,11 @@ function delElement() {
     panel.style.visibility = "hidden";
 }
 
-
 function createDelPanel(x0=0, y0=0) {
-    const widthPanel = 150;
-    const heightPanel = 60;
+    const widthPanel = 120;
+    const heightPanel = 30;
     const colorPanel = "#DDDDDD";
+    const imgDelete = "url(delete.png)";
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
@@ -1231,8 +1234,7 @@ function createDelPanel(x0=0, y0=0) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "eliminar", delElement);
+    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "eliminar", delElement,null,null,null,imgDelete);
 
     panel.appendChild(deleteElementBtn);
 
