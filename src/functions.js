@@ -824,7 +824,7 @@ function createPanel(x0, y0) {
     const inputCreateFuerzaMagnitud = createInputMagnitud("input-create-fuerza", widthPanel, heightPanelElement);
     const inputCreateFuerzaAngle = createInputAngle("input-create-fuerza-angle", widthPanel, heightPanelElement);
 
-    const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel+240, heightPanelElement);
+    const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel*2, heightPanelElement); // *2 porque en la funcion input se divide por 4 y porque 
 
 
     const imgApoyoDesilzante = "url(apoyodeslizante.png)"
