@@ -763,13 +763,13 @@ function createContainer(list) {
 
 
 function createPanel(x0, y0) {
-    const widthPanel = 200;
-    const heightPanel = 210;
+    const widthPanel = 240;
+    const heightPanel = 150;
     // const widthPanel = 350;
     // const heightPanel = 200;
     const colorPanel = "#DDDDDD";
 
-    const heightPanelElement = heightPanel / 8;
+    const heightPanelElement = heightPanel / 5;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
@@ -789,7 +789,7 @@ function createPanel(x0, y0) {
     const inputCreateFuerzaMagnitud = createInputMagnitud("input-create-fuerza", widthPanel, heightPanelElement);
     const inputCreateFuerzaAngle = createInputAngle("input-create-fuerza-angle", widthPanel, heightPanelElement);
 
-    const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel, heightPanelElement);
+    const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel+240, heightPanelElement);
 
 
     const imgApoyoDesilzante = "url(apoyodeslizante.png)"
@@ -800,7 +800,7 @@ function createPanel(x0, y0) {
     const imgFuerza = "url(fuerza.png)"
     const imgEmpotrado = "url(empotrado.png)"
     const imgViga = "url(vigaFoto.png)"
-    const imgDelete = "url(delete.png)"
+    // const imgDelete = "url(delete.png)" usado en otra funcion de delete
 
     const btnViga = createButton(widthPanel/2, heightPanelElement, "vigaBtn", "Viga", createViga, null);
     const btnApoyoDeslizante = createButton(widthPanel/2, heightPanelElement, "apoyoDeslizanteBtn", "Apoyo deslizante", createApoyoDeslizante,null,null,null,imgApoyoDesilzante ); 
