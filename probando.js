@@ -127,7 +127,7 @@ function createBeam2() {
 
     const group = new Konva.Group({name: "beam2", id: idByDate});
     const line = new Konva.Line({
-        name: "subElementoBeamLinea",
+        name: "subelementBeamLine",
         x: x0,
         y: y0,
         points: [0, 0, 3*blockSnapSize, 0],
@@ -137,7 +137,7 @@ function createBeam2() {
     });
 
     const circle = new Konva.Circle({
-        name: "subElementoBeamCirculo",
+        name: "subelementBeamCirculo",
         x: x0+3*blockSnapSize,
         y: y0,
         radius: 5,
@@ -146,8 +146,6 @@ function createBeam2() {
         id: idByDate + 2
     });
 
-    
-    
     
     group.add(line, circle)
     layer.add(group)

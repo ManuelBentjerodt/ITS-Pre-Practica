@@ -1,7 +1,7 @@
 function createShadowBeam(x0, y0, x1, y1, nameShadow="shadow-beam") {
     const group = new Konva.Group({name: nameShadow});
     const line = new Konva.Line({
-        name: "subElementoBeam",
+        name: "subelementBeam",
         x: x0,
         y: y0,
         points: [0, 0, x1, y1],
@@ -11,7 +11,7 @@ function createShadowBeam(x0, y0, x1, y1, nameShadow="shadow-beam") {
     });
 
     const circle1 = new Konva.Circle({
-        name: "subElementoBeam",
+        name: "subelementBeam",
         x: x0,
         y: y0,
         radius: nodeRadius,
@@ -20,7 +20,7 @@ function createShadowBeam(x0, y0, x1, y1, nameShadow="shadow-beam") {
     });
 
     const circle2 = circle1.clone({
-        name: "subElementoBeam",
+        name: "subelementBeam",
         x: x0+(x1),
         y: y0+(y1)
     });
@@ -44,7 +44,7 @@ function newBeam(x0, y0, x1, y1, nameBeam="beam") { //parte en el punto (x0, y0)
     const idByDate = Date.now();
     const group = new Konva.Group({draggable: false, name: nameBeam, id: idByDate});
     const line = new Konva.Line({
-        name: "subElementoBeamLinea",
+        name: "subelementBeamLine",
         x: x0,
         y: y0,
         points: [0, 0, x1, y1],
@@ -54,7 +54,7 @@ function newBeam(x0, y0, x1, y1, nameBeam="beam") { //parte en el punto (x0, y0)
     });
 
     const circle1 = new Konva.Circle({
-        name: "subElementoBeamCirculo1",
+        name: "subelementBeamCirculo1",
         x: x0,
         y: y0,
         radius: 5,
@@ -64,7 +64,7 @@ function newBeam(x0, y0, x1, y1, nameBeam="beam") { //parte en el punto (x0, y0)
     });
 
     const circle2 = new Konva.Circle({
-        name: "subElementoBeamCirculo2",
+        name: "subelementBeamCirculo2",
         x: x0 + x1,
         y: y0 + y1,
         radius: 5,
@@ -123,23 +123,23 @@ function createBeam2() {
     const [x0, y0] = getElementPos(konvaElement);
 
     const idByDate = Date.now();
-
+    
     const group = new Konva.Group({name: "beam2", id: idByDate});
     const line = new Konva.Line({
-        name: "subElementoBeamLinea",
+        name: "subelementBeamLine",
         x: x0,
         y: y0,
-        points: [0, 0, 3*blockSnapSize, 0],
+        points: [nodeRadius, 0, 3*blockSnapSize, 0],
         strokeWidth: 5,
         stroke: "black",
         id: idByDate + 1
     });
 
     const circle = new Konva.Circle({
-        name: "subElementoBeamCirculo",
+        name: "subelementBeamCirculo",
         x: x0+3*blockSnapSize,
         y: y0,
-        radius: 5,
+        radius: nodeRadius,
         fill: "red",
         draggable: true,
         id: idByDate + 2
@@ -207,7 +207,6 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
         otherCircle = konvaBeam.getChildren()[1];
     }
 
-
     const nodeBeamCircle = dcl.findNodeById(beamCircle.getAttr("id"));
     const nodeOtherCircle = dcl.findNodeById(otherCircle.getAttr("id"));
 
@@ -220,9 +219,13 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
         const circle1Pos = otherCircle.getPosition();
         const circle2Pos = beamCircle.getPosition();
         const shadowCircle1Pos = shadowList[1].getPosition();
+        
+        const newX = shadowCircle1Pos.x - circle2Pos.x
+        const newY = shadowCircle1Pos.y - circle2Pos.y
+        const angle = Math.atan2(newY, newX);
 
         beamLine.position(circle1Pos);
-        beamLine.points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
+        beamLine.points([-nodeRadius * Math.cos(angle), -nodeRadius * Math.sin(angle), circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
 
         otherCircle.position({x: circle1Pos.x, y: circle1Pos.y});
         shadowList[1].position({
@@ -231,7 +234,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
         });
 
         shadowList[0].position(circle2Pos);
-        shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
+        shadowList[0].points([0, 0, newX, newY]);
        
         moveElementsAttached(nodeOtherCircle, otherCircle.position());
     })
@@ -242,9 +245,10 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
 
         const newX = circle2Pos.x - shadowCircle1Pos.x;
         const newY = circle2Pos.y - shadowCircle1Pos.y;
+        const angle = Math.atan2(newY, newX);
 
         beamLine.position(shadowCircle1Pos);
-        beamLine.points([0, 0, newX, newY]);
+        beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), newX, newY]);
         otherCircle.position({
             x: shadowCircle1Pos.x,
             y: shadowCircle1Pos.y
@@ -271,8 +275,9 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
 
         const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
         const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+        const angle = Math.atan2(newY, newX);
 
-        beamLine.points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
+        beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
         shadowList[0].points([0, 0, newX, newY])
 
         beamCircle.position({x: circle2Pos.x, y: circle2Pos.y})
@@ -291,8 +296,9 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
 
         const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
         const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+        const angle = Math.atan2(newY, newX);
 
-        beamLine.points([0, 0, newX, newY])
+        beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), newX, newY])
         beamCircle.position({
             x: shadowCircle2Pos.x,
             y: shadowCircle2Pos.y
@@ -328,7 +334,7 @@ function createEmpotrado(shadow=false) {
 
     const group = new Konva.Group({id: idKonvaElement, name: "fixedSupport", x: x0, y: y0});
     const base = new Konva.Line({
-        name: "subElemento Empotrado",
+        name: "subelement Empotrado",
         x: 0,
         y: 0,
         points: [-large/2, 0, large/2, 0],
@@ -336,10 +342,10 @@ function createEmpotrado(shadow=false) {
         stroke: colorStroke
     });
 
-    const l1 = new Konva.Line({name: "subElemento Empotrado", x: -large/2, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l2 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l3 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l1 = new Konva.Line({name: "subelement Empotrado", x: -large/2, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l2 = new Konva.Line({name: "subelement Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l3 = new Konva.Line({name: "subelement Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    //const l4 = new Konva.Line({name: "subelement Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
     
     group.add(base, l1, l2, l3);
 
@@ -381,7 +387,7 @@ function createRollerSupport() {
 
     const group = new Konva.Group({id: idKonvaElement, name: "rollerSupport", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({    
-        name: "subElemento RollerSupport",
+        name: "subelement RollerSupport",
         x: 0,
         y: 0 + large,
         sides: 3,
@@ -392,7 +398,7 @@ function createRollerSupport() {
     });
 
     const base = new Konva.Line({
-        name: "subElemento RollerSupport",
+        name: "subelement RollerSupport",
         x: 0,
         y: 0 + 2*large ,
         points: [-large, 0, large, 0],
@@ -438,7 +444,7 @@ function createPinnedSupport() {
 
     const group = new Konva.Group({id: idKonvaElement, name: "pinnedSupport", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({
-        name: "subElemento PinnedSupport",
+        name: "subelement PinnedSupport",
         x: 0,
         y: 0 + large,
         sides: 3,
@@ -526,7 +532,7 @@ function createConnectingRod() {
     const group = new Konva.Group({id: idKonvaElement, name: "connectingRod", x: x0, y: y0});
     const large = blockSnapSize;
     const line = new Konva.Line({
-        name: "subElemento ConnectingRod",
+        name: "subelement ConnectingRod",
         x: 0,
         y: 0,
         points: [0, 0, large, 0],
@@ -534,7 +540,7 @@ function createConnectingRod() {
         stroke: "black"
     });
     const circle1 = new Konva.Circle({
-        name: "subElemento ConnectingRod",
+        name: "subelement ConnectingRod",
         x: 0,
         y: 0,
         radius: 7,
@@ -679,7 +685,7 @@ function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forEm
         fill: color,
         stroke: color,
         strokeWidth: 4,
-        name: "subElemento",
+        name: "subelement",
     });
 
     const magnitudValue = new Konva.Text({
@@ -980,23 +986,23 @@ function listenCreateElement() {
             console.log(nodeParent)
             console.log(e.target.getParent())
             // console.log(lastNodeClick)
-            if (e.target.name() == "subElementoBeamCirculo1") {
+            if (e.target.name() == "subelementBeamCirculo1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => {return node.name() === "subElementoBeamCirculo2"})[0];
+                const otherNode = parent.getChildren((node) => {return node.name() === "subelementBeamCirculo2"})[0];
                 const otherNodePosition =  getElementPos(otherNode);
                 
-            } else if (e.target.name() == "subElementoBeamCirculo2") {
+            } else if (e.target.name() == "subelementBeamCirculo2") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => {return node.name() === "subElementoBeamCirculo1"})[0]
+                const otherNode = parent.getChildren((node) => {return node.name() === "subelementBeamCirculo1"})[0]
                 const otherNodePosition =  getElementPos(otherNode);
                 
-            } else if (e.target.name() == "subElementoBeamCirculo") {
+            } else if (e.target.name() == "subelementBeamCirculo") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
@@ -1578,18 +1584,6 @@ function removeAttributesForJSON(node){
     delete node.konvaObjects;
 
 }
-
-function generateJSON(dclStructure){
-    const copy = Object.assign(Object.create(Object.getPrototypeOf(dclStructure)), dclStructure)
-    // const copy = dclStructure.clone()
-    copy.getAllDecendents().forEach(descendent => {
-        removeAttributesForJSON(descendent);
-    });
-    removeAttributesForJSON(copy);
-
-    return JSON.stringify(copy);
-}
-
 
 function paintElement(element, fillc, strokec, paintGroup){
     if (element.getAttr("fill")) element.setAttr("fill", fillc)

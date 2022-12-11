@@ -46,7 +46,7 @@ divKonvaContainer.appendChild(delPanel);
 listenPanelMovement(panel);
 listenPanelMovement(delPanel);
 
-//------------------------------------------------------Elementos dcl-----------------------------------------------//
+//------------------------------------------------------elements dcl-----------------------------------------------//
 const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null
 let lastElementClick = undefined;
