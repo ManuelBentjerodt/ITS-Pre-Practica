@@ -17,5 +17,12 @@
     <script src="src/variables.js" ></script>
     <script src="src/functions.js" ></script>
     <script src="src/create_task.js" ></script>
+    <button id="jsonGenerator">json</button>
+    <script>
+        document.querySelector("#jsonGenerator").addEventListener("click", () => {
+            //console.log(dcl.generateJSON())
+            console.log(generateJSON(dcl))
+        })
+    </script>
 </body>
 </html>
