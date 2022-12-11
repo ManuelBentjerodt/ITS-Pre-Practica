@@ -47,16 +47,15 @@ listenPanelMovement(panel);
 listenPanelMovement(delPanel);
 
 //------------------------------------------------------Elementos dcl-----------------------------------------------//
-const lastVigaNodeClick = {x: 0, y: 0};
+const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null
 let lastElementClick = undefined;
 
-const [dcl, group] = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
-const shadowLine = createShadowViga(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialViga");
+const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
+const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
 shadowLine.hide();
-listenNodeMovement(group, shadowLine, "initialViga")
+listenNodeMovement(group, shadowLine, "initialBeam")
 
-// console.log(generateJSON(dcl))
 
 
 
@@ -64,7 +63,7 @@ listenNodeMovement(group, shadowLine, "initialViga")
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
-replaceApoyos();
+replaceSupports();
 // listenSave();
 
 

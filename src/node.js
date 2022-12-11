@@ -5,17 +5,17 @@ class Node {
         this.parent = null;            // node
         
         this.childreanNodes = [],         // node
-        this.vinculo = null,              // type = 'deslizante', 'empotrado', etc
-        this.fuerzas = [],                // array(magnitud, angle)
-        this.momentos = []                // magnitud   
+        this.vinculo = null,              // type = 'deslizante', 'fixedSupport', etc
+        this.forces = [],                // array(magnitud, angle)
+        this.moments = []                // magnitud   
         
 
         this.konvaObjects = {
-            viga: null,
-            shadowViga: null,
+            beam: null,
+            shadowBeam: null,
             vinculo: null,
-            fuerzas: [],
-            momentos: [],
+            forces: [],
+            moments: [],
             circle: null
             
         }
@@ -40,7 +40,7 @@ class Node {
     }
 
     setVinculo(vinculo) {
-        const types = new Set(["apoyoDeslizante", "apoyoNoDeslizante", "empotrado", "rotula", "biela"]);
+        const types = new Set(["rollerSupport", "pinnedSupport", "fixedSupport", "ballJoint", "connectingRod"]);
         if (types.has(vinculo)) {
             this.vinculo = vinculo;
         }
@@ -50,30 +50,41 @@ class Node {
         this.vinculo = null;
     }
 
-    addFuerza(magnitud, angle) {
-        this.fuerzas.push([magnitud, angle]);
+    addForce(magnitud, angle) {
+        this.forces.push([magnitud, angle]);
     }
 
-    addMomento(magnitud) {
-        this.momentos.push(magnitud)
+    addMoment(magnitud) {
+        this.moments.push(magnitud)
     }
 
 
 
-    setKonvaViga(object){
-        this.konvaObjects.viga = object;
+    setKonvaBeam(object){
+        this.konvaObjects.beam = object;
     }
 
     setKonvaVinculo(object){
         this.konvaObjects.vinculo = object
     }
 
-    addKonvaFuerza(object){
-        this.konvaObjects.fuerzas.push(object)
+    addKonvaForce(object){
+        this.konvaObjects.forces.push(object)
     }
 
-    addKonvaMomento(object){
-        this.konvaObjects.fuerzas.push(object)
+    addKonvaMoment(object){
+        this.konvaObjects.forces.push(object)
+    }
+
+    generateJSON(){
+        // const copy = Object.assign(Object.create(Object.getPrototypeOf(dclStructure)), dclStructure)
+        const copy = this.clone()
+        copy.getAllDecendents().forEach(descendent => {
+            removeAttributesForJSON(descendent);
+        });
+        removeAttributesForJSON(copy);
+    
+        return JSON.stringify(copy);
     }
 
 
@@ -127,15 +138,7 @@ class Node {
 }
 
 
-class Viga {
-    constructor() {
-        this.parents = [];
-    }
 
-    setParents(node1, node2) {
-        this.parents = [node1, node2];
-    }
-}
 
 // function joinNodes(parent, child) {
 //     parent.addChild(child);
