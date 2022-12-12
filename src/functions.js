@@ -88,7 +88,6 @@ function createBeam(nameBeam="beam") {
     const x1 = blockSnapSize * 3;
     const y1 = 0;
 
-
     if (nameBeam == "initialBeam") {
         x0 = blockSnapSize * 8;
         y0 = blockSnapSize * 8;
@@ -96,13 +95,15 @@ function createBeam(nameBeam="beam") {
 
     const line = newBeam(x0, y0, x1, y1, nameBeam);
     layer.add(line);
-   
-    const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"))
-    const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"))
+
+    const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"));
+    const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"));
+
     originNode.setKonvaCircle(line.getChildren()[1]);
-    originNode.setKonvaCircle(line.getChildren()[2]);
-    secondNode.setKonvaBeam(line)
-    joinNodes(originNode, secondNode)
+    secondNode.setKonvaCircle(line.getChildren()[2]);
+    secondNode.setKonvaBeam(line);
+
+    joinNodes(originNode, secondNode);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -136,9 +137,9 @@ function createBeam2() {
         draggable: true,
         id: idByDate + 2
     });
- 
+
     group.add(line, circle)
-   
+
     paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
     paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
 
@@ -149,16 +150,18 @@ function createBeam2() {
 
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
+
     node.setKonvaBeam(group);
-    node.konvaObjects.shadowBeam = shadowLine;
-    node.konvaObjects.circle = circle;
+    node.setKonvaShadowBeam(shadowLine);
+    node.setKonvaCircle(circle);
+
     joinNodes(nodeParent, node)
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     
     listenNodeMovement(group, shadowLine, "beam2");
- 
+
     return group;
 }
 
@@ -967,7 +970,7 @@ function listenCreateElement() {
             const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
             console.log(nodeParent)
             console.log(e.target.getParent())
-            // console.log(lastNodeClick)
+   
             if (e.target.name() == "subelementBeamCirculo1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
@@ -987,13 +990,9 @@ function listenCreateElement() {
             } else if (e.target.name() == "subelementBeamCirculo") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
-
-            
+ 
             }
-    
-            // console.log(dcl)
-
-            
+     
         }
     });
 }
@@ -1304,9 +1303,6 @@ function getElementPos(element) {
 }
 
 function comparePositions(list1, list2) {
-    console.log("ACA en compare position")
-    console.log(list1)
-    console.log(list2)
     return JSON.stringify(list1) === JSON.stringify(list2);
 }
 
