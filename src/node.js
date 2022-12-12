@@ -4,27 +4,24 @@ class Node {
         this.coordinate = _coordinate;  // array(x, y)
         this.parent = null;            // node
         
-        this.childreanNodes = [],         // node
-        this.vinculo = null,              // type = 'deslizante', 'fixedSupport', etc
+        this.childNodes = [],         // node
+        this.link = null,              // type = 'deslizante', 'fixedSupport', etc
         this.forces = [],                // array(magnitud, angle)
         this.moments = []                // magnitud   
         
-
         this.konvaObjects = {
             beam: null,
             shadowBeam: null,
-            vinculo: null,
+            link: null,
             forces: [],
             moments: [],
             circle: null
             
         }
-
-
     }
 
     setId(id) {
-        this.id = id
+        this.id = id;
     }
 
     setCoordinate(newCoordinate) {
@@ -36,18 +33,18 @@ class Node {
     }
 
     addChild(node) {
-        this.childreanNodes.push(node);
+        this.childNodes.push(node);
     }
 
-    setVinculo(vinculo) {
+    setLink(link) {
         const types = new Set(["rollerSupport", "pinnedSupport", "fixedSupport", "ballJoint", "connectingRod"]);
-        if (types.has(vinculo)) {
-            this.vinculo = vinculo;
+        if (types.has(link)) {
+            this.link = link;
         }
     }
 
-    deleteVinculo(){
-        this.vinculo = null;
+    deleteLink(){
+        this.link = null;
     }
 
     addForce(magnitud, angle) {
@@ -55,25 +52,31 @@ class Node {
     }
 
     addMoment(magnitud) {
-        this.moments.push(magnitud)
+        this.moments.push(magnitud);
     }
-
-
 
     setKonvaBeam(object){
         this.konvaObjects.beam = object;
     }
 
-    setKonvaVinculo(object){
-        this.konvaObjects.vinculo = object
+    setKonvaLink(object){
+        this.konvaObjects.link = object;
     }
 
     addKonvaForce(object){
-        this.konvaObjects.forces.push(object)
+        this.konvaObjects.forces.push(object);
     }
 
     addKonvaMoment(object){
-        this.konvaObjects.forces.push(object)
+        this.konvaObjects.forces.push(object);
+    }
+
+    setKonvaShadowBeam(object){
+        this.konvaObjects.shadowBeam = object;
+    }
+
+    setKonvaCircle(object){
+        this.konvaObjects.circle = object;
     }
 
     generateJSON(){
@@ -101,7 +104,7 @@ class Node {
             if (actual.id == _id) {
                 return actual;
             }
-            actual.childreanNodes.forEach( child => {
+            actual.childNodes.forEach( child => {
                 if (!(discovered.includes(child))) {
                     discovered.push(child)
                     queue.push(child)
@@ -124,7 +127,7 @@ class Node {
             let actual = queue.shift();
 
             
-            actual.childreanNodes.forEach( child => {
+            actual.childNodes.forEach( child => {
                 if (!(discovered.includes(child))) {
                     discovered.push(child);
                     queue.push(child);

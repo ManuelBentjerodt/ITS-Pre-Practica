@@ -104,17 +104,10 @@ function createBeam(nameBeam="beam") {
     shadowLine.hide();
 
     layer.add(line, shadowLine);
-   
 
     updateBeam(line, shadowLine);
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
-    
-
-    
-
 
     return line;
 }
@@ -159,7 +152,5 @@ function createBeam2() {
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
 
 }
