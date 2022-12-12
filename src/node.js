@@ -112,7 +112,7 @@ class Node {
             });
         }
 
-        console.log("could not find element... returning null");
+        console.log("could not find element by id... returning null");
         return null;
 
     }
@@ -139,30 +139,4 @@ class Node {
     }
     
 }
-
-
-
-
-// function joinNodes(parent, child) {
-//     parent.addChild(child);
-//     child.setParent(parent);
-// }
-
-// const n1 = new Node(null, 1)
-// const n2 = new Node(null, 2)
-// const n3 = new Node(null, 3)
-// const n4 = new Node(null, 4)
-
-// joinNodes(n1,n2)
-// joinNodes(n2,n3)
-// joinNodes(n3,n4)
-// joinNodes(n1,n3)
-// const l =[n1]
-// console.log(l.includes(n1))
-
-// console.log(n1.getAllDecendents(n2))
-
-
-// console.log(n1.findNodeById(0))
-// console.log(Date.now())
 
