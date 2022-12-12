@@ -88,32 +88,24 @@ function createBeam(nameBeam="beam") {
     const x1 = blockSnapSize * 3;
     const y1 = 0;
 
-    let nameShadow = "shadow-beam";
+
     if (nameBeam == "initialBeam") {
         x0 = blockSnapSize * 8;
         y0 = blockSnapSize * 8;
-        nameShadow = "shadow-initialBeam"
     }
 
     const line = newBeam(x0, y0, x1, y1, nameBeam);
-    // const shadowLine = createShadowBeam(x0, y0, x1, y1, nameShadow);
-    // shadowLine.hide();
-
     layer.add(line);
    
     const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"))
     const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"))
-    originNode.konvaObjects.circle = line.getChildren()[1];
-    secondNode.konvaObjects.circle = line.getChildren()[2];
+    originNode.setKonvaCircle(line.getChildren()[1]);
+    originNode.setKonvaCircle(line.getChildren()[2]);
     secondNode.setKonvaBeam(line)
     joinNodes(originNode, secondNode)
 
-    
-    // listenNodeMovement(line, shadowLine, "initialBeam")
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
     
     return [originNode, line];
 }
@@ -149,33 +141,30 @@ function createBeam2() {
    
     paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
     paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
-    // paintIfMouseOver(line)
 
     const shadowLine = createShadowBeam(x0, y0, 3*blockSnapSize, 0, "shadowBeam2");
-    shadowLine.hide()
+    shadowLine.hide();
 
-    layer.add(group, shadowLine)
+    layer.add(group, shadowLine);
 
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
-    node.setKonvaBeam(group)
-    node.konvaObjects.shadowBeam = shadowLine
-    // nodeParent.konvaObjects.shadowBeam = shadowLine
+    node.setKonvaBeam(group);
+    node.konvaObjects.shadowBeam = shadowLine;
     node.konvaObjects.circle = circle;
     joinNodes(nodeParent, node)
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     
-    listenNodeMovement(group, shadowLine, "beam2")
-    moveBeamsToTop();
-
+    listenNodeMovement(group, shadowLine, "beam2");
+ 
     return group;
 }
 
 function moveElementsAttached(element, newPosition){
-    if (element.konvaObjects.vinculo){
-        element.konvaObjects.vinculo.position(newPosition);
+    if (element.konvaObjects.link){
+        element.konvaObjects.link.position(newPosition);
     }
     if (element.konvaObjects.forces.length){
         element.konvaObjects.forces.forEach(force => {
@@ -316,7 +305,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
 
 
 
-//------------------------------------------------------Vinculos externos-----------------------------------------------//
+//------------------------------------------------------Links externos-----------------------------------------------//
 function createFixedSupport(shadow=false) {
     let colorStroke;
     if (shadow){
@@ -355,9 +344,9 @@ function createFixedSupport(shadow=false) {
     paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup=true);
     paintIfMouseOver(l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup=true);
 
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("fixedSupport");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("fixedSupport");
+        nodeParent.setKonvaLink(group)
    
     } else {
         panel.style.visibility = "hidden";
@@ -369,8 +358,7 @@ function createFixedSupport(shadow=false) {
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
+  
     return group;    
 }
 
@@ -413,9 +401,9 @@ function createRollerSupport() {
     paintIfMouseOver(base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
 
     
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("rollerSupport");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("rollerSupport");
+        nodeParent.setKonvaLink(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
@@ -426,8 +414,7 @@ function createRollerSupport() {
     
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
+
     return group;
 }
 
@@ -459,9 +446,9 @@ function createPinnedSupport() {
 
     paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=false);
 
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("pinnedSupport");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("pinnedSupport");
+        nodeParent.setKonvaLink(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
@@ -472,13 +459,12 @@ function createPinnedSupport() {
     
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
-    
+
+    return group;
 }
 
 
-//------------------------------------------------------Vinculos internos-----------------------------------------------//
+//------------------------------------------------------Links internos-----------------------------------------------//
 function createBallJoint() {
     const x0 = lastBeamNodeClick.x
     const y0 = lastBeamNodeClick.y
@@ -502,9 +488,9 @@ function createBallJoint() {
 
     paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"), paintGroup=false);
 
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("ballJoint");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("ballJoint");
+        nodeParent.setKonvaLink(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
@@ -515,8 +501,7 @@ function createBallJoint() {
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
+
     return group;
 }
 
@@ -560,9 +545,9 @@ function createConnectingRod() {
     paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"), paintGroup=true);
     paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"), paintGroup=true);
     
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("connectingRod");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("connectingRod");
+        nodeParent.setKonvaLink(group)
 
     } else {
         panel.style.visibility = "hidden";
@@ -574,8 +559,7 @@ function createConnectingRod() {
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveBeamsToTop();
+
     return group
 }
 
@@ -635,13 +619,9 @@ function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForP
         group.setAttr("id", konvaElement.getAttr("id"))    
     }
 
-    // layer.add(group);
-
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateEquations();
-    // updateScorePanel();
-    moveBeamsToTop();
+
     return group;
 }
 
@@ -673,7 +653,7 @@ function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forFi
             y0lastPos = y0;
             listOfPoints = positiveList;
         }
-    
+        return;
     }
 
 
@@ -1021,8 +1001,9 @@ function listenCreateElement() {
 
 function destroyAttachedKonvaElements(node){
     if(node.konvaObjects.beam) node.konvaObjects.beam.destroy();
-    if(node.konvaObjects.vinculo) node.konvaObjects.vinculo.destroy();
     if(node.konvaObjects.shadowBeam) node.konvaObjects.shadowBeam.destroy();
+    if(node.konvaObjects.link) node.konvaObjects.link.destroy();
+    if(node.konvaObjects.circle) node.konvaObjects.circle.destroy();
     
     node.konvaObjects.forces.forEach(force => {
         force.destroy();
@@ -1036,10 +1017,10 @@ function deleteElement(element) {
     if (element.name() === "beam2") {
         const node = dcl.findNodeById(element.getAttr("id")+2) //element es el group del objeto, 
         const parentNode = node.parent
-        const idx = parentNode.childreanNodes.findIndex(child => {
+        const idx = parentNode.childNodes.findIndex(child => {
             child.id === node.id
         })
-        parentNode.childreanNodes.splice(idx, 1)
+        parentNode.childNodes.splice(idx, 1)
 
         node.getAllDecendents().forEach(decendent => {
             destroyAttachedKonvaElements(decendent);
@@ -1054,7 +1035,7 @@ function deleteElement(element) {
         const supports = new Set(["rollerSupport", "pinnedSupport", "fixedSupport", "ballJoint", "connectingRod"]);
 
         if (supports.has(element.name())) {
-            node.deleteVinculo();
+            node.deleteLink();
 
         } else if (element.name() === "force"){
             const tuple = element.getAttr("tension")
@@ -1216,20 +1197,6 @@ function updateCounts() {
 }
 
 
-function moveBeamsToTop() {
-    // const beams = layer.getChildren(element => {
-    //     return element.name() == "beam";
-    // });
-
-    // const initialBeam = layer.getChildren(element => {
-    //     return element.name() == "initialBeam";
-    // })[0];
-    // beams.push(initialBeam);
-    // beams.forEach(beam => {
-    //     beam.moveToTop();
-    // });
-}
-
 //------------------------------------------------------Delete panel-----------------------------------------------//
 function delElement() {
     deleteElement(lastElementClick);
@@ -1255,11 +1222,9 @@ function createDelPanel(x0=0, y0=0) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "eliminar", delElement);
+    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement);
 
     panel.appendChild(deleteElementBtn);
-
 
     return panel;
 }
@@ -1557,7 +1522,7 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
 function showHints() {
     compare(stage, stageSolution);
     let txt = "";
-    console.log(ERRORS)
+    console.log(ERRORS);
     Object.values(ERRORS).forEach((value) => {
         value.forEach(hint => {
             txt += hint + "\n";
@@ -1588,23 +1553,43 @@ function removeAttributesForJSON(node){
 }
 
 function paintElement(element, fillc, strokec, paintGroup){
-    if (element.getAttr("fill")) element.setAttr("fill", fillc)
-    if (element.getAttr("stroke")) element.setAttr("stroke", strokec)
+    if (element.getAttr("fill")) element.setAttr("fill", fillc);
+    if (element.getAttr("stroke")) element.setAttr("stroke", strokec);
 
     if (paintGroup){
         element.getParent().getChildren().forEach(e => {
-            if (e.getAttr("fill")) e.setAttr("fill", fillc)
-            if (e.getAttr("stroke")) e.setAttr("stroke", strokec)
+            if (e.getAttr("fill")) e.setAttr("fill", fillc);
+            if (e.getAttr("stroke")) e.setAttr("stroke", strokec);
         })
     }
 }
 
 function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup=false){
     element.on("mouseenter", () => {
-        paintElement(element, nfillc, nstrokec, paintGroup)
+        paintElement(element, nfillc, nstrokec, paintGroup);
     })
 
     element.on("mouseleave", () => {
-        paintElement(element, ofillc, ostrokec, paintGroup)
+        paintElement(element, ofillc, ostrokec, paintGroup);
     })
+}
+
+function generateGrid(layer){
+    for (let i = 0; i <= widthStage / blockSnapSize; i++) {
+        layer.add(new Konva.Line({
+            name: "horizontalLines",
+            points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, heightStage],
+            stroke: "#777777",
+            strokeWidth: 1,
+        }));
+    }
+    
+    for (let j = 0; j <= heightStage / blockSnapSize; j++) {
+        layer.add(new Konva.Line({
+            name: "verticalLines",
+            points: [0, Math.round(j * blockSnapSize), widthStage, Math.round(j * blockSnapSize)],
+            stroke: "#7777777",
+            strokeWidth: 0.5,
+        }));
+    }
 }
