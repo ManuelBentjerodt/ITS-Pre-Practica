@@ -139,7 +139,7 @@ function createViga2() {
         name: "subElementoVigaCirculo",
         x: x0+3*blockSnapSize, // se crea al final de la viga
         y: y0,
-        radius: 5,
+        radius: 7,
         fill: "red",
         draggable: true,
         id: idByDate + 2
