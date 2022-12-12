@@ -317,7 +317,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
 
 
 //------------------------------------------------------Vinculos externos-----------------------------------------------//
-function createEmpotrado(shadow=false) {
+function createFixedSupport(shadow=false) {
     let colorStroke;
     if (shadow){
         colorStroke = shadowStroke;
@@ -332,20 +332,21 @@ function createEmpotrado(shadow=false) {
     const y0 = lastBeamNodeClick.y;
     const large = blockSnapSize;
 
+
     const group = new Konva.Group({id: idKonvaElement, name: "fixedSupport", x: x0, y: y0});
     const base = new Konva.Line({
-        name: "subelement Empotrado",
+        name: "subelement FixedSupport",
         x: 0,
-        y: 0,
+        y: nodeRadius+2,
         points: [-large/2, 0, large/2, 0],
         strokeWidth: 5,
         stroke: colorStroke
     });
 
-    const l1 = new Konva.Line({name: "subelement Empotrado", x: -large/2, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l2 = new Konva.Line({name: "subelement Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l3 = new Konva.Line({name: "subelement Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    //const l4 = new Konva.Line({name: "subelement Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l1 = new Konva.Line({name: "subelement FixedSupport", x: -large/2, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l2 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 12.5, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l3 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 25, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    //const l4 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 +37.5, y: nodeRadius, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
     
     group.add(base, l1, l2, l3);
 
@@ -389,7 +390,7 @@ function createRollerSupport() {
     const triangle = new Konva.RegularPolygon({    
         name: "subelement RollerSupport",
         x: 0,
-        y: 0 + large,
+        y: 0 + large + 2*nodeRadius - 1,
         sides: 3,
         radius: large,
         fill: "#00D2FF",
@@ -400,7 +401,7 @@ function createRollerSupport() {
     const base = new Konva.Line({
         name: "subelement RollerSupport",
         x: 0,
-        y: 0 + 2*large ,
+        y: 0 + 2*large + 2*nodeRadius - 1,
         points: [-large, 0, large, 0],
         strokeWidth: 5,
         stroke: "black",
@@ -446,7 +447,7 @@ function createPinnedSupport() {
     const triangle = new Konva.RegularPolygon({
         name: "subelement PinnedSupport",
         x: 0,
-        y: 0 + large,
+        y: 0 + large + 2*nodeRadius - 1,
         sides: 3,
         radius: large,
         fill: "#00F210",
@@ -590,18 +591,19 @@ function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForP
 
     const large = blockSnapSize * 2;
     const lx = large * Math.cos(angle * Math.PI / 180)
-    const ly = large * Math.sin(angle * Math.PI / 180)
+    const ly = large * Math.sin(degToRad(angle))
 
     if (color != "black") {
         x0lastPos = x0;
         y0lasPos = y0;
         txt = valMagnitud
     }
+    degToRad
   
     const group = new Konva.Group({tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos});
     const arrow = new Konva.Arrow({
-        x: 0,
-        y: 0,
+        x: 2*nodeRadius*Math.cos(degToRad(angle)),
+        y: -2*nodeRadius*Math.sin(degToRad(angle)),
         points: [lx, -ly, 0, 0],
         pointerLength: 15,
         pointerWidth: 15,
@@ -643,7 +645,7 @@ function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForP
     return group;
 }
 
-function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forEmpotrado=false) {
+function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forFixedSupport=false) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lastPos = lastBeamNodeClick.y
 
@@ -823,7 +825,7 @@ function createPanel(x0, y0) {
     // const btnBeam = createButton(widthPanel, heightPanelElement, "beamBtn", "Beam", createBeam, null);
     const btnRollerSupport = createButton(widthPanel, heightPanelElement, "rollerSupportBtn", "Roller support ", createRollerSupport); 
     const btnPinnedSupport = createButton(widthPanel, heightPanelElement, "pinnedSupportBtn", "Pinned support", createPinnedSupport); 
-    const btnEmpotrado = createButton(widthPanel, heightPanelElement, "fixedSupportBtn", "Fixed support", createEmpotrado); 
+    const btnFixedSupport = createButton(widthPanel, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport); 
     const btnBallJoint = createButton(widthPanel, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint);
     const btnConnectingRod = createButton(widthPanel, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod); 
     const btnForce = createButton(widthPanel, heightPanelElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle); 
@@ -847,7 +849,7 @@ function createPanel(x0, y0) {
     panel.appendChild(btnBeam2)
     panel.appendChild(btnRollerSupport);
     panel.appendChild(btnPinnedSupport)
-    panel.appendChild(btnEmpotrado);
+    panel.appendChild(btnFixedSupport);
     panel.appendChild(btnBallJoint);
     panel.appendChild(btnConnectingRod);
     panel.appendChild(containerForce);
@@ -1207,9 +1209,9 @@ function replaceSupports() {
 
 function updateCounts() {
     stage.find( (element) => { 
-       if (element.name() == "fixedSupport") countEmpotrado += 1;
+       if (element.name() == "fixedSupport") countFixedSupport += 1;
        else if (element.name() == "rollerSupport") countRollerSupport += 1;
-       else if (element.name() == "fixedSupport") countEmpotrado += 1;
+       else if (element.name() == "fixedSupport") countFixedSupport += 1;
     });
 }
 
@@ -1430,8 +1432,8 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
     });
     if (!verifyedAND) ERRORS.ERRORpinnedSupports.add("OJO: Atencion con la posicion de algun support no deslizante");
 
-    let verifyedEmpotrados = hashElementsStage1.fixedSupports.length == hashElementsStage2.fixedSupports.length;
-    if (!verifyedEmpotrados) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la cantidad de fixedSupports");
+    let verifyedFixedSupports = hashElementsStage1.fixedSupports.length == hashElementsStage2.fixedSupports.length;
+    if (!verifyedFixedSupports) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la cantidad de fixedSupports");
     hashElementsStage1.fixedSupports.forEach(e1 => {
         let e1Pos = getElementPos(e1);
         let verify = false;
@@ -1441,9 +1443,9 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
                 verify = true;
             }
         });
-        verifyedEmpotrados &&= verify;
+        verifyedFixedSupports &&= verify;
     });
-    if (!verifyedEmpotrados) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la posicion de algun fixedSupport");
+    if (!verifyedFixedSupports) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la posicion de algun fixedSupport");
 
     let verifyedBallJoints = hashElementsStage1.ballJoints.length == hashElementsStage2.ballJoints.length;
     if (!verifyedBallJoints) ERRORS.ERRORballJoints.add("OJO: Atencion con la cantidad de ballJoints");
@@ -1540,7 +1542,7 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
     
 
     console.log("verificaciones")
-    const listOfConditions = [verifyedInitialBeam, verifyedBeams, verifyedAD, verifyedAND, verifyedEmpotrados, verifyedBallJoints, verifyedConnectingRods, verifyedMP, verifyedMN, verifyedForces]
+    const listOfConditions = [verifyedInitialBeam, verifyedBeams, verifyedAD, verifyedAND, verifyedFixedSupports, verifyedBallJoints, verifyedConnectingRods, verifyedMP, verifyedMN, verifyedForces]
     console.log(listOfConditions)
     taskResolvedSuccefully = true
     listOfConditions.forEach(element => {
