@@ -626,19 +626,21 @@ function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForP
         group.setAttr("id", konvaElement.getAttr("id"))    
     }
 
-    // panel.style.visibility = "hidden";
-    // delPanel.style.visibility = "hidden";
-    //modal.style.visibility = "visible";
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+    modalForce.style.visibility = "hidden";
 
     return group;
 }
 
-function createButtonModalForce(){
+function showModalForce(){
+    movePanelTo(modalForce, lastBeamNodeClick.x, lastBeamNodeClick.y);
     modalForce.style.visibility = "visible";
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 }
-function createButtonModalMoment(){
+function showModalMoment(){
+    movePanelTo(modalMoment, lastBeamNodeClick.x, lastBeamNodeClick.y);
     modalMoment.style.visibility = "visible";
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -838,8 +840,8 @@ function createPanel(x0, y0) {
     const btnFixedSupport = createButton(widthPanel/2, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport,null,null,null, imgFixedSupport); 
     const btnBallJoint = createButton(widthPanel/2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint,null,null,null, imgBallJoint);
     const btnConnectingRod = createButton(widthPanel/2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod,null,null,null, imgConnectingRod); 
-    const btnForce = createButton(widthPanel/2, heightPanelElement, "modalForce", "Force", createButtonModalForce, null, null,null,imgForce); 
-    const btnMoment = createButton(widthPanel/2, heightPanelElement, "modalMoment", "Moment", createButtonModalMoment, null,null,null, imgMoment,null,imgForce);
+    const btnForce = createButton(widthPanel/2, heightPanelElement, "modalForce", "Force", showModalForce, null, null,null,imgForce); 
+    const btnMoment = createButton(widthPanel/2, heightPanelElement, "modalMoment", "Moment", showModalMoment, null,null,null, imgMoment,null,imgForce);
     const btnBeam2 = createButton(widthPanel/2, heightPanelElement, "beam2btn", "Beam", createBeam2, null,null,null,imgBeam);
 
    
@@ -898,7 +900,7 @@ function listenPanelMovement(panel) {
             panel.style.top  = (mousePosition.y + offset[1]) + "px";
         }
     });
-
+    
     return mousePosition;
 }
 
@@ -909,6 +911,9 @@ function movePanelTo(panelParam, x, y) {
         panelParam.style.top  = getOffset(divKonvaContainer).top + y + "px";
     } else if (panelParam == delPanel) {
         panelParam.style.left = getOffset(divKonvaContainer).left + x - panelParam.offsetWidth + "px";
+        panelParam.style.top  = getOffset(divKonvaContainer).top + y + "px";
+    } else if (panelParam == modalForce || panelParam == modalMoment){
+        panelParam.style.left = getOffset(divKonvaContainer).left + x  + "px";
         panelParam.style.top  = getOffset(divKonvaContainer).top + y + "px";
     }
 
