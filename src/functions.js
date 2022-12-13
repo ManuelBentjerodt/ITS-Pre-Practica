@@ -716,14 +716,20 @@ function getOffset(element) {
 
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
-function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud=0, valAngle=0, element=0) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud=0, valAngle=0, element=0,image) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.style.backgroundColor = "yellow";
+    // btn.style.backgroundColor = "yellow";
+    // btn.style.background =  "url(prueba.png)";
+    btn.style.backgroundImage = image;
+    console.log("widdth boton es: "+ widthPanel)
+    console.log("alto boton: "+heightPanel)
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel  + "px";
+    btn.style.backgroundSize = "cover"; // todo en button
     btn.id = idNameText;
-    btn.innerText = btnText;
+    
+    // btn.innerText = btnText;
     btn.addEventListener("dblclick", () => {
 
         if (idNameText == "beamBtn") {
@@ -781,11 +787,13 @@ function createContainer(list) {
 
 
 function createPanel(x0, y0) {
-    const widthPanel = 200;
-    const heightPanel = 350;
+    const widthPanel = 240;
+    const heightPanel = 150;
+    // const widthPanel = 350;
+    // const heightPanel = 200;
     const colorPanel = "#DDDDDD";
 
-    const heightPanelElement = heightPanel / 8;
+    const heightPanelElement = heightPanel / 5;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
@@ -798,22 +806,36 @@ function createPanel(x0, y0) {
     panel.style.border = "40px";
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1000";
+    
+    
     // panel.style.visibility = "visible";
 
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthPanel, heightPanelElement);
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthPanel, heightPanelElement);
 
-    const inputCreateMoment = createInputMagnitud("input-create-moment", widthPanel, heightPanelElement);
+    const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel*2, heightPanelElement); // *2 porque en la funcion input se divide por 4 y porque 
+
+
+    const imgApoyoDesilzante = "url(fotos/apoyodeslizante.png)"
+    const imgApoyo = "url(fotos/apoyo.png)"
+    const imgBiela = "url(fotos/biela.png)"
+    const imgRotula= "url(fotos/rotula.png)"
+    const imgApMomento = "url(fotos/momento.png)"
+    const imgFuerza = "url(fotos/fuerza.png)"
+    const imgEmpotrado = "url(fotos/empotrado.png)"
+    const imgViga = "url(fotos/vigaFoto.png)"
+
+    const inputCreateMoment = createInputMagnitud("input-create-moment", widthPanel*2, heightPanelElement); // width panel*2
 
     // const btnBeam = createButton(widthPanel, heightPanelElement, "beamBtn", "Beam", createBeam, null);
-    const btnRollerSupport = createButton(widthPanel, heightPanelElement, "rollerSupportBtn", "Roller support ", createRollerSupport); 
-    const btnPinnedSupport = createButton(widthPanel, heightPanelElement, "pinnedSupportBtn", "Pinned support", createPinnedSupport); 
-    const btnFixedSupport = createButton(widthPanel, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport); 
-    const btnBallJoint = createButton(widthPanel, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint);
-    const btnConnectingRod = createButton(widthPanel, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod); 
-    const btnForce = createButton(widthPanel, heightPanelElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle); 
-    const btnMoment = createButton(widthPanel, heightPanelElement, "momentBtn", "Moment", createMoment, inputCreateMoment);
-    const btnBeam2 = createButton(widthPanel, heightPanelElement, "beam2btn", "Beam", createBeam2, null);
+    const btnRollerSupport = createButton(widthPanel/2, heightPanelElement, "rollerSupportBtn", "Roller support ", createRollerSupport,null,null,null,imgApoyoDesilzante); 
+    const btnPinnedSupport = createButton(widthPanel/2, heightPanelElement, "pinnedSupportBtn", "Pinned support", createPinnedSupport,null,null,null, imgApoyo); 
+    const btnFixedSupport = createButton(widthPanel/2, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport,null,null,null, imgEmpotrado); 
+    const btnBallJoint = createButton(widthPanel/2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint,null,null,null, imgRotula);
+    const btnConnectingRod = createButton(widthPanel/2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod,null,null,null, imgBiela); 
+    const btnForce = createButton(widthPanel/2, heightPanelElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle,null,imgFuerza); 
+    const btnMoment = createButton(widthPanel/2, heightPanelElement, "momentBtn", "Moment", createMoment, inputCreateMoment,null,null, imgApMomento,null,imgFuerza);
+    const btnBeam2 = createButton(widthPanel/2, heightPanelElement, "beam2btn", "Beam", createBeam2, null,null,null,imgViga);
 
     const containerForce = createContainer([btnForce, inputCreateForceMagnitud, inputCreateForceAngle]);
     const containerCreateMoment = createContainer([btnMoment, inputCreateMoment]);
@@ -824,7 +846,7 @@ function createPanel(x0, y0) {
     topOfPanel.style.backgroundColor = colorPanel;
     topOfPanel.style.border = "2px";
     topOfPanel.style.borderBlockColor = "black";
-    topOfPanel.innerText = "Panel ";
+    topOfPanel.innerText = "Elementos ";
     topOfPanel.align = "center";
 
     panel.appendChild(topOfPanel);
@@ -1203,11 +1225,11 @@ function delElement() {
     panel.style.visibility = "hidden";
 }
 
-
 function createDelPanel(x0=0, y0=0) {
-    const widthPanel = 150;
-    const heightPanel = 60;
+    const widthPanel = 120;
+    const heightPanel = 30;
     const colorPanel = "#DDDDDD";
+    const imgDelete = "url(fotos/delete.png)";
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
@@ -1221,7 +1243,8 @@ function createDelPanel(x0=0, y0=0) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement);
+    //const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "eliminar", delElement,null,null,null,imgDelete);
+    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement,null,null,null,imgDelete);
 
     panel.appendChild(deleteElementBtn);
 

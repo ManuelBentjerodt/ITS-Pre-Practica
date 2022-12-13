@@ -18,7 +18,7 @@ generateGrid(layer);
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
 const divKonvaContainer = document.querySelector("#container");
 
-const panel = createPanel(400, 80);
+const panel = createPanel(250, 80);
 const delPanel = createDelPanel(0,0);
 
 divKonvaContainer.appendChild(panel);
