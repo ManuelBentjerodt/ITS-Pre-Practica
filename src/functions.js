@@ -626,11 +626,26 @@ function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForP
         group.setAttr("id", konvaElement.getAttr("id"))    
     }
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
+    // panel.style.visibility = "hidden";
+    // delPanel.style.visibility = "hidden";
+    //modal.style.visibility = "visible";
 
     return group;
 }
+
+function createButtonModalForce(){
+    modalForce.style.visibility = "visible";
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+}
+function createButtonModalMoment(){
+    modalMoment.style.visibility = "visible";
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+}
+
+
+
 
 function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forFixedSupport=false) {
     let x0lastPos = lastBeamNodeClick.x
@@ -703,6 +718,7 @@ function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forFi
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
+    modalMoment.style.visibility = "hidden";
     // updateEquations();
     // updateScorePanel();
     return group;
@@ -829,8 +845,8 @@ function createPanel(x0, y0) {
     const btnFixedSupport = createButton(widthPanel/2, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport,null,null,null, imgFixedSupport); 
     const btnBallJoint = createButton(widthPanel/2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint,null,null,null, imgBallJoint);
     const btnConnectingRod = createButton(widthPanel/2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod,null,null,null, imgConnectingRod); 
-    const btnForce = createButton(widthPanel/2, heightPanelElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle,null,imgForce); 
-    const btnMoment = createButton(widthPanel/2, heightPanelElement, "momentBtn", "Moment", createMoment, inputCreateMoment,null,null, imgMoment,null,imgForce);
+    const btnForce = createButton(widthPanel/2, heightPanelElement, "forceBtn", "Force", createButtonModalForce, inputCreateForceMagnitud, inputCreateForceAngle,null,imgForce); 
+    const btnMoment = createButton(widthPanel/2, heightPanelElement, "momentBtn", "Moment", createButtonModalMoment, inputCreateMoment,null,null, imgMoment,null,imgForce);
     const btnBeam2 = createButton(widthPanel/2, heightPanelElement, "beam2btn", "Beam", createBeam2, null,null,null,imgBeam);
 
     const containerForce = createContainer([btnForce, inputCreateForceMagnitud, inputCreateForceAngle]);
@@ -1016,6 +1032,13 @@ function listenCreateElement() {
 }
 
 
+
+
+
+
+
+
+
 function destroyAttachedKonvaElements(node){
     if(node.konvaObjects.beam) node.konvaObjects.beam.destroy();
     if(node.konvaObjects.shadowBeam) node.konvaObjects.shadowBeam.destroy();
@@ -1100,6 +1123,8 @@ function listenHiddePanels() {
     stage.on("click", () => {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
+        modalForce.style.visibility = "hidden";
+        modalMoment.style.visibility = "hidden";
     });
 }
 
@@ -1608,3 +1633,105 @@ function generateGrid(layer){
         }));
     }
 }
+
+
+
+function createModalForce(x0,y0){
+   
+    const widthModal = 120;
+    const heightModal = 70;
+
+    const colorModal = "#DDDDDD";
+
+    const heightModalElement = heightModal / 5;
+
+    const modal = document.createElement("div");
+    modal.style.position = "absolute";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
+    modal.style.top = divKonvaContainer.getBoundingClientRect().left + y0 +"px";
+    modal.style.width = widthModal + "px";
+    modal.style.height = heightModal +"px";
+    modal.style.backgroundColor = colorModal;
+    modal.style.borderColor = "black";
+    modal.style.border = "40px";
+    modal.style.visibility = "hidden";
+    modal.style.zIndex = "1000";
+    
+    const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
+    const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
+
+    const btnForce = createButton(widthModal/2, heightModalElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle); 
+
+    const containerForce = createContainer([inputCreateForceMagnitud, inputCreateForceAngle]);
+
+
+
+    const topOfModal = document.createElement("div");
+    topOfModal.style.width = widthModal;
+    topOfModal.style.height = heightModalElement;
+    topOfModal.style.backgroundColor = colorModal;
+    topOfModal.style.border = "2px";
+    topOfModal.style.borderBlockColor = "black";
+    topOfModal.innerText = "Fuerza";
+    topOfModal.align = "center";
+
+    btnForce.innerText = "Crear";
+    modal.appendChild(topOfModal);
+    modal.appendChild(containerForce);
+    modal.appendChild(btnForce);
+
+    // modal.appendChild(containerCreateMoment);
+
+    return modal;
+    
+}
+
+function createModalMoment(x0,y0){
+   
+    const widthModal = 120;
+    const heightModal = 70;
+
+    const colorModal = "#DDDDDD";
+
+    const heightModalElement = heightModal / 5;
+
+    const modal = document.createElement("div");
+    modal.style.position = "absolute";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
+    modal.style.top = divKonvaContainer.getBoundingClientRect().left + y0 +"px";
+    modal.style.width = widthModal + "px";
+    modal.style.height = heightModal +"px";
+    modal.style.backgroundColor = colorModal;
+    modal.style.borderColor = "black";
+    modal.style.border = "40px";
+    modal.style.visibility = "hidden";
+    modal.style.zIndex = "1000";
+    
+    const inputCreateMoment = createInputMagnitud("input-create-moment", widthModal*2, heightModalElement); // width panel*2
+
+    const btnMoment = createButton(widthModal/2, heightModalElement, "momentBtn", "Moment", createMoment, inputCreateMoment);
+
+    const containerForce = createContainer([inputCreateMoment]);
+
+
+
+    const topOfModal = document.createElement("div");
+    topOfModal.style.width = widthModal;
+    topOfModal.style.height = heightModalElement;
+    topOfModal.style.backgroundColor = colorModal;
+    topOfModal.style.border = "2px";
+    topOfModal.style.borderBlockColor = "black";
+    topOfModal.innerText = "Momento";
+    topOfModal.align = "center";
+
+    btnMoment.innerText = "Crear";
+    modal.appendChild(topOfModal);
+    modal.appendChild(containerForce);
+    modal.appendChild(btnMoment);
+
+    // modal.appendChild(containerCreateMoment);
+
+    return modal;
+    
+}
+
