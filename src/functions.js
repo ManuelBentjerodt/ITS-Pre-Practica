@@ -57,7 +57,7 @@ function newBeam(x0, y0, x1, y1, nameBeam="beam") { //parte en el punto (x0, y0)
         name: "subelementBeamCirculo1",
         x: x0,
         y: y0,
-        radius: 5,
+        radius: nodeRadius,
         fill: colorCircle,
         draggable: dragg,
         id: idByDate + 2
@@ -67,7 +67,7 @@ function newBeam(x0, y0, x1, y1, nameBeam="beam") { //parte en el punto (x0, y0)
         name: "subelementBeamCirculo2",
         x: x0 + x1,
         y: y0 + y1,
-        radius: 5,
+        radius: nodeRadius,
         fill: "red",
         draggable: true,
         id: idByDate + 3
@@ -323,22 +323,22 @@ function createFixedSupport(shadow=false) {
     const x0 = lastBeamNodeClick.x;
     const y0 = lastBeamNodeClick.y;
     const large = blockSnapSize;
-
+    const strokeVal = 5;
 
     const group = new Konva.Group({id: idKonvaElement, name: "fixedSupport", x: x0, y: y0});
     const base = new Konva.Line({
         name: "subelement FixedSupport",
         x: 0,
-        y: nodeRadius+2,
+        y: nodeRadius + strokeVal/2,
         points: [-large/2, 0, large/2, 0],
         strokeWidth: 5,
         stroke: colorStroke
     });
 
-    const l1 = new Konva.Line({name: "subelement FixedSupport", x: -large/2, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l2 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 12.5, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l3 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 25, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    //const l4 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 +37.5, y: nodeRadius, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l1 = new Konva.Line({name: "subelement FixedSupport", x: -large/2, y: nodeRadius + strokeVal/2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l2 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 12.5, y: nodeRadius + strokeVal/2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l3 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 25, y: nodeRadius + strokeVal/2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    //const l4 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 +37.5, y: nodeRadius + strokeVal/2points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
     
     group.add(base, l1, l2, l3);
 
@@ -376,12 +376,13 @@ function createRollerSupport() {
     const x0 = lastBeamNodeClick.x
     const y0 = lastBeamNodeClick.y
     const large = 20; //blockSnapSize / 2;
+    const strokeVal = 4;
 
     const group = new Konva.Group({id: idKonvaElement, name: "rollerSupport", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({    
         name: "subelement RollerSupport",
         x: 0,
-        y: 0 + large + 2*nodeRadius - 1,
+        y: large + nodeRadius + strokeVal,
         sides: 3,
         radius: large,
         fill: "#00D2FF",
@@ -392,7 +393,7 @@ function createRollerSupport() {
     const base = new Konva.Line({
         name: "subelement RollerSupport",
         x: 0,
-        y: 0 + 2*large + 2*nodeRadius - 1,
+        y: 2*large + nodeRadius + strokeVal,
         points: [-large, 0, large, 0],
         strokeWidth: 5,
         stroke: "black",
@@ -432,17 +433,18 @@ function createPinnedSupport() {
     const x0 = lastBeamNodeClick.x
     const y0 = lastBeamNodeClick.y
     const large = 20; //blockSnapSize / 2;
+    const strokeVal = 4;
 
     const group = new Konva.Group({id: idKonvaElement, name: "pinnedSupport", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({
         name: "subelement PinnedSupport",
         x: 0,
-        y: 0 + large + 2*nodeRadius - 1,
+        y: large + nodeRadius + strokeVal,
         sides: 3,
         radius: large,
         fill: "#00F210",
         stroke: "black",
-        strokeWidth: 4,
+        strokeWidth: strokeVal,
     });
 
     group.add(triangle);
@@ -480,7 +482,7 @@ function createBallJoint() {
     const circle = new Konva.Circle({
         x: 0,
         y: 0,
-        radius: 8,
+        radius: nodeRadius*1.5,
         fill: "yellow",
         stroke: "black",
         strokeWidth: 4,
@@ -532,7 +534,7 @@ function createConnectingRod() {
         name: "subelement ConnectingRod",
         x: 0,
         y: 0,
-        radius: 7,
+        radius: nodeRadius*1.5,
         fill: "yellow",
         stroke: "black",
         strokeWidth: 4,
@@ -577,6 +579,8 @@ function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForP
     let txt = magnitud + " N" + ", " + angle + " °";
 
     const large = blockSnapSize * 2;
+    const strokeVal = 4;
+
     const lx = large * Math.cos(angle * Math.PI / 180)
     const ly = large * Math.sin(degToRad(angle))
 
@@ -589,14 +593,14 @@ function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForP
   
     const group = new Konva.Group({tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos});
     const arrow = new Konva.Arrow({
-        x: 2*nodeRadius*Math.cos(degToRad(angle)),
-        y: -2*nodeRadius*Math.sin(degToRad(angle)),
+        x: (nodeRadius + strokeVal)*Math.cos(degToRad(angle)),
+        y: -(nodeRadius + strokeVal)*Math.sin(degToRad(angle)),
         points: [lx, -ly, 0, 0],
         pointerLength: 15,
         pointerWidth: 15,
         fill: color,
         stroke: color,
-        strokeWidth: 4
+        strokeWidth: strokeVal
     });
 
     const magnitudValue = new Konva.Text({
