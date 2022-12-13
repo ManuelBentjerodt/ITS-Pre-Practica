@@ -21,12 +21,16 @@ const divKonvaContainer = document.querySelector("#container");
 const panel = createPanel(250, 80);
 const delPanel = createDelPanel(0,0);
 
+const modal = createModal(250, 80); // NUEVO
+
 divKonvaContainer.appendChild(panel);
 divKonvaContainer.appendChild(delPanel);
+divKonvaContainer.appendChild(modal);
 
 listenPanelMovement(panel);
 listenPanelMovement(delPanel);
 
+listenPanelMovement(modal); // NUEVO
 //------------------------------------------------------elements dcl-----------------------------------------------//
 const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null;
