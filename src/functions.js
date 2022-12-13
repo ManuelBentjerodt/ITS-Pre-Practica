@@ -827,14 +827,14 @@ function createPanel(x0, y0) {
     const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel*2, heightPanelElement); // *2 porque en la funcion input se divide por 4 y porque 
 
 
-    const imgApoyoDesilzante = "url(apoyodeslizante.png)"
-    const imgApoyo = "url(apoyo.png)"
-    const imgBiela = "url(biela.png)"
-    const imgRotula= "url(rotula.png)"
-    const imgApMomento = "url(momento.png)"
-    const imgFuerza = "url(fuerza.png)"
-    const imgEmpotrado = "url(empotrado.png)"
-    const imgViga = "url(vigaFoto.png)"
+    const imgApoyoDesilzante = "url(fotos/apoyodeslizante.png)"
+    const imgApoyo = "url(fotos/apoyo.png)"
+    const imgBiela = "url(fotos/biela.png)"
+    const imgRotula= "url(fotos/rotula.png)"
+    const imgApMomento = "url(fotos/momento.png)"
+    const imgFuerza = "url(fotos/fuerza.png)"
+    const imgEmpotrado = "url(fotos/empotrado.png)"
+    const imgViga = "url(fotos/vigaFoto.png)"
     // const imgDelete = "url(delete.png)" usado en otra funcion de delete
 
     const btnViga = createButton(widthPanel/2, heightPanelElement, "vigaBtn", "Viga", createViga, null);
@@ -1256,7 +1256,7 @@ function createDelPanel(x0=0, y0=0) {
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
-    const imgDelete = "url(delete.png)";
+    const imgDelete = "url(fotos/delete.png)";
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
