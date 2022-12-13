@@ -1,6 +1,5 @@
 const resolvingTask = false;
 //------------------------------------------------------Creacion canvas-----------------------------------------------//
-
 const stage = new Konva.Stage({
     name: "stage",
     container: "container",
@@ -14,27 +13,9 @@ const layer = new Konva.Layer({name: "layer"});
 stage.add(layer);
 
 //------------------------------------------------------Creacion grilla-----------------------------------------------//
-for (let i = 0; i <= widthStage / blockSnapSize; i++) {
-    layer.add(new Konva.Line({
-        name: "horizontalLines",
-        points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, heightStage],
-        stroke: "#777777",
-        strokeWidth: 1,
-    }));
-}
+generateGrid(layer);
 
-
-for (let j = 0; j <= heightStage / blockSnapSize; j++) {
-    layer.add(new Konva.Line({
-        name: "verticalLines",
-        points: [0, Math.round(j * blockSnapSize), widthStage, Math.round(j * blockSnapSize)],
-        stroke: "#7777777",
-        strokeWidth: 0.5,
-    }));
-}
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
-
-
 const divKonvaContainer = document.querySelector("#container");
 
 const panel = createPanel(250, 80);
@@ -46,26 +27,23 @@ divKonvaContainer.appendChild(delPanel);
 listenPanelMovement(panel);
 listenPanelMovement(delPanel);
 
-//------------------------------------------------------Elementos dcl-----------------------------------------------//
-const lastVigaNodeClick = {x: 0, y: 0};
-let lastNodeClick = null
+//------------------------------------------------------elements dcl-----------------------------------------------//
+const lastBeamNodeClick = {x: 0, y: 0};
+let lastNodeClick = null;
 let lastElementClick = undefined;
 
-const [dcl, group] = createViga(nameViga="initialViga"); // initialViga no puede ser destruida
-const shadowLine = createShadowViga(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialViga");
+const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
+const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
 shadowLine.hide();
-listenNodeMovement(group, shadowLine, "initialViga")
 
-// console.log(generateJSON(dcl))
-
-
-
-
+//------------------------------------------------------Eventos usuario-----------------------------------------------//
+listenNodeMovement(group, shadowLine, "initialBeam");
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
-replaceApoyos();
-// listenSave();
+
+replaceSupports();
+
 
 
 

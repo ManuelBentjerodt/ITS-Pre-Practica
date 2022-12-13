@@ -1,5 +1,5 @@
-let countEmpotrado = 0;
-let countApoyoDeslizante = 0;
+let countFixedSupport = 0;
+let countRollerSupport = 0;
 let countpoyoNoDeslizante = 0;
 
 const blockSnapSize = 40;

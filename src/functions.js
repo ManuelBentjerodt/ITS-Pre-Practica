@@ -1,7 +1,7 @@
-function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
+function createShadowBeam(x0, y0, x1, y1, nameShadow="shadow-beam") {
     const group = new Konva.Group({name: nameShadow});
     const line = new Konva.Line({
-        name: "subElementoViga",
+        name: "subelementBeam",
         x: x0,
         y: y0,
         points: [0, 0, x1, y1],
@@ -11,7 +11,7 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
     });
 
     const circle1 = new Konva.Circle({
-        name: "subElementoViga",
+        name: "subelementBeam",
         x: x0,
         y: y0,
         radius: nodeRadius,
@@ -20,7 +20,7 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
     });
 
     const circle2 = circle1.clone({
-        name: "subElementoViga",
+        name: "subelementBeam",
         x: x0+(x1),
         y: y0+(y1)
     });
@@ -32,19 +32,19 @@ function createShadowViga(x0, y0, x1, y1, nameShadow="shadow-viga") {
 }
 
 
-//------------------------------------------------------Viga-----------------------------------------------//
+//------------------------------------------------------Beam-----------------------------------------------//
 
-function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
+function newBeam(x0, y0, x1, y1, nameBeam="beam") { //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
     let colorCircle = "red";
     let dragg = true;
-    if(nameViga == "initialViga") {
+    if(nameBeam == "initialBeam") {
         colorCircle = "green";
         // dragg = false;
     }
     const idByDate = Date.now();
-    const group = new Konva.Group({draggable: false, name: nameViga, id: idByDate});
+    const group = new Konva.Group({draggable: false, name: nameBeam, id: idByDate});
     const line = new Konva.Line({
-        name: "subElementoVigaLinea",
+        name: "subelementBeamLine",
         x: x0,
         y: y0,
         points: [0, 0, x1, y1],
@@ -54,7 +54,7 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
     });
 
     const circle1 = new Konva.Circle({
-        name: "subElementoVigaCirculo1",
+        name: "subelementBeamCirculo1",
         x: x0,
         y: y0,
         radius: 5,
@@ -64,7 +64,7 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
     });
 
     const circle2 = new Konva.Circle({
-        name: "subElementoVigaCirculo2",
+        name: "subelementBeamCirculo2",
         x: x0 + x1,
         y: y0 + y1,
         radius: 5,
@@ -82,133 +82,124 @@ function newViga(x0, y0, x1, y1, nameViga="viga") { //parte en el punto (x0, y0)
     return group;
 }
 
-function createViga(nameViga="viga") {
-    let x0 = lastVigaNodeClick.x
-    let y0 = lastVigaNodeClick.y
+function createBeam(nameBeam="beam") {
+    let x0 = lastBeamNodeClick.x
+    let y0 = lastBeamNodeClick.y
     const x1 = blockSnapSize * 3;
     const y1 = 0;
 
-    let nameShadow = "shadow-viga";
-    if (nameViga == "initialViga") {
+    if (nameBeam == "initialBeam") {
         x0 = blockSnapSize * 8;
         y0 = blockSnapSize * 8;
-        nameShadow = "shadow-initialViga"
     }
 
-    const line = newViga(x0, y0, x1, y1, nameViga);
-    // const shadowLine = createShadowViga(x0, y0, x1, y1, nameShadow);
-    // shadowLine.hide();
-
+    const line = newBeam(x0, y0, x1, y1, nameBeam);
     layer.add(line);
-   
-    const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"))
-    const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"))
-    originNode.konvaObjects.circle = line.getChildren()[1];
-    secondNode.konvaObjects.circle = line.getChildren()[2];
-    secondNode.setKonvaViga(line)
-    joinNodes(originNode, secondNode)
 
-    
-    // listenNodeMovement(line, shadowLine, "initialViga")
+    const originNode = new Node([x0, y0], id=line.getChildren()[1].getAttr("id"));
+    const secondNode = new Node([x0, y0], id=line.getChildren()[2].getAttr("id"));
+
+    originNode.setKonvaCircle(line.getChildren()[1]);
+    secondNode.setKonvaCircle(line.getChildren()[2]);
+    secondNode.setKonvaBeam(line);
+
+    joinNodes(originNode, secondNode);
+
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveVigasToTop();
     
     return [originNode, line];
 }
 
-function createViga2() {
+function createBeam2() {
     const konvaElement = lastNodeClick;
     const [x0, y0] = getElementPos(konvaElement);
 
     const idByDate = Date.now();
-
-    const group = new Konva.Group({name: "viga2", id: idByDate});
+    
+    const group = new Konva.Group({name: "beam2", id: idByDate});
     const line = new Konva.Line({
-        name: "subElementoVigaLinea",
+        name: "subelementBeamLine",
         x: x0,
         y: y0,
-        points: [0, 0, 3*blockSnapSize, 0],
+        points: [nodeRadius, 0, 3*blockSnapSize, 0],
         strokeWidth: 5,
         stroke: "black",
         id: idByDate + 1
     });
 
     const circle = new Konva.Circle({
-        name: "subElementoVigaCirculo",
-        x: x0+3*blockSnapSize, // se crea al final de la viga
+        name: "subelementBeamCirculo",
+        x: x0+3*blockSnapSize,
         y: y0,
-        radius: 7,
+        radius: nodeRadius,
         fill: "red",
         draggable: true,
         id: idByDate + 2
     });
- 
+
     group.add(line, circle)
-   
+
     paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
     paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
-    // paintIfMouseOver(line)
 
-    const shadowLine = createShadowViga(x0, y0, 3*blockSnapSize, 0, "shadowViga2");
-    shadowLine.hide()
+    const shadowLine = createShadowBeam(x0, y0, 3*blockSnapSize, 0, "shadowBeam2");
+    shadowLine.hide();
 
-    layer.add(group, shadowLine)
+    layer.add(group, shadowLine);
 
     const node = new Node([x0, y0], id=circle.getAttr("id"));
     const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
-    node.setKonvaViga(group)
-    node.konvaObjects.shadowViga = shadowLine
-    // nodeParent.konvaObjects.shadowViga = shadowLine
-    node.konvaObjects.circle = circle;
+
+    node.setKonvaBeam(group);
+    node.setKonvaShadowBeam(shadowLine);
+    node.setKonvaCircle(circle);
+
     joinNodes(nodeParent, node)
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     
-    listenNodeMovement(group, shadowLine, "viga2")
-    moveVigasToTop();
+    listenNodeMovement(group, shadowLine, "beam2");
 
     return group;
 }
 
 function moveElementsAttached(element, newPosition){
-    if (element.konvaObjects.vinculo){
-        element.konvaObjects.vinculo.position(newPosition);
+    if (element.konvaObjects.link){
+        element.konvaObjects.link.position(newPosition);
     }
-    if (element.konvaObjects.fuerzas.length){
-        element.konvaObjects.fuerzas.forEach(fuerza => {
-            fuerza.position(newPosition);
+    if (element.konvaObjects.forces.length){
+        element.konvaObjects.forces.forEach(force => {
+            force.position(newPosition);
         })   
     }
-    if (element.konvaObjects.momentos.length){
-        element.konvaObjects.momentos.forEach(momento => {
-            momento.position(newPosition);
+    if (element.konvaObjects.moments.length){
+        element.konvaObjects.moments.forEach(moment => {
+            moment.position(newPosition);
         })   
     }
 }
-function listenNodeMovement(konvaViga, shadow, typeOfViga){
+function listenNodeMovement(konvaBeam, shadow, typeOfBeam){
     let shadowList;
-    let vigaLine;
-    let vigaCircle;
+    let beamLine;
+    let beamCircle;
     let otherCircle;
 
-    if (typeOfViga === "viga2"){
+    if (typeOfBeam === "beam2"){
         shadowList = shadow.getChildren();
-        vigaLine = konvaViga.getChildren()[0];
-        vigaCircle = konvaViga.getChildren()[1];
-        otherCircle = dcl.findNodeById(vigaCircle.getAttr("id")).parent.konvaObjects.circle;
+        beamLine = konvaBeam.getChildren()[0];
+        beamCircle = konvaBeam.getChildren()[1];
+        otherCircle = dcl.findNodeById(beamCircle.getAttr("id")).parent.konvaObjects.circle;
 
     } else {
         shadowList = shadow.getChildren();
-        vigaLine = konvaViga.getChildren()[0];
-        vigaCircle = konvaViga.getChildren()[2];
-        otherCircle = konvaViga.getChildren()[1];
+        beamLine = konvaBeam.getChildren()[0];
+        beamCircle = konvaBeam.getChildren()[2];
+        otherCircle = konvaBeam.getChildren()[1];
     }
 
-
-    const nodeVigaCircle = dcl.findNodeById(vigaCircle.getAttr("id"));
+    const nodeBeamCircle = dcl.findNodeById(beamCircle.getAttr("id"));
     const nodeOtherCircle = dcl.findNodeById(otherCircle.getAttr("id"));
 
     otherCircle.on("dragstart", () => {
@@ -218,11 +209,15 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
 
     otherCircle.on("dragmove", () => {
         const circle1Pos = otherCircle.getPosition();
-        const circle2Pos = vigaCircle.getPosition();
+        const circle2Pos = beamCircle.getPosition();
         const shadowCircle1Pos = shadowList[1].getPosition();
+        
+        const newX = shadowCircle1Pos.x - circle2Pos.x
+        const newY = shadowCircle1Pos.y - circle2Pos.y
+        const angle = Math.atan2(newY, newX);
 
-        vigaLine.position(circle1Pos);
-        vigaLine.points([0, 0, circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
+        beamLine.position(circle1Pos);
+        beamLine.points([-nodeRadius * Math.cos(angle), -nodeRadius * Math.sin(angle), circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
 
         otherCircle.position({x: circle1Pos.x, y: circle1Pos.y});
         shadowList[1].position({
@@ -231,20 +226,21 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
         });
 
         shadowList[0].position(circle2Pos);
-        shadowList[0].points([0, 0, shadowCircle1Pos.x - circle2Pos.x, shadowCircle1Pos.y - circle2Pos.y]);
+        shadowList[0].points([0, 0, newX, newY]);
        
         moveElementsAttached(nodeOtherCircle, otherCircle.position());
     })
 
     otherCircle.on("dragend", () => {
-        const circle2Pos = vigaCircle.getPosition();
+        const circle2Pos = beamCircle.getPosition();
         const shadowCircle1Pos = shadowList[1].getPosition();
 
         const newX = circle2Pos.x - shadowCircle1Pos.x;
         const newY = circle2Pos.y - shadowCircle1Pos.y;
+        const angle = Math.atan2(newY, newX);
 
-        vigaLine.position(shadowCircle1Pos);
-        vigaLine.points([0, 0, newX, newY]);
+        beamLine.position(shadowCircle1Pos);
+        beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), newX, newY]);
         otherCircle.position({
             x: shadowCircle1Pos.x,
             y: shadowCircle1Pos.y
@@ -252,57 +248,59 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
 
         const newNodePos = [shadowCircle1Pos.x, shadowCircle1Pos.y];
         dcl.findNodeById(otherCircle.getAttr("id")).setCoordinate(newNodePos);
-        shadowList[0].position(vigaLine.position());
+        shadowList[0].position(beamLine.position());
         shadow.hide();
 
         moveElementsAttached(nodeOtherCircle, otherCircle.position());
         
     });
 
-    vigaCircle.on("dragstart", () => {
+    beamCircle.on("dragstart", () => {
         shadow.show();
         shadow.moveToTop();
         
     });
 
-    vigaCircle.on("dragmove", () => {
-        const linePos = vigaLine.getPosition();
-        const circle2Pos = vigaCircle.getPosition();
+    beamCircle.on("dragmove", () => {
+        const linePos = beamLine.getPosition();
+        const circle2Pos = beamCircle.getPosition();
 
         const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
         const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+        const angle = Math.atan2(newY, newX);
 
-        vigaLine.points([0, 0, circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
+        beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
         shadowList[0].points([0, 0, newX, newY])
 
-        vigaCircle.position({x: circle2Pos.x, y: circle2Pos.y})
+        beamCircle.position({x: circle2Pos.x, y: circle2Pos.y})
         shadowList[2].position({
             x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
             y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
         });
 
-        moveElementsAttached(nodeVigaCircle, vigaCircle.position());
+        moveElementsAttached(nodeBeamCircle, beamCircle.position());
     });
 
-    vigaCircle.on("dragend", () => {
-        const linePos = vigaLine.getPosition();
-        const circle2Pos = vigaCircle.getPosition();
+    beamCircle.on("dragend", () => {
+        const linePos = beamLine.getPosition();
+        const circle2Pos = beamCircle.getPosition();
         const shadowCircle2Pos = shadowList[2].getPosition();
 
         const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
         const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+        const angle = Math.atan2(newY, newX);
 
-        vigaLine.points([0, 0, newX, newY])
-        vigaCircle.position({
+        beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), newX, newY])
+        beamCircle.position({
             x: shadowCircle2Pos.x,
             y: shadowCircle2Pos.y
         });
 
         const newNodePos = [shadowCircle2Pos.x, shadowCircle2Pos.y];
-        dcl.findNodeById(vigaCircle.getAttr("id")).setCoordinate(newNodePos);
+        dcl.findNodeById(beamCircle.getAttr("id")).setCoordinate(newNodePos);
         shadow.hide();
 
-        moveElementsAttached(nodeVigaCircle, vigaCircle.position());
+        moveElementsAttached(nodeBeamCircle, beamCircle.position());
        
     });
 }
@@ -310,10 +308,8 @@ function listenNodeMovement(konvaViga, shadow, typeOfViga){
 
 
 
-
-
-//------------------------------------------------------Vinculos externos-----------------------------------------------//
-function createEmpotrado(shadow=false) {
+//------------------------------------------------------Links externos-----------------------------------------------//
+function createFixedSupport(shadow=false) {
     let colorStroke;
     if (shadow){
         colorStroke = shadowStroke;
@@ -324,24 +320,25 @@ function createEmpotrado(shadow=false) {
     const idKonvaElement = konvaElement.getAttr("id")
     const nodeParent = dcl.findNodeById(idKonvaElement);
 
-    const x0 = lastVigaNodeClick.x;
-    const y0 = lastVigaNodeClick.y;
+    const x0 = lastBeamNodeClick.x;
+    const y0 = lastBeamNodeClick.y;
     const large = blockSnapSize;
 
-    const group = new Konva.Group({id: idKonvaElement, name: "empotrado", x: x0, y: y0});
+
+    const group = new Konva.Group({id: idKonvaElement, name: "fixedSupport", x: x0, y: y0});
     const base = new Konva.Line({
-        name: "subElemento Empotrado",
+        name: "subelement FixedSupport",
         x: 0,
-        y: 0,
+        y: nodeRadius+2,
         points: [-large/2, 0, large/2, 0],
         strokeWidth: 5,
         stroke: colorStroke
     });
 
-    const l1 = new Konva.Line({name: "subElemento Empotrado", x: -large/2, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l2 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 12.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    const l3 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 + 25, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
-    //const l4 = new Konva.Line({name: "subElemento Empotrado",x: -large/2 +37.5, y: 0, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l1 = new Konva.Line({name: "subelement FixedSupport", x: -large/2, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l2 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 12.5, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    const l3 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 + 25, y: nodeRadius+2, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
+    //const l4 = new Konva.Line({name: "subelement FixedSupport",x: -large/2 +37.5, y: nodeRadius, points: [0, 12.5, 12.5, 0], strokeWidth: 5, stroke: colorStroke});
     
     group.add(base, l1, l2, l3);
 
@@ -350,9 +347,9 @@ function createEmpotrado(shadow=false) {
     paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup=true);
     paintIfMouseOver(l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup=true);
 
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("empotrado");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("fixedSupport");
+        nodeParent.setKonvaLink(group)
    
     } else {
         panel.style.visibility = "hidden";
@@ -364,28 +361,27 @@ function createEmpotrado(shadow=false) {
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveVigasToTop();
+  
     return group;    
 }
 
 
-function createApoyoDeslizante() {
-    countApoyoDeslizante += 1;
+function createRollerSupport() {
+    countRollerSupport += 1;
     
     const konvaElement = lastNodeClick;
     const idKonvaElement = konvaElement.getAttr("id")
     const nodeParent = dcl.findNodeById(idKonvaElement);
 
-    const x0 = lastVigaNodeClick.x
-    const y0 = lastVigaNodeClick.y
+    const x0 = lastBeamNodeClick.x
+    const y0 = lastBeamNodeClick.y
     const large = 20; //blockSnapSize / 2;
 
-    const group = new Konva.Group({id: idKonvaElement, name: "apoyoDeslizante", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "rollerSupport", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({    
-        name: "subElemento ApoyoDeslizante",
+        name: "subelement RollerSupport",
         x: 0,
-        y: 0 + large,
+        y: 0 + large + 2*nodeRadius - 1,
         sides: 3,
         radius: large,
         fill: "#00D2FF",
@@ -394,9 +390,9 @@ function createApoyoDeslizante() {
     });
 
     const base = new Konva.Line({
-        name: "subElemento ApoyoDeslizante",
+        name: "subelement RollerSupport",
         x: 0,
-        y: 0 + 2*large ,
+        y: 0 + 2*large + 2*nodeRadius - 1,
         points: [-large, 0, large, 0],
         strokeWidth: 5,
         stroke: "black",
@@ -408,9 +404,9 @@ function createApoyoDeslizante() {
     paintIfMouseOver(base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup=true);
 
     
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("apoyoDeslizante");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("rollerSupport");
+        nodeParent.setKonvaLink(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
@@ -421,28 +417,27 @@ function createApoyoDeslizante() {
     
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveVigasToTop();
+
     return group;
 }
 
 
-function createApoyoNoDeslizante() {
+function createPinnedSupport() {
     countpoyoNoDeslizante += 1;
     
     const konvaElement = lastNodeClick;
     const idKonvaElement = konvaElement.getAttr("id")
     const nodeParent = dcl.findNodeById(idKonvaElement);
 
-    const x0 = lastVigaNodeClick.x
-    const y0 = lastVigaNodeClick.y
+    const x0 = lastBeamNodeClick.x
+    const y0 = lastBeamNodeClick.y
     const large = 20; //blockSnapSize / 2;
 
-    const group = new Konva.Group({id: idKonvaElement, name: "apoyoNoDeslizante", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "pinnedSupport", x: x0, y: y0});
     const triangle = new Konva.RegularPolygon({
-        name: "subElemento ApoyoNoDeslizante",
+        name: "subelement PinnedSupport",
         x: 0,
-        y: 0 + large,
+        y: 0 + large + 2*nodeRadius - 1,
         sides: 3,
         radius: large,
         fill: "#00F210",
@@ -454,9 +449,9 @@ function createApoyoNoDeslizante() {
 
     paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup=false);
 
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("apoyoNoDeslizante");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("pinnedSupport");
+        nodeParent.setKonvaLink(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
@@ -467,22 +462,21 @@ function createApoyoNoDeslizante() {
     
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveVigasToTop();
-    
+
+    return group;
 }
 
 
-//------------------------------------------------------Vinculos internos-----------------------------------------------//
-function createRotula() {
-    const x0 = lastVigaNodeClick.x
-    const y0 = lastVigaNodeClick.y
+//------------------------------------------------------Links internos-----------------------------------------------//
+function createBallJoint() {
+    const x0 = lastBeamNodeClick.x
+    const y0 = lastBeamNodeClick.y
 
     const konvaElement = lastNodeClick;
     const idKonvaElement = konvaElement.getAttr("id")
     const nodeParent = dcl.findNodeById(idKonvaElement);
 
-    const group = new Konva.Group({id: idKonvaElement, name: "rotula", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "ballJoint", x: x0, y: y0});
     const circle = new Konva.Circle({
         x: 0,
         y: 0,
@@ -490,16 +484,16 @@ function createRotula() {
         fill: "yellow",
         stroke: "black",
         strokeWidth: 4,
-        name: "subElement Rotula"
+        name: "subElement BallJoint"
     });
 
     group.add(circle);
 
     paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"), paintGroup=false);
 
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("rotula");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("ballJoint");
+        nodeParent.setKonvaLink(group)
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
@@ -510,25 +504,24 @@ function createRotula() {
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveVigasToTop();
+
     return group;
 }
 
 
-function createBiela() {
-    const x0 = lastVigaNodeClick.x
-    const y0 = lastVigaNodeClick.y
+function createConnectingRod() {
+    const x0 = lastBeamNodeClick.x
+    const y0 = lastBeamNodeClick.y
     
     const konvaElement = lastNodeClick;
     const idKonvaElement = konvaElement.getAttr("id")
     const nodeParent = dcl.findNodeById(idKonvaElement);
     
 
-    const group = new Konva.Group({id: idKonvaElement, name: "biela", x: x0, y: y0});
+    const group = new Konva.Group({id: idKonvaElement, name: "connectingRod", x: x0, y: y0});
     const large = blockSnapSize;
     const line = new Konva.Line({
-        name: "subElemento Biela",
+        name: "subelement ConnectingRod",
         x: 0,
         y: 0,
         points: [0, 0, large, 0],
@@ -536,7 +529,7 @@ function createBiela() {
         stroke: "black"
     });
     const circle1 = new Konva.Circle({
-        name: "subElemento Biela",
+        name: "subelement ConnectingRod",
         x: 0,
         y: 0,
         radius: 7,
@@ -555,9 +548,9 @@ function createBiela() {
     paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"), paintGroup=true);
     paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"), paintGroup=true);
     
-    if(nodeParent.vinculo === null) {
-        nodeParent.setVinculo("biela");
-        nodeParent.setKonvaVinculo(group)
+    if(nodeParent.link === null) {
+        nodeParent.setLink("connectingRod");
+        nodeParent.setKonvaLink(group)
 
     } else {
         panel.style.visibility = "hidden";
@@ -569,16 +562,15 @@ function createBiela() {
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateAll();
-    moveVigasToTop();
+
     return group
 }
 
 
-//------------------------------------------------------Fuerzas y momentos-----------------------------------------------//
-function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForPaint=layer, aux="aux") {
-    let x0lastPos = lastVigaNodeClick.x
-    let y0lasPos = lastVigaNodeClick.y
+//------------------------------------------------------Forces y moments-----------------------------------------------//
+function createForce(valMagnitud, valAngle, color="black", x0=0, y0=0, layerForPaint=layer, aux="aux") {
+    let x0lastPos = lastBeamNodeClick.x
+    let y0lasPos = lastBeamNodeClick.y
     
     let magnitud = valMagnitud;
     let angle = valAngle;
@@ -586,18 +578,19 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
 
     const large = blockSnapSize * 2;
     const lx = large * Math.cos(angle * Math.PI / 180)
-    const ly = large * Math.sin(angle * Math.PI / 180)
+    const ly = large * Math.sin(degToRad(angle))
 
     if (color != "black") {
         x0lastPos = x0;
         y0lasPos = y0;
         txt = valMagnitud
     }
+    degToRad
   
-    const group = new Konva.Group({tension: [magnitud, angle], name: "fuerza", x: x0lastPos, y: y0lasPos});
+    const group = new Konva.Group({tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos});
     const arrow = new Konva.Arrow({
-        x: 0,
-        y: 0,
+        x: 2*nodeRadius*Math.cos(degToRad(angle)),
+        y: -2*nodeRadius*Math.sin(degToRad(angle)),
         points: [lx, -ly, 0, 0],
         pointerLength: 15,
         pointerWidth: 15,
@@ -624,24 +617,20 @@ function createFuerza(valMagnitud, valAngle, color="black", x0=0, y0=0, layerFor
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addFuerza(parseFloat(magnitud), parseFloat(angle));
-        nodeParent.addKonvaFuerza(group)
+        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
+        nodeParent.addKonvaForce(group)
         group.setAttr("id", konvaElement.getAttr("id"))    
     }
 
-    // layer.add(group);
-
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateEquations();
-    // updateScorePanel();
-    moveVigasToTop();
+
     return group;
 }
 
-function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forEmpotrado=false) {
-    let x0lastPos = lastVigaNodeClick.x
-    let y0lastPos = lastVigaNodeClick.y
+function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forFixedSupport=false) {
+    let x0lastPos = lastBeamNodeClick.x
+    let y0lastPos = lastBeamNodeClick.y
 
     let magnitud = val;
     let txt = magnitud + " Nm";
@@ -667,11 +656,11 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
             y0lastPos = y0;
             listOfPoints = positiveList;
         }
-    
+        return;
     }
 
 
-    const group = new Konva.Group({name: "momento", tension: magnitud, x: x0lastPos, y: y0lastPos});
+    const group = new Konva.Group({name: "moment", tension: magnitud, x: x0lastPos, y: y0lastPos});
     const arrow = new Konva.Arrow({
         x: 0,
         y: 0,
@@ -681,7 +670,7 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
         fill: color,
         stroke: color,
         strokeWidth: 4,
-        name: "subElemento",
+        name: "subelement",
     });
 
     const magnitudValue = new Konva.Text({
@@ -701,8 +690,8 @@ function createMomento(val, color="black", x0=0, y0=0, layerForPaint=layer, forE
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addMomento(parseFloat(magnitud)); 
-        nodeParent.addKonvaMomento(group);
+        nodeParent.addMoment(parseFloat(magnitud)); 
+        nodeParent.addKonvaMoment(group);
         group.setAttr("id", konvaElement.getAttr("id"));
     }
 
@@ -743,11 +732,11 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction
     // btn.innerText = btnText;
     btn.addEventListener("dblclick", () => {
 
-        if (idNameText == "vigaBtn") {
+        if (idNameText == "beamBtn") {
             execFunction();
-        } else if (idNameText == "fuerzaBtn") {
+        } else if (idNameText == "forceBtn") {
             execFunction(valMagnitud.value, valAngle.value);
-        } else if(idNameText == "momentoBtn") {
+        } else if(idNameText == "momentBtn") {
             execFunction(valMagnitud.value)
         } else if(idNameText == "deleteElementBtn") {
             execFunction(element);
@@ -821,8 +810,8 @@ function createPanel(x0, y0) {
     
     // panel.style.visibility = "visible";
 
-    const inputCreateFuerzaMagnitud = createInputMagnitud("input-create-fuerza", widthPanel, heightPanelElement);
-    const inputCreateFuerzaAngle = createInputAngle("input-create-fuerza-angle", widthPanel, heightPanelElement);
+    const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthPanel, heightPanelElement);
+    const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthPanel, heightPanelElement);
 
     const inputCreateMomento = createInputMagnitud("input-create-momento", widthPanel*2, heightPanelElement); // *2 porque en la funcion input se divide por 4 y porque 
 
@@ -835,20 +824,21 @@ function createPanel(x0, y0) {
     const imgFuerza = "url(fotos/fuerza.png)"
     const imgEmpotrado = "url(fotos/empotrado.png)"
     const imgViga = "url(fotos/vigaFoto.png)"
-    // const imgDelete = "url(delete.png)" usado en otra funcion de delete
 
-    const btnViga = createButton(widthPanel/2, heightPanelElement, "vigaBtn", "Viga", createViga, null);
-    const btnApoyoDeslizante = createButton(widthPanel/2, heightPanelElement, "apoyoDeslizanteBtn", "Apoyo deslizante", createApoyoDeslizante,null,null,null,imgApoyoDesilzante ); 
-    const btnApoyoNoDeslizante = createButton(widthPanel/2, heightPanelElement, "apoyoNoDeslizanteBtn", "Apoyo no deslizante", createApoyoNoDeslizante,null,null,null, imgApoyo); 
-    const btnEmpotrado = createButton(widthPanel/2, heightPanelElement, "empotradoBtn", "Empotrado", createEmpotrado,null,null,null, imgEmpotrado); 
-    const btnRotula = createButton(widthPanel/2, heightPanelElement, "rotulaBtn", "Rotula", createRotula,null,null,null, imgRotula);
-    const btnBiela = createButton(widthPanel/2, heightPanelElement, "bielaBtn", "Biela", createBiela,null,null,null, imgBiela); 
-    const btnFuerza = createButton(widthPanel/2, heightPanelElement, "fuerzaBtn", "Fuerza", createFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle,null,imgFuerza); 
-    const btnMomento = createButton(widthPanel/2, heightPanelElement, "momentoBtn", "Momento", createMomento, inputCreateMomento,null,null, imgApMomento);
-    const btnViga2 = createButton(widthPanel/2, heightPanelElement, "viga2btn", "Viga", createViga2, null,null,null,imgViga);
+    const inputCreateMoment = createInputMagnitud("input-create-moment", widthPanel*2, heightPanelElement); // width panel*2
 
-    const containerFuerza = createContainer([btnFuerza, inputCreateFuerzaMagnitud, inputCreateFuerzaAngle]);
-    const containerCreateMomento = createContainer([btnMomento, inputCreateMomento]);
+    // const btnBeam = createButton(widthPanel, heightPanelElement, "beamBtn", "Beam", createBeam, null);
+    const btnRollerSupport = createButton(widthPanel/2, heightPanelElement, "rollerSupportBtn", "Roller support ", createRollerSupport,null,null,null,imgApoyoDesilzante); 
+    const btnPinnedSupport = createButton(widthPanel/2, heightPanelElement, "pinnedSupportBtn", "Pinned support", createPinnedSupport,null,null,null, imgApoyo); 
+    const btnFixedSupport = createButton(widthPanel/2, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport,null,null,null, imgEmpotrado); 
+    const btnBallJoint = createButton(widthPanel/2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint,null,null,null, imgRotula);
+    const btnConnectingRod = createButton(widthPanel/2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod,null,null,null, imgBiela); 
+    const btnForce = createButton(widthPanel/2, heightPanelElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle,null,imgFuerza); 
+    const btnMoment = createButton(widthPanel/2, heightPanelElement, "momentBtn", "Moment", createMoment, inputCreateMoment,null,null, imgApMomento,null,imgFuerza);
+    const btnBeam2 = createButton(widthPanel/2, heightPanelElement, "beam2btn", "Beam", createBeam2, null,null,null,imgViga);
+
+    const containerForce = createContainer([btnForce, inputCreateForceMagnitud, inputCreateForceAngle]);
+    const containerCreateMoment = createContainer([btnMoment, inputCreateMoment]);
 
     const topOfPanel = document.createElement("div");
     topOfPanel.style.width = widthPanel;
@@ -860,15 +850,15 @@ function createPanel(x0, y0) {
     topOfPanel.align = "center";
 
     panel.appendChild(topOfPanel);
-    // panel.appendChild(btnViga);
-    panel.appendChild(btnViga2)
-    panel.appendChild(btnApoyoDeslizante);
-    panel.appendChild(btnApoyoNoDeslizante)
-    panel.appendChild(btnEmpotrado);
-    panel.appendChild(btnRotula);
-    panel.appendChild(btnBiela);
-    panel.appendChild(containerFuerza);
-    panel.appendChild(containerCreateMomento);
+    // panel.appendChild(btnBeam);
+    panel.appendChild(btnBeam2)
+    panel.appendChild(btnRollerSupport);
+    panel.appendChild(btnPinnedSupport)
+    panel.appendChild(btnFixedSupport);
+    panel.appendChild(btnBallJoint);
+    panel.appendChild(btnConnectingRod);
+    panel.appendChild(containerForce);
+    panel.appendChild(containerCreateMoment);
 
     return panel;
 }
@@ -996,65 +986,62 @@ function listenCreateElement() {
     stage.on("dblclick", (e) => {
         if (e.target != stage && e.target) {
             const mouseXY = roundXY(getXY());
-            lastVigaNodeClick.x = mouseXY.x;
-            lastVigaNodeClick.y = mouseXY.y;
+            lastBeamNodeClick.x = mouseXY.x;
+            lastBeamNodeClick.y = mouseXY.y;
             lastNodeClick = e.target;
             const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
             console.log(nodeParent)
             console.log(e.target.getParent())
-            // console.log(lastNodeClick)
-            if (e.target.name() == "subElementoVigaCirculo1") {
+   
+            if (e.target.name() == "subelementBeamCirculo1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo2"})[0];
+                const otherNode = parent.getChildren((node) => {return node.name() === "subelementBeamCirculo2"})[0];
                 const otherNodePosition =  getElementPos(otherNode);
                 
-            } else if (e.target.name() == "subElementoVigaCirculo2") {
+            } else if (e.target.name() == "subelementBeamCirculo2") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => {return node.name() === "subElementoVigaCirculo1"})[0]
+                const otherNode = parent.getChildren((node) => {return node.name() === "subelementBeamCirculo1"})[0]
                 const otherNodePosition =  getElementPos(otherNode);
                 
-            } else if (e.target.name() == "subElementoVigaCirculo") {
+            } else if (e.target.name() == "subelementBeamCirculo") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
-
-            
+ 
             }
-    
-            // console.log(dcl)
-
-            
+     
         }
     });
 }
 
 
 function destroyAttachedKonvaElements(node){
-    if(node.konvaObjects.viga) node.konvaObjects.viga.destroy();
-    if(node.konvaObjects.vinculo) node.konvaObjects.vinculo.destroy();
-    if(node.konvaObjects.shadowViga) node.konvaObjects.shadowViga.destroy();
+    if(node.konvaObjects.beam) node.konvaObjects.beam.destroy();
+    if(node.konvaObjects.shadowBeam) node.konvaObjects.shadowBeam.destroy();
+    if(node.konvaObjects.link) node.konvaObjects.link.destroy();
+    if(node.konvaObjects.circle) node.konvaObjects.circle.destroy();
     
-    node.konvaObjects.fuerzas.forEach(fuerza => {
-        fuerza.destroy();
+    node.konvaObjects.forces.forEach(force => {
+        force.destroy();
     })
-    node.konvaObjects.momentos.forEach(momento => {
-        momento.destroy();
+    node.konvaObjects.moments.forEach(moment => {
+        moment.destroy();
     })
 }
 
 function deleteElement(element) {
-    if (element.name() === "viga2") {
+    if (element.name() === "beam2") {
         const node = dcl.findNodeById(element.getAttr("id")+2) //element es el group del objeto, 
         const parentNode = node.parent
-        const idx = parentNode.childreanNodes.findIndex(child => {
+        const idx = parentNode.childNodes.findIndex(child => {
             child.id === node.id
         })
-        parentNode.childreanNodes.splice(idx, 1)
+        parentNode.childNodes.splice(idx, 1)
 
         node.getAllDecendents().forEach(decendent => {
             destroyAttachedKonvaElements(decendent);
@@ -1066,21 +1053,21 @@ function deleteElement(element) {
 
     } else {
         const node = dcl.findNodeById(element.getAttr("id"))
-        const apoyos = new Set(["apoyoDeslizante", "apoyoNoDeslizante", "empotrado", "rotula", "biela"]);
+        const supports = new Set(["rollerSupport", "pinnedSupport", "fixedSupport", "ballJoint", "connectingRod"]);
 
-        if (apoyos.has(element.name())) {
-            node.deleteVinculo();
+        if (supports.has(element.name())) {
+            node.deleteLink();
 
-        } else if (element.name() === "fuerza"){
+        } else if (element.name() === "force"){
             const tuple = element.getAttr("tension")
             const floatTuple = [parseFloat(tuple[0]), parseFloat(tuple[1])];
-            const idx = idxForceInNode(node.fuerzas, floatTuple)
-            node.fuerzas.splice(idx, 1)
+            const idx = idxForceInNode(node.forces, floatTuple)
+            node.forces.splice(idx, 1)
 
-        } else if (element.name() === "momento"){
+        } else if (element.name() === "moment"){
             const val = parseFloat(element.getAttr("tension"))
-            const idx = node.momentos.indexOf(val)
-            node.momentos.splice(idx, 1)
+            const idx = node.moments.indexOf(val)
+            node.moments.splice(idx, 1)
         }
     }
 
@@ -1094,15 +1081,15 @@ function listenDeleteElement() {
         if (e.target && e.target.getParent()) {
             const element = e.target.getParent();
             const name = element.name();
-            if (name == "viga"                  ||
-                name == "apoyoDeslizante"       ||
-                name == "apoyoNoDeslizante"     ||
-                name == "empotrado"             ||
-                name == "rotula"                ||
-                name == "biela"                 ||
-                name == "fuerza"                ||
-                name == "momento"               ||
-                name == "viga2") {
+            if (name == "beam"                  ||
+                name == "rollerSupport"       ||
+                name == "pinnedSupport"     ||
+                name == "fixedSupport"             ||
+                name == "ballJoint"                ||
+                name == "connectingRod"                 ||
+                name == "force"                ||
+                name == "moment"               ||
+                name == "beam2") {
                     const mouseXY = roundXY(getXY());
                     lastElementClick = element;
                     delPanel.style.visibility = "visible";
@@ -1125,12 +1112,12 @@ function updateAll() {
     if (!resolvingTask) {
         // updateEquations();
         // updateScorePanel();
-        replaceApoyos();
+        replaceSupports();
     } 
 }
 
 
-function replaceApoyos() {
+function replaceSupports() {
     if (!resolvingTask) {
         stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
 
@@ -1138,83 +1125,83 @@ function replaceApoyos() {
             return element.name() == "layer";
         })[0];
     
-        const apoyosDeslizantes = layer2.find(element => {
-            return element.name() == "apoyoDeslizante";
+        const rollerSupports = layer2.find(element => {
+            return element.name() == "rollerSupport";
         });
-        apoyosDeslizantes.forEach((item) => {
+        rollerSupports.forEach((item) => {
             const posXY = {x: item.getAttr("x"), y: item.getAttr("y")}
-            createFuerza(`F${item.getAttr("id")}_y`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+            createForce(`F${item.getAttr("id")}_y`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
             item.destroy();
         })
     
-        const apoyosNoDeslizantes = layer2.find(element => {
-            return element.name() == "apoyoNoDeslizante";
+        const pinnedSupports = layer2.find(element => {
+            return element.name() == "pinnedSupport";
         });
-        apoyosNoDeslizantes.forEach((item) => {
+        pinnedSupports.forEach((item) => {
             const posXY = {x: item.getAttr("x"), y: item.getAttr("y")}
-            createFuerza(`F${item.getAttr("id")}_y`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
-            createFuerza(`F${item.getAttr("id")}_x`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+            createForce(`F${item.getAttr("id")}_y`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+            createForce(`F${item.getAttr("id")}_x`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
             item.destroy();
         })
     
-        const empotrados = layer2.find(element => {
-            return element.name() == "empotrado";
+        const fixedSupports = layer2.find(element => {
+            return element.name() == "fixedSupport";
         });
-        empotrados.forEach((item) => {
+        fixedSupports.forEach((item) => {
             const posXY = {x: item.getAttr("x"), y: item.getAttr("y")}
-            createFuerza(`F${item.getAttr("id")}_y `, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
-            createFuerza(`F${item.getAttr("id")}_x `, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
-            createMomento(`M${item.getAttr("id")}`, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+            createForce(`F${item.getAttr("id")}_y `, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+            createForce(`F${item.getAttr("id")}_x `, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+            createMoment(`M${item.getAttr("id")}`, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
             item.destroy();
         })
     
-        const fuerzas = layer2.find(element => {
-            return element.name() == "fuerza";
+        const forces = layer2.find(element => {
+            return element.name() == "force";
         });
-        fuerzas.forEach((item) => {
+        forces.forEach((item) => {
             const posXY = {x: item.getAttr("x"), y: item.getAttr("y")}
             const magnitud = item.getAttr("tension")[0];
             const angle = item.getAttr("tension")[1];
             const angleRad = angle * Math.PI / 180;
         
             if(0 == angle) { //
-                createFuerza(`${magnitud} N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud} N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (0 < angle && angle < 90) { //
-                createFuerza(`${magnitud}*cos(${angle}) N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
-                createFuerza(`${magnitud}*sin(${angle}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*cos(${angle}) N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*sin(${angle}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (90 == angle) { //
-                createFuerza(`${magnitud} N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud} N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (90 < angle && angle < 180) {
-                createFuerza(`${magnitud}*cos(${angle - 90}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
-                createFuerza(`${magnitud}*sin(${angle - 90}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*cos(${angle - 90}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*sin(${angle - 90}) N`, 90, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (180 == angle) { //
-                createFuerza(`${magnitud} N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud} N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (180 < angle && angle < 270) {
-                createFuerza(`${magnitud}*cos(${angle - 180}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
-                createFuerza(`${magnitud}*sin(${angle - 180}) N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*cos(${angle - 180}) N`, 180, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*sin(${angle - 180}) N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (270 == angle) { //
-                createFuerza(`${magnitud} N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud} N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             } else if (270 < angle && angle < 360) {
-                createFuerza(`${magnitud}*cos(${360 - angle}) N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
-                createFuerza(`${magnitud}*sin(${360 - angle}) N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*cos(${360 - angle}) N`, 0, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+                createForce(`${magnitud}*sin(${360 - angle}) N`, 270, color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
                 item.destroy();
             }
         });
 
-        const momentos = layer2.find(element => {
-            return element.name() == "momento";
+        const moments = layer2.find(element => {
+            return element.name() == "moment";
         });
 
-        momentos.forEach((item) => {
+        moments.forEach((item) => {
             const posXY = {x: item.getAttr("x"), y: item.getAttr("y")}
-            createMomento(item.getAttr("tension"), color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
+            createMoment(item.getAttr("tension"), color="green", x0=posXY.x, y0=posXY.y, layerForPaint=layer2);
             item.destroy();
         });
     }
@@ -1224,26 +1211,12 @@ function replaceApoyos() {
 
 function updateCounts() {
     stage.find( (element) => { 
-       if (element.name() == "empotrado") countEmpotrado += 1;
-       else if (element.name() == "apoyoDeslizante") countApoyoDeslizante += 1;
-       else if (element.name() == "empotrado") countEmpotrado += 1;
+       if (element.name() == "fixedSupport") countFixedSupport += 1;
+       else if (element.name() == "rollerSupport") countRollerSupport += 1;
+       else if (element.name() == "fixedSupport") countFixedSupport += 1;
     });
 }
 
-
-function moveVigasToTop() {
-    // const vigas = layer.getChildren(element => {
-    //     return element.name() == "viga";
-    // });
-
-    // const initialViga = layer.getChildren(element => {
-    //     return element.name() == "initialViga";
-    // })[0];
-    // vigas.push(initialViga);
-    // vigas.forEach(viga => {
-    //     viga.moveToTop();
-    // });
-}
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
 function delElement() {
@@ -1270,10 +1243,10 @@ function createDelPanel(x0=0, y0=0) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "eliminar", delElement,null,null,null,imgDelete);
+    //const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "eliminar", delElement,null,null,null,imgDelete);
+    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement,null,null,null,imgDelete);
 
     panel.appendChild(deleteElementBtn);
-
 
     return panel;
 }
@@ -1281,16 +1254,16 @@ function createDelPanel(x0=0, y0=0) {
 
 function createHashElements(stage) {
     const hash = {
-        initialViga: [],
-        vigas: [],
-        apoyosDeslizantes: [],
-        apoyosNoDeslizantes: [],
-        empotrados: [],
-        bielas: [],
-        rotulas: [],
-        fuerzas: [],
-        momentosPositivos: [],
-        momentosNegativos: []
+        initialBeam: [],
+        beams: [],
+        rollerSupports: [],
+        pinnedSupports: [],
+        fixedSupports: [],
+        connectingRods: [],
+        ballJoints: [],
+        forces: [],
+        momentsPositivos: [],
+        momentsNegativos: []
     }
 
     const layer = stage.find(element => {
@@ -1298,44 +1271,44 @@ function createHashElements(stage) {
     })[0];
 
     layer.getChildren().forEach(element => {
-        if (element.name() == "initialViga") {
-            hash.initialViga.push(element);
+        if (element.name() == "initialBeam") {
+            hash.initialBeam.push(element);
 
-        } else if (element.name() == "viga") {
-            hash.vigas.push(element);
+        } else if (element.name() == "beam") {
+            hash.beams.push(element);
 
-        } else if (element.name() == "apoyoDeslizante") {
-            hash.apoyosDeslizantes.push(element);
+        } else if (element.name() == "rollerSupport") {
+            hash.rollerSupports.push(element);
 
-        } else if (element.name() == "apoyoNoDeslizante") {
-            hash.apoyosNoDeslizantes.push(element);
+        } else if (element.name() == "pinnedSupport") {
+            hash.pinnedSupports.push(element);
 
-        } else if (element.name() == "empotrado") {
-            hash.empotrados.push(element);
+        } else if (element.name() == "fixedSupport") {
+            hash.fixedSupports.push(element);
 
-        } else if (element.name() == "biela") {
-            hash.bielas.push(element);
+        } else if (element.name() == "connectingRod") {
+            hash.connectingRods.push(element);
 
-        } else if (element.name() == "rotula") {
-            hash.rotulas.push(element);
+        } else if (element.name() == "ballJoint") {
+            hash.ballJoints.push(element);
 
-        } else if (element.name() == "fuerza") {
-            hash.fuerzas.push(element);
+        } else if (element.name() == "force") {
+            hash.forces.push(element);
 
-        } else if (element.name() == "momento-positivo") {
-            hash.momentosPositivos.push(element);
+        } else if (element.name() == "moment-positivo") {
+            hash.momentsPositivos.push(element);
 
-        } else if (element.name() == "momento-negativo") {
-            hash.momentosNegativos.push(element);
+        } else if (element.name() == "moment-negativo") {
+            hash.momentsNegativos.push(element);
         }
     });
 
     return hash;
 }
 
-function getStartEndViga(viga) {
-    const circle1 = viga.getChildren()[1];
-    const circle2 = viga.getChildren()[2];
+function getStartEndBeam(beam) {
+    const circle1 = beam.getChildren()[1];
+    const circle2 = beam.getChildren()[2];
     const c1x = circle1.getAttr("x");
     const c1y = circle1.getAttr("y");
     const c2x = circle2.getAttr("x");
@@ -1353,28 +1326,25 @@ function getElementPos(element) {
 }
 
 function comparePositions(list1, list2) {
-    console.log("ACA en compare position")
-    console.log(list1)
-    console.log(list2)
     return JSON.stringify(list1) === JSON.stringify(list2);
 }
 
-function comparefuerzas(tension1, tension2) {
+function compareforces(tension1, tension2) {
     return JSON.stringify(tension1) === JSON.stringify(tension2);
 }
 
 function hashOfErros() {
     return {
-        ERRORinitialViga: new Set(),
-        ERRORvigas: new Set(),
-        ERRORapoyosDeslizantes: new Set(),
-        ERRORapoyosNoDeslizantes: new Set(),
-        ERRORempotrados: new Set(),
-        ERRORbielas: new Set(),
-        ERRORrotulas: new Set(),
-        ERRORfuerzas: new Set(),
-        ERRORmomentosPositivos: new Set(),
-        ERRORmomentosNegativos: new Set()
+        ERRORinitialBeam: new Set(),
+        ERRORbeams: new Set(),
+        ERRORrollerSupports: new Set(),
+        ERRORpinnedSupports: new Set(),
+        ERRORfixedSupports: new Set(),
+        ERRORconnectingRods: new Set(),
+        ERRORballJoints: new Set(),
+        ERRORforces: new Set(),
+        ERRORmomentsPositivos: new Set(),
+        ERRORmomentsNegativos: new Set()
     }
 
 }
@@ -1385,43 +1355,43 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
     const hashElementsStage1 = createHashElements(stage1);
     const hashElementsStage2 = createHashElements(stage2);
 
-    const initViga1 = hashElementsStage1.initialViga[0];
-    const initViga2 = hashElementsStage2.initialViga[0];
+    const initBeam1 = hashElementsStage1.initialBeam[0];
+    const initBeam2 = hashElementsStage2.initialBeam[0];
 
-    const initViga1Pos = getStartEndViga(initViga1);
-    const initViga2Pos = getStartEndViga(initViga2);
+    const initBeam1Pos = getStartEndBeam(initBeam1);
+    const initBeam2Pos = getStartEndBeam(initBeam2);
 
-    let verifyedInitialViga = true;
-    if (comparePositions(initViga1Pos.end, initViga2Pos.end)) { //comparamos que la viga inicial este bien posicionada
-        console.log("Viga inicial bien posicionada!");
+    let verifyedInitialBeam = true;
+    if (comparePositions(initBeam1Pos.end, initBeam2Pos.end)) { //comparamos que la beam inicial este bien posicionada
+        console.log("Beam inicial bien posicionada!");
     } else {
-        console.log("Viga inicial mal posicionada!");
-        verifyedInitialViga = false;
-        ERRORS.ERRORinitialViga.add("OJO: Atencion con la viga inicial");
+        console.log("Beam inicial mal posicionada!");
+        verifyedInitialBeam = false;
+        ERRORS.ERRORinitialBeam.add("OJO: Atencion con la beam inicial");
     }
 
-    let verifyedVigas = hashElementsStage1.vigas.length == hashElementsStage2.vigas.length;
-    if (!verifyedVigas) ERRORS.ERRORvigas.add("OJO: Atencion con la cantidad de vigas (no iniciales)");
-    hashElementsStage1.vigas.forEach(viga1 => {
-        let viga1Pos = getStartEndViga(viga1);
+    let verifyedBeams = hashElementsStage1.beams.length == hashElementsStage2.beams.length;
+    if (!verifyedBeams) ERRORS.ERRORbeams.add("OJO: Atencion con la cantidad de beams (no iniciales)");
+    hashElementsStage1.beams.forEach(beam1 => {
+        let beam1Pos = getStartEndBeam(beam1);
         let verify = false;
-        hashElementsStage2.vigas.forEach(viga2 => {
-            let viga2Pos = getStartEndViga(viga2);
-            if (comparePositions(viga1Pos.start, viga2Pos.start) && comparePositions(viga1Pos.end, viga2Pos.end)) {
+        hashElementsStage2.beams.forEach(beam2 => {
+            let beam2Pos = getStartEndBeam(beam2);
+            if (comparePositions(beam1Pos.start, beam2Pos.start) && comparePositions(beam1Pos.end, beam2Pos.end)) {
                 console.log("LOL Estoy dentro de la condicion")
                 verify = true;
             }
         });
-        verifyedVigas &&= verify; 
+        verifyedBeams &&= verify; 
     });
-    if (!verifyedVigas) ERRORS.ERRORvigas.add("OJO: Atencion con la posicion de alguna viga");
+    if (!verifyedBeams) ERRORS.ERRORbeams.add("OJO: Atencion con la posicion de alguna beam");
 
-    let verifyedAD = hashElementsStage1.apoyosDeslizantes.length == hashElementsStage2.apoyosDeslizantes.length;  
-    if (!verifyedAD) ERRORS.ERRORapoyosDeslizantes.add("OJO: Atencion con la cantidad de apoyos deslizantes");
-    hashElementsStage1.apoyosDeslizantes.forEach(ad1 => {
+    let verifyedAD = hashElementsStage1.rollerSupports.length == hashElementsStage2.rollerSupports.length;  
+    if (!verifyedAD) ERRORS.ERRORrollerSupports.add("OJO: Atencion con la cantidad de supports deslizantes");
+    hashElementsStage1.rollerSupports.forEach(ad1 => {
         let ad1Pos = getElementPos(ad1);
         let verify = false;
-        hashElementsStage2.apoyosDeslizantes.forEach(ad2 => {
+        hashElementsStage2.rollerSupports.forEach(ad2 => {
             let ad2Pos = getElementPos(ad2);
             if (comparePositions(ad1Pos, ad2Pos)) {
                 verify = true;
@@ -1429,14 +1399,14 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
         });
         verifyedAD &&= verify;
     });
-    if (!verifyedAD) ERRORS.ERRORapoyosDeslizantes.add("OJO: Atencion con la posicion de algun apoyo deslizante");
+    if (!verifyedAD) ERRORS.ERRORrollerSupports.add("OJO: Atencion con la posicion de algun support deslizante");
 
-    let verifyedAND = hashElementsStage1.apoyosNoDeslizantes.length == hashElementsStage2.apoyosNoDeslizantes.length;
-    if (!verifyedAND) ERRORS.ERRORapoyosNoDeslizantes.add("OJO: Atencion con la cantidad de apoyos no deslizantes");
-    hashElementsStage1.apoyosNoDeslizantes.forEach(and1 => {
+    let verifyedAND = hashElementsStage1.pinnedSupports.length == hashElementsStage2.pinnedSupports.length;
+    if (!verifyedAND) ERRORS.ERRORpinnedSupports.add("OJO: Atencion con la cantidad de supports no deslizantes");
+    hashElementsStage1.pinnedSupports.forEach(and1 => {
         let and1Pos = getElementPos(and1);
         let verify = false;
-        hashElementsStage2.apoyosNoDeslizantes.forEach(and2 => {
+        hashElementsStage2.pinnedSupports.forEach(and2 => {
             let and2Pos = getElementPos(and2);
             if (comparePositions(and1Pos, and2Pos)) {
                 verify = true;
@@ -1444,119 +1414,119 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
         });
         verifyedAND &&= verify;
     });
-    if (!verifyedAND) ERRORS.ERRORapoyosNoDeslizantes.add("OJO: Atencion con la posicion de algun apoyo no deslizante");
+    if (!verifyedAND) ERRORS.ERRORpinnedSupports.add("OJO: Atencion con la posicion de algun support no deslizante");
 
-    let verifyedEmpotrados = hashElementsStage1.empotrados.length == hashElementsStage2.empotrados.length;
-    if (!verifyedEmpotrados) ERRORS.ERRORempotrados.add("OJO: Atencion con la cantidad de empotrados");
-    hashElementsStage1.empotrados.forEach(e1 => {
+    let verifyedFixedSupports = hashElementsStage1.fixedSupports.length == hashElementsStage2.fixedSupports.length;
+    if (!verifyedFixedSupports) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la cantidad de fixedSupports");
+    hashElementsStage1.fixedSupports.forEach(e1 => {
         let e1Pos = getElementPos(e1);
         let verify = false;
-        hashElementsStage2.empotrados.forEach(e2 => {
+        hashElementsStage2.fixedSupports.forEach(e2 => {
             let e2Pos = getElementPos(e2);
             if (comparePositions(e1Pos, e2Pos)) {
                 verify = true;
             }
         });
-        verifyedEmpotrados &&= verify;
+        verifyedFixedSupports &&= verify;
     });
-    if (!verifyedEmpotrados) ERRORS.ERRORempotrados.add("OJO: Atencion con la posicion de algun empotrado");
+    if (!verifyedFixedSupports) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la posicion de algun fixedSupport");
 
-    let verifyedRotulas = hashElementsStage1.rotulas.length == hashElementsStage2.rotulas.length;
-    if (!verifyedRotulas) ERRORS.ERRORrotulas.add("OJO: Atencion con la cantidad de rotulas");
-    hashElementsStage1.rotulas.forEach(r1 => {
+    let verifyedBallJoints = hashElementsStage1.ballJoints.length == hashElementsStage2.ballJoints.length;
+    if (!verifyedBallJoints) ERRORS.ERRORballJoints.add("OJO: Atencion con la cantidad de ballJoints");
+    hashElementsStage1.ballJoints.forEach(r1 => {
         let r1Pos = getElementPos(r1);
         let verify = false;
-        hashElementsStage2.rotulas.forEach(r2 => {
+        hashElementsStage2.ballJoints.forEach(r2 => {
             let r2Pos = getElementPos(r2);
             if (comparePositions(r1Pos, r2Pos)) {
                 verify = true;
             }
         });
-        verifyedRotulas &&= verify;
+        verifyedBallJoints &&= verify;
     });
-    if (!verifyedRotulas) ERRORS.ERRORrotulas.add("OJO: Atencion con la posicion de alguna rotula");
+    if (!verifyedBallJoints) ERRORS.ERRORballJoints.add("OJO: Atencion con la posicion de alguna ballJoint");
 
-    let verifyedBielas = hashElementsStage1.bielas.length == hashElementsStage2.bielas.length;
-    if (!verifyedBielas) ERRORS.ERRORbielas.add("OJO: Atencion con la cantidad de bielas");
-    hashElementsStage1.bielas.forEach(b1 => {
+    let verifyedConnectingRods = hashElementsStage1.connectingRods.length == hashElementsStage2.connectingRods.length;
+    if (!verifyedConnectingRods) ERRORS.ERRORconnectingRods.add("OJO: Atencion con la cantidad de connectingRods");
+    hashElementsStage1.connectingRods.forEach(b1 => {
         let b1Pos = getElementPos(b1);
         let verify = false;
-        hashElementsStage2.bielas.forEach(b2 => {
+        hashElementsStage2.connectingRods.forEach(b2 => {
             let b2Pos = getElementPos(b2);
             if (comparePositions(b1Pos, b2Pos)) {
                 verify = true;
             }
         });
-        verifyedBielas &&= verify;
+        verifyedConnectingRods &&= verify;
     });
-    if (!verifyedBielas) ERRORS.ERRORrotulas.add("OJO: Atencion con la posicion de alguna biela");
+    if (!verifyedConnectingRods) ERRORS.ERRORballJoints.add("OJO: Atencion con la posicion de alguna connectingRod");
 
-    let verifyedMN = hashElementsStage1.momentosNegativos.length == hashElementsStage2.momentosNegativos.length;
-    if (!verifyedMN) ERRORS.ERRORmomentosNegativos.add("OJO: Atencion con la cantidad de momentos negativos");
-    hashElementsStage1.bielas.forEach(mn1 => {
+    let verifyedMN = hashElementsStage1.momentsNegativos.length == hashElementsStage2.momentsNegativos.length;
+    if (!verifyedMN) ERRORS.ERRORmomentsNegativos.add("OJO: Atencion con la cantidad de moments negativos");
+    hashElementsStage1.connectingRods.forEach(mn1 => {
         let mn1Pos = getElementPos(mn1);
         let verify = false;
         let aux = false;
-        hashElementsStage2.bielas.forEach(mn2 => {
+        hashElementsStage2.connectingRods.forEach(mn2 => {
             let mn2Pos = getElementPos(mn2);
             if (comparePositions(mn1Pos, mn2Pos)) {
                 if (mn1.getAttr("tension") == mn2.getAttr("tension")) {
                     verify = true;
                 } else {
-                    ERRORS.ERRORmomentosNegativos.add("OJO: Atencion con la magnitud de algun momento negativo");
+                    ERRORS.ERRORmomentsNegativos.add("OJO: Atencion con la magnitud de algun moment negativo");
                     aux = true;
                 }
             } 
         });
         verifyedMN &&= verify;
-        if (!verify && !aux) ERRORS.ERRORmomentosNegativos.add("OJO: Atencion con la posicion de algun momento negativo");
+        if (!verify && !aux) ERRORS.ERRORmomentsNegativos.add("OJO: Atencion con la posicion de algun moment negativo");
     });
 
-    let verifyedMP = hashElementsStage1.momentosPositivos.length == hashElementsStage2.momentosPositivos.length;
-    if (!verifyedMP) ERRORS.ERRORmomentosPositivos.add("OJO: Atencion con la cantidad de momentos positivos");
-    hashElementsStage1.momentosPositivos.forEach(mp1 => {
+    let verifyedMP = hashElementsStage1.momentsPositivos.length == hashElementsStage2.momentsPositivos.length;
+    if (!verifyedMP) ERRORS.ERRORmomentsPositivos.add("OJO: Atencion con la cantidad de moments positivos");
+    hashElementsStage1.momentsPositivos.forEach(mp1 => {
         let mp1Pos = getElementPos(mp1);
         let verify = false;
         let aux = false;
-        hashElementsStage2.momentosPositivos.forEach(mp2 => {
+        hashElementsStage2.momentsPositivos.forEach(mp2 => {
             let mp2Pos = getElementPos(mp2);
             if (comparePositions(mp1Pos, mp2Pos)) {
                 if (mp1.getAttr("tension") == mp2.getAttr("tension")) {
                     verify = true;
                 } else {
-                    ERRORS.ERRORmomentosPositivos.add("OJO: Atencion con la magnitud de algun momento positivo");
+                    ERRORS.ERRORmomentsPositivos.add("OJO: Atencion con la magnitud de algun moment positivo");
                     aux = true;
                 }
             } 
         });
         verifyedMP &&= verify;
-        if (!verify && !aux) ERRORS.ERRORmomentosPositivos.add("OJO: Atencion con la posicion de algun momento positivo");
+        if (!verify && !aux) ERRORS.ERRORmomentsPositivos.add("OJO: Atencion con la posicion de algun moment positivo");
     });
 
-    let verifyedFuerzas = hashElementsStage1.fuerzas.length == hashElementsStage2.fuerzas.length;  
-    if (!verifyedFuerzas) ERRORS.ERRORfuerzas.add("OJO: Atencion con la cantidad de fuerzas");
-    hashElementsStage1.fuerzas.forEach(f1 => {
+    let verifyedForces = hashElementsStage1.forces.length == hashElementsStage2.forces.length;  
+    if (!verifyedForces) ERRORS.ERRORforces.add("OJO: Atencion con la cantidad de forces");
+    hashElementsStage1.forces.forEach(f1 => {
         let f1Pos = getElementPos(f1);
         let verify = false;
         let aux = false;
-        hashElementsStage2.fuerzas.forEach(f2 => {
+        hashElementsStage2.forces.forEach(f2 => {
             let f2Pos = getElementPos(f2);
             if (comparePositions(f1Pos, f2Pos)) {
-                if (comparefuerzas(f1.getAttr("tension"), f2.getAttr("tension"))) {
+                if (compareforces(f1.getAttr("tension"), f2.getAttr("tension"))) {
                     verify = true;
                 } else {
-                    ERRORS.ERRORfuerzas.add("OJO: Atencion con la magnitud o angulo de algun fuerza");
+                    ERRORS.ERRORforces.add("OJO: Atencion con la magnitud o angulo de algun force");
                     aux = true;
                 }
             } 
         });
-        verifyedFuerzas &&= verify;
-        if (!verify && !aux) ERRORS.ERRORfuerzas.add("OJO: Atencion con la posicion de alguna fuerza");
+        verifyedForces &&= verify;
+        if (!verify && !aux) ERRORS.ERRORforces.add("OJO: Atencion con la posicion de alguna force");
     });
     
 
     console.log("verificaciones")
-    const listOfConditions = [verifyedInitialViga, verifyedVigas, verifyedAD, verifyedAND, verifyedEmpotrados, verifyedRotulas, verifyedBielas, verifyedMP, verifyedMN, verifyedFuerzas]
+    const listOfConditions = [verifyedInitialBeam, verifyedBeams, verifyedAD, verifyedAND, verifyedFixedSupports, verifyedBallJoints, verifyedConnectingRods, verifyedMP, verifyedMN, verifyedForces]
     console.log(listOfConditions)
     taskResolvedSuccefully = true
     listOfConditions.forEach(element => {
@@ -1571,7 +1541,7 @@ function compare(stage1, stage2) { //stage1 student  stage2 solution
 function showHints() {
     compare(stage, stageSolution);
     let txt = "";
-    console.log(ERRORS)
+    console.log(ERRORS);
     Object.values(ERRORS).forEach((value) => {
         value.forEach(hint => {
             txt += hint + "\n";
@@ -1601,36 +1571,44 @@ function removeAttributesForJSON(node){
 
 }
 
-function generateJSON(dclStructure){
-    // const copy = Object.assign(Object.create(Object.getPrototypeOf(dclStructure)), dclStructure)
-    const copy = dclStructure.clone()
-    copy.getAllDecendents().forEach(descendent => {
-        removeAttributesForJSON(descendent);
-    });
-    removeAttributesForJSON(copy);
-
-    return JSON.stringify(copy);
-}
-
-
 function paintElement(element, fillc, strokec, paintGroup){
-    if (element.getAttr("fill")) element.setAttr("fill", fillc)
-    if (element.getAttr("stroke")) element.setAttr("stroke", strokec)
+    if (element.getAttr("fill")) element.setAttr("fill", fillc);
+    if (element.getAttr("stroke")) element.setAttr("stroke", strokec);
 
     if (paintGroup){
         element.getParent().getChildren().forEach(e => {
-            if (e.getAttr("fill")) e.setAttr("fill", fillc)
-            if (e.getAttr("stroke")) e.setAttr("stroke", strokec)
+            if (e.getAttr("fill")) e.setAttr("fill", fillc);
+            if (e.getAttr("stroke")) e.setAttr("stroke", strokec);
         })
     }
 }
 
 function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup=false){
     element.on("mouseenter", () => {
-        paintElement(element, nfillc, nstrokec, paintGroup)
+        paintElement(element, nfillc, nstrokec, paintGroup);
     })
 
     element.on("mouseleave", () => {
-        paintElement(element, ofillc, ostrokec, paintGroup)
+        paintElement(element, ofillc, ostrokec, paintGroup);
     })
+}
+
+function generateGrid(layer){
+    for (let i = 0; i <= widthStage / blockSnapSize; i++) {
+        layer.add(new Konva.Line({
+            name: "horizontalLines",
+            points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, heightStage],
+            stroke: "#777777",
+            strokeWidth: 1,
+        }));
+    }
+    
+    for (let j = 0; j <= heightStage / blockSnapSize; j++) {
+        layer.add(new Konva.Line({
+            name: "verticalLines",
+            points: [0, Math.round(j * blockSnapSize), widthStage, Math.round(j * blockSnapSize)],
+            stroke: "#7777777",
+            strokeWidth: 0.5,
+        }));
+    }
 }
