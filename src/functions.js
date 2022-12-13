@@ -1656,7 +1656,21 @@ function createModalForce(x0,y0){
 
     const btnForce = createButton(widthModal/2, heightModalElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle); 
 
-    const containerForce = createContainer([inputCreateForceMagnitud, inputCreateForceAngle]);
+    const newtons = document.createElement("b");
+    newtons.innerText = "N";
+    newtons.type = "number";
+    newtons.style.width = widthModal / 4 + "px";
+    newtons.style.height = heightModal -6  +"px";
+
+    const grados = document.createElement("b");
+    grados.innerText = "º";
+    grados.type = "number";
+    grados.style.width = widthModal / 4 + "px";
+    grados.style.height = heightModal -6  +"px";
+
+
+
+    const containerForce = createContainer([inputCreateForceMagnitud,newtons, inputCreateForceAngle,grados]);
 
 
 
@@ -1704,7 +1718,14 @@ function createModalMoment(x0,y0){
 
     const btnMoment = createButton(widthModal/2, heightModalElement, "momentBtn", "Moment", createMoment, inputCreateMoment);
 
-    const containerForce = createContainer([inputCreateMoment]);
+    const newtonsMetro = document.createElement("b");
+    newtonsMetro.innerText = "Nm";
+    newtonsMetro.type = "number";
+    newtonsMetro.style.width = widthModal / 4 + "px";
+    newtonsMetro.style.height = heightModal -6  +"px";
+
+
+    const containerForce = createContainer([inputCreateMoment,newtonsMetro]);
 
 
 
