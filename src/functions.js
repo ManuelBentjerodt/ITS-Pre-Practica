@@ -718,7 +718,6 @@ function createMoment(val, color="black", x0=0, y0=0, layerForPaint=layer, forFi
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    modalMoment.style.visibility = "hidden";
     // updateEquations();
     // updateScorePanel();
     return group;
