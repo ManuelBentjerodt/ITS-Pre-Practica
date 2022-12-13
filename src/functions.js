@@ -808,8 +808,6 @@ function createContainer(list) {
 function createPanel(x0, y0) {
     const widthPanel = 240;
     const heightPanel = 120;
-    // const widthPanel = 350;
-    // const heightPanel = 200;
     const colorPanel = "#DDDDDD";
 
     const heightPanelElement = heightPanel / 4;
@@ -835,11 +833,6 @@ function createPanel(x0, y0) {
     const imgFixedSupport = "url(images/fixedSupport.png)";
     const imgBeam = "url(images/beam.png)";
     
-    // const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthPanel, heightPanelElement);
-    // const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthPanel, heightPanelElement);
-    // const inputCreateMoment = createInputMagnitud("input-create-moment", widthPanel*2, heightPanelElement); // width panel*2
-
-    // const btnBeam = createButton(widthPanel, heightPanelElement, "beamBtn", "Beam", createBeam, null);
     const btnRollerSupport = createButton(widthPanel/2, heightPanelElement, "rollerSupportBtn", "Roller support ", createRollerSupport,null,null,null,imgRollerSupport); 
     const btnPinnedSupport = createButton(widthPanel/2, heightPanelElement, "pinnedSupportBtn", "Pinned support", createPinnedSupport,null,null,null, imgPinnedSupport); 
     const btnFixedSupport = createButton(widthPanel/2, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport,null,null,null, imgFixedSupport); 
@@ -849,9 +842,7 @@ function createPanel(x0, y0) {
     const btnMoment = createButton(widthPanel/2, heightPanelElement, "modalMoment", "Moment", createButtonModalMoment, null,null,null, imgMoment,null,imgForce);
     const btnBeam2 = createButton(widthPanel/2, heightPanelElement, "beam2btn", "Beam", createBeam2, null,null,null,imgBeam);
 
-    // const containerForce = createContainer([btnForce, inputCreateForceMagnitud, inputCreateForceAngle]);
-    // const containerCreateMoment = createContainer([btnMoment, inputCreateMoment]);
-
+   
     const topOfPanel = document.createElement("div");
     topOfPanel.style.width = widthPanel;
     topOfPanel.style.height = heightPanelElement;
@@ -1683,7 +1674,6 @@ function createModalForce(x0,y0){
     modal.appendChild(containerForce);
     modal.appendChild(btnForce);
 
-    // modal.appendChild(containerCreateMoment);
 
     return modal;
     
@@ -1732,7 +1722,6 @@ function createModalMoment(x0,y0){
     modal.appendChild(containerForce);
     modal.appendChild(btnMoment);
 
-    // modal.appendChild(containerCreateMoment);
 
     return modal;
     
