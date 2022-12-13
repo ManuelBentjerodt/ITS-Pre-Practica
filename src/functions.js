@@ -807,12 +807,12 @@ function createContainer(list) {
 
 function createPanel(x0, y0) {
     const widthPanel = 240;
-    const heightPanel = 150;
+    const heightPanel = 120;
     // const widthPanel = 350;
     // const heightPanel = 200;
     const colorPanel = "#DDDDDD";
 
-    const heightPanelElement = heightPanel / 5;
+    const heightPanelElement = heightPanel / 4;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
@@ -835,9 +835,9 @@ function createPanel(x0, y0) {
     const imgFixedSupport = "url(images/fixedSupport.png)";
     const imgBeam = "url(images/beam.png)";
     
-    const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthPanel, heightPanelElement);
-    const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthPanel, heightPanelElement);
-    const inputCreateMoment = createInputMagnitud("input-create-moment", widthPanel*2, heightPanelElement); // width panel*2
+    // const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthPanel, heightPanelElement);
+    // const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthPanel, heightPanelElement);
+    // const inputCreateMoment = createInputMagnitud("input-create-moment", widthPanel*2, heightPanelElement); // width panel*2
 
     // const btnBeam = createButton(widthPanel, heightPanelElement, "beamBtn", "Beam", createBeam, null);
     const btnRollerSupport = createButton(widthPanel/2, heightPanelElement, "rollerSupportBtn", "Roller support ", createRollerSupport,null,null,null,imgRollerSupport); 
@@ -845,12 +845,12 @@ function createPanel(x0, y0) {
     const btnFixedSupport = createButton(widthPanel/2, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport,null,null,null, imgFixedSupport); 
     const btnBallJoint = createButton(widthPanel/2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint,null,null,null, imgBallJoint);
     const btnConnectingRod = createButton(widthPanel/2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod,null,null,null, imgConnectingRod); 
-    const btnForce = createButton(widthPanel/2, heightPanelElement, "forceBtn", "Force", createButtonModalForce, inputCreateForceMagnitud, inputCreateForceAngle,null,imgForce); 
-    const btnMoment = createButton(widthPanel/2, heightPanelElement, "momentBtn", "Moment", createButtonModalMoment, inputCreateMoment,null,null, imgMoment,null,imgForce);
+    const btnForce = createButton(widthPanel/2, heightPanelElement, "modalForce", "Force", createButtonModalForce, null, null,null,imgForce); 
+    const btnMoment = createButton(widthPanel/2, heightPanelElement, "modalMoment", "Moment", createButtonModalMoment, null,null,null, imgMoment,null,imgForce);
     const btnBeam2 = createButton(widthPanel/2, heightPanelElement, "beam2btn", "Beam", createBeam2, null,null,null,imgBeam);
 
-    const containerForce = createContainer([btnForce, inputCreateForceMagnitud, inputCreateForceAngle]);
-    const containerCreateMoment = createContainer([btnMoment, inputCreateMoment]);
+    // const containerForce = createContainer([btnForce, inputCreateForceMagnitud, inputCreateForceAngle]);
+    // const containerCreateMoment = createContainer([btnMoment, inputCreateMoment]);
 
     const topOfPanel = document.createElement("div");
     topOfPanel.style.width = widthPanel;
@@ -869,8 +869,11 @@ function createPanel(x0, y0) {
     panel.appendChild(btnFixedSupport);
     panel.appendChild(btnBallJoint);
     panel.appendChild(btnConnectingRod);
-    panel.appendChild(containerForce);
-    panel.appendChild(containerCreateMoment);
+    panel.appendChild(btnForce);
+    panel.appendChild(btnMoment);
+
+    // panel.appendChild(containerForce);
+    // panel.appendChild(containerCreateMoment);
 
     return panel;
 }
@@ -1638,12 +1641,12 @@ function generateGrid(layer){
 
 function createModalForce(x0,y0){
    
-    const widthModal = 120;
-    const heightModal = 70;
+    const widthModal = 150;
+    const heightModal = 100;
 
     const colorModal = "#DDDDDD";
 
-    const heightModalElement = heightModal / 5;
+    const heightModalElement = heightModal / 3;
 
     const modal = document.createElement("div");
     modal.style.position = "absolute";
@@ -1688,12 +1691,12 @@ function createModalForce(x0,y0){
 
 function createModalMoment(x0,y0){
    
-    const widthModal = 120;
-    const heightModal = 70;
+    const widthModal = 150;
+    const heightModal = 100;
 
     const colorModal = "#DDDDDD";
 
-    const heightModalElement = heightModal / 5;
+    const heightModalElement = heightModal / 3;
 
     const modal = document.createElement("div");
     modal.style.position = "absolute";
