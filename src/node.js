@@ -47,7 +47,7 @@ class Node {
         this.link = null;
     }
 
-    addForce(magnitud, angle) {
+    addForce(magnitud, angle, id) {
         this.forces.push([magnitud, angle]);
     }
 
@@ -77,6 +77,10 @@ class Node {
 
     setKonvaCircle(object){
         this.konvaObjects.circle = object;
+    }
+
+    updateAngleForce(index, newAngle){
+        this.forces[index][1] = newAngle
     }
 
     generateJSON(){
