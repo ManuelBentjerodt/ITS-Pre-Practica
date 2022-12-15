@@ -1189,7 +1189,7 @@ function updateAll() {
     if (!resolvingTask) {
         // updateEquations();
         // updateScorePanel();
-        replaceSupports();
+        // replaceSupports();
     }
 }
 

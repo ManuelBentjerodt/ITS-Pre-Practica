@@ -7,7 +7,7 @@ const stage = new Konva.Stage({
     height: heightStage
 });
 
-let stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
+// let stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
 
 const layer = new Konva.Layer({name: "layer"});
 stage.add(layer);

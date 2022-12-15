@@ -8,11 +8,11 @@ urlpatterns = [
     path('sign_in',views.sign_in,name='sign_in'),
     path('sign_out',views.sign_out,name='sign_out'),
     
-    
     path('teacher_home',views.teacher_home,name='teacher_home'),
     path('student_home',views.student_home,name='student_home'),
-
+    
     path('create_task',views.create_task, name='create_task'),
-
+    path('edit_task<int:id>',views.delete_task, name='edit_task'),
+    path('delete_task<int:id>',views.delete_task, name='delete_task'),
 
 ]

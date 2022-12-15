@@ -25,8 +25,8 @@
                 <td>{{task.id}}</td>
                 <td>{{task.date}}</td>
                 <td>
-                    <a href="{% url 'edit_task' task.id %}">EDIT</a>
-                    <a href="{% url 'delete_task' task.id %}">DELETE</a>
+                    <a href="{% url 'edit_task' task.id %}">Editar</a>
+                    <a href="{% url 'delete_task' task.id %}">Eliminar</a>
                 </td>
             </tr>
             {% endfor%}

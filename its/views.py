@@ -115,3 +115,28 @@ def create_task(request):
             
     return render (request, 'create_task.html', context)
 
+@login_required(login_url="sign_in")
+def delete_task(request, id=None):
+    task = Task.objects.get(id = id)
+    task.delete()
+    return redirect('teacher_home')
+
+@login_required(login_url="sign_in")
+def edit_task(request, id):
+    task = Task.objects.get(id = id)
+    if request.method == 'GET':
+        task_form = TaskForm(instance = task)
+        context = {
+            'form': task_form,
+            'dclJSON': task.dcl
+        }
+    else:
+        task_form = TaskForm(request.POST, request.FILES , instance = task)
+        context = {
+            'form':task_form
+        }
+        if task_form.is_valid():
+            task_form.save()
+            return redirect('teacher_home')
+    return render (request,'edit_task.html',context)
+
