@@ -8,5 +8,34 @@
 </head>
 <body>
     <h1>hola profe</h1>
+        
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fecha</th>
+                <th>Accion</th>
+
+        
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks%}
+            <tr>
+                <td>{{task.id}}</td>
+                <td>{{task.date}}</td>
+                <td>
+                    <a href="{% url 'edit_task' task.id %}">EDIT</a>
+                    <a href="{% url 'delete_task' task.id %}">DELETE</a>
+                </td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+        
+    <a href="{% url 'create_task' %}">Nueva tarea</a>
+    <a href="{% url 'sign_out' %}">Salir</a>
+
+
 </body>
 </html>

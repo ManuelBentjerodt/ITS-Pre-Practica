@@ -51,21 +51,3 @@ listenHiddePanels();
 
 replaceSupports();
 
-const a = 270
-var arc = new Konva.Arc({
-    x: blockSnapSize*11,
-    y: blockSnapSize*8,
-    innerRadius: blockSnapSize,
-    outerRadius: blockSnapSize+1,
-    fill: 'red',
-    stroke: 'black',
-    strokeWidth: 2,
-    angle: a,
-    rotationDeg: -a,
-    draggable: true
-  });
-
-layer.add(arc)
-
-
-
