@@ -657,14 +657,16 @@ function forceMovement(group, large, strokeVal) {
         arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
         arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
 
-        let txt = magnitudVal + " N" + ", " + prettyDeg(newAngle) + " °";
+        let txt = magnitudVal + " N" + ", " + Math.round(prettyDeg(newAngle))  + " °";
         magnitud.setAttr("text", txt)
+        magnitud.setAttr("x", a*x+10)
+        magnitud.setAttr("y", a*y+10)
 
     })
 
     arrow.on("dragend", () => {
         group.setAttr("tension", [magnitudVal, newAngle])
-        console.log(group.getAttr("tension"))
+
         const node = dcl.findNodeById(group.getAttr("id"))
 
         const force = node.forces.find(force => {
