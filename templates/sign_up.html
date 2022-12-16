@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>up</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token%}
+
+        <input type="text" name ="username" placeholder="Nombre de usuario">
+        <input type="text" name="email" placeholder="Email">
+        <input type="password" name ="password" placeholder="Contraseña">
+        <input type="password" name ="password2" placeholder="Confirmar contraseña">
+        <button type="submit">Registrarse</button>
+        <div class="text-center mt-5 space-x-2">
+            <p class="btn"> Ya tienes una cuenta? <a href="{% url 'sign_in' %}"> Ingresa aqui </a></p>
+        </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {%block head%}
+    {%endblock head%}
+</head>
+    {%block body%}
+<body class="text-center">
+    <header class="masthead mb-auto">
+        <div class="inner">
+            <h3 class="masthead-brand">ITS: Static Instructor </h3>
+        </div>
+    </header>
+    <main role="main" class="inner cover">
+        <a href="{% url 'sign_in' %}">Entrar</a> 
+        <a href="{% url 'sign_up' %}">Resistrarse</a> 
+    </main>
+    {%endblock body%}
+
+
+</body>
+</html>

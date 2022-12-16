@@ -4,27 +4,44 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCL</title>
-    <!-- import Konva-->
+    <title>Document</title>
     <script src="https://unpkg.com/konva@8.3.12/konva.min.js"></script>
 </head>
 <body>
+    <h1>Crear tarea</h1>
+    
     <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
-    <br>
-    <div id="container2" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
+    <!-- <br>
+    <div id="container2" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div> -->
 
-    <script src="static/node.js" ></script>
-    <script src="static/variables.js" ></script>
-    <script src="static/functions.js" ></script>
-    <script src="static/create_task.js" ></script>
+    {% load static %}
+
+    <script src="{%static '/node.js'%}"></script>
+    <script src="{%static '/variables.js'%}"></script>
+    <script src="{%static '/functions.js'%}"></script>
+    <script src="{%static '/create_task.js'%}"></script>
+
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+
+        <script src="{%static '/save_task.js'%}"></script>
+        <button type="submit" onclick="saveJSONandDate()">GUARDAR</button>
+    </form>
+
     <button id="jsonGenerator">json</button>
     <a href="https://jsonformatter.org/json-pretty-print" target="_blank">Pretty JSON</a>
     <script>
         document.querySelector("#jsonGenerator").addEventListener("click", () => {
             const json = dcl.generateJSON()
+            console.log(json)
             const newDcl = recreateDcl(json)
         })
     </script>
+
+
+
+
 </body>
 </html>
-

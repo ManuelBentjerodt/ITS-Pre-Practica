@@ -765,7 +765,6 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    modalMoment.style.visibility = "hidden";
     // updateEquations();
     // updateScorePanel();
     return group;
@@ -1189,7 +1188,7 @@ function updateAll() {
     if (!resolvingTask) {
         // updateEquations();
         // updateScorePanel();
-        replaceSupports();
+        // replaceSupports();
     }
 }
 
@@ -1799,3 +1798,40 @@ function createModalMoment(x0, y0) {
     return modal;
 }
 
+
+function jsonToObject(json){
+    const object = JSON.parse(json);
+    return object;
+}
+
+function createNodeWithObject(object, _id=Date.now()){
+    const node = new Node(null, id=_id);
+    node.setNodeWithObject(object);
+    return node;
+}
+
+function recreateDcl(json){
+    const object = jsonToObject(json);
+    const newDCL = createNodeWithObject(object);
+    console.log("new dcl")
+    console.log(newDCL)
+    return newDCL;
+}
+
+function getDate(){
+    const d = new Date;
+    const dmy = [
+        d.getDate(),
+        d.getMonth()+1,
+        d.getFullYear()
+    ];
+    
+    const hms = [
+        d.getHours(),
+        d.getMinutes(),
+        d.getSeconds()
+    ]
+    
+    const date = dmy.join('/') + ' ' + hms.join(':');
+    return date;
+}

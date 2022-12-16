@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/konva@8.3.12/konva.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h1>Editar</h1>
+
+    <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
+
+    {% load static %}
+
+    {{dclJSON|json_script:"dclJSON"}}
+
+    <script src="{%static '/node.js'%}"></script>
+    <script src="{%static '/variables.js'%}"></script>
+    <script src="{%static '/functions.js'%}"></script>
+    <script src="{%static '/edit_task.js'%}"></script>
+
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+    
+        <button type="submit">GUARDAR</button>
+    </form>
+</body>
+</html>
+

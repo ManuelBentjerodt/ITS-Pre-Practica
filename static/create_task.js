@@ -7,7 +7,7 @@ const stage = new Konva.Stage({
     height: heightStage
 });
 
-let stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
+// let stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
 
 const layer = new Konva.Layer({name: "layer"});
 stage.add(layer);
@@ -50,22 +50,4 @@ listenDeleteElement();
 listenHiddePanels();
 
 replaceSupports();
-
-const a = 270
-var arc = new Konva.Arc({
-    x: blockSnapSize*11,
-    y: blockSnapSize*8,
-    innerRadius: blockSnapSize,
-    outerRadius: blockSnapSize+1,
-    fill: 'red',
-    stroke: 'black',
-    strokeWidth: 2,
-    angle: a,
-    rotationDeg: -a,
-    draggable: true
-  });
-
-layer.add(arc)
-
-
 
