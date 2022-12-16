@@ -30,6 +30,16 @@
         <button type="submit" onclick="saveJSONandDate()">GUARDAR</button>
     </form>
 
+    <button id="jsonGenerator">json</button>
+    <a href="https://jsonformatter.org/json-pretty-print" target="_blank">Pretty JSON</a>
+    <script>
+        document.querySelector("#jsonGenerator").addEventListener("click", () => {
+            const json = dcl.generateJSON()
+            console.log(json)
+            const newDcl = recreateDcl(json)
+        })
+    </script>
+
 
 
 

@@ -1,4 +1,5 @@
 const dclJSON = JSON.parse(document.querySelector("#dclJSON").textContent);
+console.log(dclJSON)
 
 const resolvingTask = false;
 //------------------------------------------------------Creacion canvas-----------------------------------------------//
