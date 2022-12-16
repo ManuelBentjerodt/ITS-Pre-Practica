@@ -117,6 +117,7 @@ function createBeam(nameBeam = "beam", _id=null, coordinates=null, _node=null) {
     } else {
         originNode = new Node([x0, y0], id = line.getChildren()[1].getAttr("id"));
         secondNode = new Node([x0+x1, y0+y1], id = line.getChildren()[2].getAttr("id"));
+        joinNodes(originNode, secondNode);
     }
 
     console.log("askdfjnks")
@@ -125,7 +126,6 @@ function createBeam(nameBeam = "beam", _id=null, coordinates=null, _node=null) {
     secondNode.setKonvaCircle(line.getChildren()[2]);
     secondNode.setKonvaBeam(line);
 
-    joinNodes(originNode, secondNode);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -494,19 +494,31 @@ function createRollerSupport() {
 }
 
 
-function createPinnedSupport() {
-    countpoyoNoDeslizante += 1;
+function createPinnedSupport(_node=null) {
+    let ID;
+    let nodeParent;
+    let x0;
+    let y0; 
 
-    const konvaElement = lastNodeClick;
-    const idKonvaElement = konvaElement.getAttr("id")
-    const nodeParent = dcl.findNodeById(idKonvaElement);
+    if (_node) {
+        ID = _node.id;
+        [x0, y0] = _node.coordinate;
+        nodeParent = _node;
+        console.log(nodeParent)
 
-    const x0 = lastBeamNodeClick.x
-    const y0 = lastBeamNodeClick.y
+    } else {
+        konvaElement = lastNodeClick;
+        ID = konvaElement.getAttr("id");
+        nodeParent = dcl.findNodeById(ID);
+        x0 = lastBeamNodeClick.x
+        y0 = lastBeamNodeClick.y
+      
+    }
+    
     const large = 20; //blockSnapSize / 2;
     const strokeVal = 4;
 
-    const group = new Konva.Group({ id: idKonvaElement, name: "pinnedSupport", x: x0, y: y0 });
+    const group = new Konva.Group({ id: ID, name: "pinnedSupport", x: x0, y: y0 });
     const triangle = new Konva.RegularPolygon({
         name: "subelement PinnedSupport",
         x: 0,
@@ -524,11 +536,16 @@ function createPinnedSupport() {
 
     if (nodeParent.link === null) {
         nodeParent.setLink("pinnedSupport");
-        nodeParent.setKonvaLink(group)
+        nodeParent.setKonvaLink(group);
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
-        return;
+    
+        if (_node){
+            nodeParent.setKonvaLink(group)
+        } else {
+            return;
+        }
     }
 
     layer.add(group);
@@ -1906,6 +1923,21 @@ function getDate() {
     return date;
 }
 
+
+function drawLink(node){
+    if (node.link === "rollerSupport") {
+        createRollerSupport(node);
+    } else if (node.link === "pinnedSupport") {
+        createPinnedSupport(node);
+    } else if (node.link === "fixedSupport") {
+        createFixedSupport(node);
+    } else if (node.link === "ballJoint") {
+        createBallJoint(node);
+    } else if (node.link === "connectingRod") {
+        createConnectingRod(node);
+    }
+}
+
 function drawDCL() {
     const allNodes = [dcl, ...dcl.getAllDecendents()]
    
@@ -1914,11 +1946,6 @@ function drawDCL() {
 
     let [x0, y0] = nodesInitialBeam[0].coordinate;
     let [x1, y1] = nodesInitialBeam[1].coordinate;
-
-    console.log(allNodes)
-    console.log(nodesInitialBeam)
-    console.log(otherNodes)
-
 
     const initalBeam = createBeam(
         nameBeam="initialBeam",
@@ -1933,6 +1960,10 @@ function drawDCL() {
     const shadowBeam = createShadowBeam(x0,y0,x1-x0,y1-y0);
     shadowBeam.hide();
     listenNodeMovement(initalBeam, shadowBeam, "initialBeam");
+
+    drawLink(nodesInitialBeam[0]);
+    drawLink(nodesInitialBeam[1]);
+
 
     otherNodes.forEach(node => {
         // console.log("en for each: " + node.id)
