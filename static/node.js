@@ -147,7 +147,7 @@ class Node {
             });
         }
 
-        console.log("could not find element by id... returning null");
+        console.log(`could not find element by id (${_id}) ... returning null`);
         return null;
 
     }

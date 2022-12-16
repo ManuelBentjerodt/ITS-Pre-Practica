@@ -90,7 +90,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     return group;
 }
 
-function createBeam(nameBeam = "beam", _id=null, coordinates) {
+function createBeam(nameBeam = "beam", _id=null, coordinates=null, _node=null) {
     let x0 = lastBeamNodeClick.x
     let y0 = lastBeamNodeClick.y
     let x1 = blockSnapSize * 3;
@@ -109,9 +109,18 @@ function createBeam(nameBeam = "beam", _id=null, coordinates) {
     const line = newBeam(x0, y0, x1, y1, nameBeam, _id=_id);
     layer.add(line);
 
-    const originNode = new Node([x0, y0], id = line.getChildren()[1].getAttr("id"));
-    const secondNode = new Node([x0+x1, y0+y1], id = line.getChildren()[2].getAttr("id"));
+    let originNode;
+    let secondNode;
+    if (_node) {
+        secondNode = _node;
+        originNode = _node.parent;
+    } else {
+        originNode = new Node([x0, y0], id = line.getChildren()[1].getAttr("id"));
+        secondNode = new Node([x0+x1, y0+y1], id = line.getChildren()[2].getAttr("id"));
+    }
 
+    console.log("askdfjnks")
+    console.log(_node)
     originNode.setKonvaCircle(line.getChildren()[1]);
     secondNode.setKonvaCircle(line.getChildren()[2]);
     secondNode.setKonvaBeam(line);
@@ -124,18 +133,55 @@ function createBeam(nameBeam = "beam", _id=null, coordinates) {
     return [originNode, line];
 }
 
-function createBeam2() {
+function createBeam2(_node=null, _parent=null) {
     const konvaElement = lastNodeClick;
-    const [x0, y0] = getElementPos(konvaElement);
+    let [x0, y0] = [];
+    let idByDate;
+    let pointsLine;
+    let posXCircle, posYCircle;
+    let posXLine, posYLine;
+    let x0shadow, y0shadow, x1shadow, y1shadow;
 
-    const idByDate = Date.now();
+    if (_node){
+        [x0, y0] = _parent.coordinate;
+        [x1, y1] = _node.coordinate;
+
+        const diffX = x1-x0
+        const diffY = y1-y0
+        const angle = Math.atan2(diffY, diffX);
+
+
+        idByDate = _node.id - 2;
+        pointsLine = [nodeRadius*Math.cos(angle), nodeRadius*Math.sin(angle) , x1-x0, y1-y0];
+        posXLine = x0;
+        posYLine = y0;
+        posXCircle = x1
+        posYCircle = y1;
+        x0shadow = x0
+        y0shadow = y0
+        x1shadow = x1-x0
+        y1shadow = y1-y0
+        
+    } else {
+        [x0, y0] = getElementPos(konvaElement);
+        idByDate = Date.now();
+        pointsLine = [nodeRadius, 0, 3 * blockSnapSize, 0];
+        posXLine = x0;
+        posYLine = y0;
+        posXCircle = x0 + 3*blockSnapSize;
+        posYCircle = y0;
+        x0shadow = x0
+        y0shadow = y0
+        x1shadow = 3*blockSnapSize
+        y1shadow = 0
+    }
 
     const group = new Konva.Group({ name: "beam2", id: idByDate });
     const line = new Konva.Line({
         name: "subelementBeamLine",
-        x: x0,
-        y: y0,
-        points: [nodeRadius, 0, 3 * blockSnapSize, 0],
+        x: posXLine,
+        y: posYLine,
+        points: pointsLine,
         strokeWidth: 5,
         stroke: "black",
         id: idByDate + 1
@@ -143,8 +189,8 @@ function createBeam2() {
 
     const circle = new Konva.Circle({
         name: "subelementBeamCirculo",
-        x: x0 + 3 * blockSnapSize,
-        y: y0,
+        x: posXCircle,
+        y: posYCircle,
         radius: nodeRadius,
         fill: "red",
         draggable: true,
@@ -156,19 +202,27 @@ function createBeam2() {
     paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
     paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
 
-    const shadowLine = createShadowBeam(x0, y0, 3 * blockSnapSize, 0, "shadowBeam2");
+    const shadowLine = createShadowBeam(x0shadow, y0shadow, x1shadow, y1shadow, "shadowBeam2");
     shadowLine.hide();
 
     layer.add(group, shadowLine);
 
-    const node = new Node([x0, y0], id = circle.getAttr("id"));
-    const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
+    let node, nodeParent;
+    
+    if (_node) {
+        node = _node
+        
+    } else {
+        node = new Node([x0, y0], id = circle.getAttr("id"));  
+        nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
+        joinNodes(nodeParent, node)
+    }
 
+  
     node.setKonvaBeam(group);
     node.setKonvaShadowBeam(shadowLine);
     node.setKonvaCircle(circle);
 
-    joinNodes(nodeParent, node)
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -203,6 +257,8 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         shadowList = shadow.getChildren();
         beamLine = konvaBeam.getChildren()[0];
         beamCircle = konvaBeam.getChildren()[1];
+        console.log("asdsad " + beamCircle.getAttr("id"))
+        console.log(dcl.findNodeById(beamCircle.getAttr("id")))
         otherCircle = dcl.findNodeById(beamCircle.getAttr("id")).parent.konvaObjects.circle;
 
     } else {
@@ -212,8 +268,8 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         otherCircle = konvaBeam.getChildren()[1];
     }
 
-    console.log(beamCircle.getAttr("id"))
-    console.log(otherCircle.getAttr("id"))
+    console.log("beam " + beamCircle.getAttr("id"))
+    console.log("other " + otherCircle.getAttr("id"))
     const nodeBeamCircle = dcl.findNodeById(beamCircle.getAttr("id"));
     const nodeOtherCircle = dcl.findNodeById(otherCircle.getAttr("id"));
 
@@ -1057,7 +1113,7 @@ function radToDeg(rad) {
 }
 
 function prettyDeg(deg) {
-    if(deg < 0) {
+    if (deg < 0) {
         return 360 + deg ;
     } 
 
@@ -1859,8 +1915,10 @@ function drawDCL() {
     let [x0, y0] = nodesInitialBeam[0].coordinate;
     let [x1, y1] = nodesInitialBeam[1].coordinate;
 
-    console.log("id node0: " + nodesInitialBeam[0].id);
-    console.log("id node1: " + nodesInitialBeam[1].id);
+    console.log(allNodes)
+    console.log(nodesInitialBeam)
+    console.log(otherNodes)
+
 
     const initalBeam = createBeam(
         nameBeam="initialBeam",
@@ -1868,21 +1926,20 @@ function drawDCL() {
         coordinates=[
             [x0, y0],
             [x1-x0, y1-y0]
-        ]
+        ],
+        _node=nodesInitialBeam[1]
     )[1];
+
     const shadowBeam = createShadowBeam(x0,y0,x1-x0,y1-y0);
     shadowBeam.hide();
     listenNodeMovement(initalBeam, shadowBeam, "initialBeam");
 
-   
+    otherNodes.forEach(node => {
+        // console.log("en for each: " + node.id)
+        const [x1, y1] = node.coordinate;
+        const [x0, y0] = node.parent.coordinate;
 
-    // otherNodes.forEach(node => {
-
-    //     node.childNodes.forEach(child => {
-    //         const [x0, y0] = node.coordinate;
-    //         const [x1, y1] = child.coordinate;
-
-            
-    //     })
-    // })
+        createBeam2(node, node.parent)
+      
+    })
 }
