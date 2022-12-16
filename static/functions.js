@@ -120,8 +120,6 @@ function createBeam(nameBeam = "beam", _id=null, coordinates=null, _node=null) {
         joinNodes(originNode, secondNode);
     }
 
-    console.log("askdfjnks")
-    console.log(_node)
     originNode.setKonvaCircle(line.getChildren()[1]);
     secondNode.setKonvaCircle(line.getChildren()[2]);
     secondNode.setKonvaBeam(line);
@@ -257,8 +255,6 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         shadowList = shadow.getChildren();
         beamLine = konvaBeam.getChildren()[0];
         beamCircle = konvaBeam.getChildren()[1];
-        console.log("asdsad " + beamCircle.getAttr("id"))
-        console.log(dcl.findNodeById(beamCircle.getAttr("id")))
         otherCircle = dcl.findNodeById(beamCircle.getAttr("id")).parent.konvaObjects.circle;
 
     } else {
@@ -268,8 +264,6 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         otherCircle = konvaBeam.getChildren()[1];
     }
 
-    console.log("beam " + beamCircle.getAttr("id"))
-    console.log("other " + otherCircle.getAttr("id"))
     const nodeBeamCircle = dcl.findNodeById(beamCircle.getAttr("id"));
     const nodeOtherCircle = dcl.findNodeById(otherCircle.getAttr("id"));
 
@@ -380,7 +374,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
 
 //------------------------------------------------------Links externos-----------------------------------------------//
-function createFixedSupport(_node) {
+function createFixedSupport(_node=null) {
     const colorStroke = "black"
 
     let x0;
@@ -446,7 +440,7 @@ function createFixedSupport(_node) {
 }
 
 
-function createRollerSupport(_node) {
+function createRollerSupport(_node=null) {
     let ID;
     let nodeParent;
     let x0;
@@ -579,15 +573,26 @@ function createPinnedSupport(_node=null) {
 
 
 //------------------------------------------------------Links internos-----------------------------------------------//
-function createBallJoint() {
-    const x0 = lastBeamNodeClick.x
-    const y0 = lastBeamNodeClick.y
+function createBallJoint(_node=null) {
+    let ID;
+    let nodeParent;
+    let x0;
+    let y0; 
 
-    const konvaElement = lastNodeClick;
-    const idKonvaElement = konvaElement.getAttr("id")
-    const nodeParent = dcl.findNodeById(idKonvaElement);
+    if (_node) {
+        ID = _node.id;
+        [x0, y0] = _node.coordinate;
+        nodeParent = _node;
+    } else {
+        konvaElement = lastNodeClick;
+        ID = konvaElement.getAttr("id");
+        nodeParent = dcl.findNodeById(ID);
+        x0 = lastBeamNodeClick.x
+        y0 = lastBeamNodeClick.y
+        
+    }
 
-    const group = new Konva.Group({ id: idKonvaElement, name: "ballJoint", x: x0, y: y0 });
+    const group = new Konva.Group({ id: ID, name: "ballJoint", x: x0, y: y0 });
     const circle = new Konva.Circle({
         x: 0,
         y: 0,
@@ -608,7 +613,11 @@ function createBallJoint() {
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
-        return;
+        if (_node){
+            nodeParent.setKonvaLink(group);
+        } else {
+            return;
+        }
     }
 
     layer.add(group);
@@ -620,16 +629,25 @@ function createBallJoint() {
 }
 
 
-function createConnectingRod() {
-    const x0 = lastBeamNodeClick.x
-    const y0 = lastBeamNodeClick.y
+function createConnectingRod(_node=null) {
+    let ID;
+    let nodeParent;
+    let x0;
+    let y0; 
 
-    const konvaElement = lastNodeClick;
-    const idKonvaElement = konvaElement.getAttr("id")
-    const nodeParent = dcl.findNodeById(idKonvaElement);
-
-
-    const group = new Konva.Group({ id: idKonvaElement, name: "connectingRod", x: x0, y: y0 });
+    if (_node) {
+        ID = _node.id;
+        [x0, y0] = _node.coordinate;
+        nodeParent = _node;
+    } else {
+        konvaElement = lastNodeClick;
+        ID = konvaElement.getAttr("id");
+        nodeParent = dcl.findNodeById(ID);
+        x0 = lastBeamNodeClick.x
+        y0 = lastBeamNodeClick.y
+        
+    }
+    const group = new Konva.Group({ id: ID, name: "connectingRod", x: x0, y: y0 });
     const large = blockSnapSize;
     const line = new Konva.Line({
         name: "subelement ConnectingRod",
@@ -666,7 +684,11 @@ function createConnectingRod() {
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
-        return;
+        if (_node){
+            nodeParent.setKonvaLink(group);
+        } else {
+            return;
+        }
     }
 
     layer.add(group);
@@ -1985,13 +2007,14 @@ function drawDCL() {
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
 
-
     otherNodes.forEach(node => {
         // console.log("en for each: " + node.id)
         const [x1, y1] = node.coordinate;
         const [x0, y0] = node.parent.coordinate;
 
+        console.log(node.coordinate, node.parent.coordinate)
         createBeam2(node, node.parent)
+        drawLink(node);
       
     })
 }
