@@ -20,6 +20,38 @@ class Node {
         }
     }
 
+    setNodeWithObject({
+        id,
+        coordinate,
+        parent,
+        childNodes,
+        link,
+        forces,
+        moments
+        
+        }, _id=this.id){
+        _id += 1
+
+        this.setCoordinate(coordinate);
+        this.setParent(parent);
+        this.setLink(link);
+
+        forces.forEach(force => {
+            this.addForce(force[0], force[1])
+        })
+
+        moments.forEach(moment => {
+            this.addMoment(moment)
+        })
+
+        childNodes.forEach(child => {
+            let node = createNodeWithObject(child, id=_id)
+            _id += 1
+            joinNodes(this, node)
+        })
+        
+    }
+
     setId(id) {
         this.id = id;
     }
@@ -47,7 +79,7 @@ class Node {
         this.link = null;
     }
 
-    addForce(magnitud, angle, id) {
+    addForce(magnitud, angle) {
         this.forces.push([magnitud, angle]);
     }
 
@@ -141,6 +173,8 @@ class Node {
 
         return discovered;
     }
+
+    
     
 }
 
