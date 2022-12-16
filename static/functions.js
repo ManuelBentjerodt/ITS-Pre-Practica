@@ -97,7 +97,7 @@ function createBeam(nameBeam = "beam") {
     layer.add(line);
 
     const originNode = new Node([x0, y0], id = line.getChildren()[1].getAttr("id"));
-    const secondNode = new Node([x0, y0], id = line.getChildren()[2].getAttr("id"));
+    const secondNode = new Node([x0+x1, y0+y1], id = line.getChildren()[2].getAttr("id"));
 
     originNode.setKonvaCircle(line.getChildren()[1]);
     secondNode.setKonvaCircle(line.getChildren()[2]);
@@ -1805,17 +1805,15 @@ function jsonToObject(json){
     return object;
 }
 
-function createNodeWithObject(object, _id=Date.now()){
+function createNodeWithObject(object, _id){
     const node = new Node(null, id=_id);
-    node.setNodeWithObject(object);
+    node.setNodeWithObject(object, node.id);
     return node;
 }
 
 function recreateDcl(json){
     const object = jsonToObject(json);
-    const newDCL = createNodeWithObject(object);
-    console.log("new dcl")
-    console.log(newDCL)
+    const newDCL = createNodeWithObject(object, object.id);
     return newDCL;
 }
 
@@ -1835,4 +1833,21 @@ function getDate(){
     
     const date = dmy.join('/') + ' ' + hms.join(':');
     return date;
+}
+
+function drawDCL(){
+    const allNodes = [dcl, ...dcl.getAllDecendents()]
+   
+
+    allNodes.forEach(node => {
+
+        node.childNodes.forEach(child => {
+            const [x0, y0] = node.coordinate;
+            const [x1, y1] = child.coordinate;
+
+            // console.log(x0,y0,x1,y1)
+            // console.log(node)
+            // console.log(child)
+        })
+    })
 }

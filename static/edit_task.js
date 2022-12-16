@@ -1,7 +1,4 @@
-const dclJSON = JSON.parse(document.querySelector("#dclJSON").textContent);
-console.log(dclJSON)
 
-const resolvingTask = false;
 //------------------------------------------------------Creacion canvas-----------------------------------------------//
 const stage = new Konva.Stage({
     name: "stage",
@@ -37,3 +34,9 @@ listenPanelMovement(delPanel);
 
 listenPanelMovement(modalMoment); // NUEVO
 listenPanelMovement(modalForce); // NUEVO
+
+const dclJSON = document.querySelector("#dclJSON").textContent;
+const dcl = recreateDcl(dclJSON)
+console.log(dcl)
+drawDCL(dcl)
+
