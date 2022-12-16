@@ -144,10 +144,9 @@ function createBeam2(_node=null, _parent=null) {
         [x0, y0] = _parent.coordinate;
         [x1, y1] = _node.coordinate;
 
-        const diffX = x1-x0
-        const diffY = y1-y0
+        const diffX = x1-x0;
+        const diffY = y1-y0;
         const angle = Math.atan2(diffY, diffX);
-
 
         idByDate = _node.id - 2;
         pointsLine = [nodeRadius*Math.cos(angle), nodeRadius*Math.sin(angle) , x1-x0, y1-y0];
@@ -211,7 +210,7 @@ function createBeam2(_node=null, _parent=null) {
         node = _node
         
     } else {
-        node = new Node([x0, y0], id = circle.getAttr("id"));  
+        node = new Node([posXCircle, posYCircle], id = circle.getAttr("id"));  
         nodeParent = dcl.findNodeById(konvaElement.getAttr("id"))
         joinNodes(nodeParent, node)
     }
@@ -2012,7 +2011,8 @@ function drawDCL() {
         const [x1, y1] = node.coordinate;
         const [x0, y0] = node.parent.coordinate;
 
-        console.log(node.coordinate, node.parent.coordinate)
+        // console.log(node.coordinate, node.parent.coordinate)
+        console.log(node, node.parent)
         createBeam2(node, node.parent)
         drawLink(node);
       

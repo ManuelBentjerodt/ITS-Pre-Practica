@@ -39,8 +39,12 @@ listenPanelMovement(delPanel);
 listenPanelMovement(modalMoment); // NUEVO
 listenPanelMovement(modalForce); // NUEVO
 
+
+listenCreateElement();
+listenDeleteElement();
+listenHiddePanels();
+
 const dclJSON = document.querySelector("#dclJSON").textContent;
 const dcl = recreateDcl(dclJSON)
-console.log(dcl)
 drawDCL(dcl)
 
