@@ -29,7 +29,7 @@ class Node {
         forces,
         moments
         
-        }, _id=this.id){
+        }, _id=this.id) {
 
         this.setCoordinate(coordinate);
         this.setParent(parent);
@@ -74,7 +74,7 @@ class Node {
         }
     }
 
-    deleteLink(){
+    deleteLink() {
         this.link = null;
     }
 
@@ -86,35 +86,35 @@ class Node {
         this.moments.push(magnitud);
     }
 
-    setKonvaBeam(object){
+    setKonvaBeam(object) {
         this.konvaObjects.beam = object;
     }
 
-    setKonvaLink(object){
+    setKonvaLink(object) {
         this.konvaObjects.link = object;
     }
 
-    addKonvaForce(object){
+    addKonvaForce(object) {
         this.konvaObjects.forces.push(object);
     }
 
-    addKonvaMoment(object){
+    addKonvaMoment(object) {
         this.konvaObjects.forces.push(object);
     }
 
-    setKonvaShadowBeam(object){
+    setKonvaShadowBeam(object) {
         this.konvaObjects.shadowBeam = object;
     }
 
-    setKonvaCircle(object){
+    setKonvaCircle(object) {
         this.konvaObjects.circle = object;
     }
 
-    updateAngleForce(index, newAngle){
+    updateAngleForce(index, newAngle) {
         this.forces[index][1] = newAngle
     }
 
-    generateJSON(){
+    generateJSON() {
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
         //const copy = this.clone()
         copy.getAllDecendents().forEach(descendent => {

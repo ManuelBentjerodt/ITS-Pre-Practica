@@ -1,3 +1,7 @@
+const lastBeamNodeClick = {x: 0, y: 0};
+let lastNodeClick = null;
+let lastElementClick = undefined;
+
 
 //------------------------------------------------------Creacion canvas-----------------------------------------------//
 const stage = new Konva.Stage({
