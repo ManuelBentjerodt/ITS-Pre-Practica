@@ -4,7 +4,8 @@ from .models import Task, TaskPerAccount
 
 
 class TaskForm(forms.ModelForm):
-    dcl = forms.JSONField() #widget=forms.HiddenInput()
+    dcl = forms.JSONField(widget=forms.HiddenInput())
+    date = forms.CharField(widget=forms.HiddenInput())
     class Meta:
         model = Task
         fields = '__all__'
