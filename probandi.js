@@ -7,7 +7,7 @@ var d = new Date,
                d.getMinutes(),
                d.getSeconds()].join(':');
 
-function getDate(){
+function getDate() {
     const d = new Date;
     const dmy = [
         d.getDate(),

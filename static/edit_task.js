@@ -1,7 +1,8 @@
-const dclJSON = JSON.parse(document.querySelector("#dclJSON").textContent);
-console.log(dclJSON)
+const lastBeamNodeClick = {x: 0, y: 0};
+let lastNodeClick = null;
+let lastElementClick = undefined;
 
-const resolvingTask = false;
+
 //------------------------------------------------------Creacion canvas-----------------------------------------------//
 const stage = new Konva.Stage({
     name: "stage",
@@ -37,3 +38,13 @@ listenPanelMovement(delPanel);
 
 listenPanelMovement(modalMoment); // NUEVO
 listenPanelMovement(modalForce); // NUEVO
+
+
+listenCreateElement();
+listenDeleteElement();
+listenHiddePanels();
+
+const dclJSON = document.querySelector("#dclJSON").textContent;
+const dcl = recreateDcl(dclJSON)
+drawDCL(dcl)
+
