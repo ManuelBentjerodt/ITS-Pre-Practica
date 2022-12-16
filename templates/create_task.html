@@ -25,9 +25,12 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}
-    
-        <button type="submit">GUARDAR</button>
+
+        <script src="{%static '/save_task.js'%}"></script>
+        <button type="submit" onclick="saveJSONandDate()">GUARDAR</button>
     </form>
+
+
 
 
 </body>

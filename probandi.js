@@ -24,3 +24,5 @@ function getDate(){
     const date = dmy.join('/') + ' ' + hms.join(':');
     return date;
 }
+
+console.log(getDate())
