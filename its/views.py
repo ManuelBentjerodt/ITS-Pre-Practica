@@ -11,7 +11,8 @@ from django.contrib import messages
 def sign_up(request):
     if request.method == 'POST':
 
-        username = request.POST.get("username")
+        # username = request.POST.get("username")
+        username = request.POST["username"]
         email = request.POST['email']
         password = request.POST['password']
         password2 = request.POST['password2']

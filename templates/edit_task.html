@@ -7,14 +7,14 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Editar <textarea name="" id="" cols="30" rows="10"></textarea></h1>
+    <h1>Editar</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}
 
      
-        <div id="container2" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
-        {{drawJSON|json_script:"drawJSON"}}
+        <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
+        {{dclJSON|json_script:"dclJSON"}}
         {% load static %}
         <script src="{%static '/variables.js'%}" ></script>
         <script src="{%static '/functions.js'%}" ></script>
