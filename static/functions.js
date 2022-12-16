@@ -2007,14 +2007,9 @@ function drawDCL() {
     drawLink(nodesInitialBeam[1]);
 
     otherNodes.forEach(node => {
-        // console.log("en for each: " + node.id)
-        const [x1, y1] = node.coordinate;
-        const [x0, y0] = node.parent.coordinate;
-
-        // console.log(node.coordinate, node.parent.coordinate)
         console.log(node, node.parent)
         createBeam2(node, node.parent)
         drawLink(node);
-      
+        
     })
 }
