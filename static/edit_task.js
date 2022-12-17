@@ -45,6 +45,7 @@ listenDeleteElement();
 listenHiddePanels();
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
+
 const dcl = recreateDcl(dclJSON)
 drawDCL(dcl)
 

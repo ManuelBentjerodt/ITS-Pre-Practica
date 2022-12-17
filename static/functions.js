@@ -751,6 +751,9 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
+        console.log("El dcl es FORCE: \n"+dcl.id);
+        console.log("El konva es: \n"+konvaElement.getAttr("id"));
+        console.log("NODE PARENT: "+ nodeParent.id);
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
         nodeParent.addKonvaForce(group)
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -1979,9 +1982,31 @@ function drawLink(node){
     }
 }
 
+
+function drawForces(node){
+
+    node.forces.forEach(force=>{
+        // console.log("FUERZA:"+force);
+        // console.log("MAGNITUD: "+force[0])
+        // console.log("COORDINATE: "+ node.coordinate[1] );
+        if (force !=null){
+        createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
+        }
+    })
+    //console.log("fuerzas: "+ node.forces);
+}
+
+
+
+
+
+
+
+
 function drawDCL() {
+    console.log("LLAME A drawDCL");
     const allNodes = [dcl, ...dcl.getAllDecendents()]
-   
+
     const nodesInitialBeam = allNodes.slice(0,2)
     const otherNodes = allNodes.slice(2)
 
@@ -2009,6 +2034,76 @@ function drawDCL() {
         console.log(node, node.parent)
         createBeam2(node, node.parent)
         drawLink(node);
-        
+        drawForces(node);
     })
+    //console.log("node\n"+ otherNodes);
+}
+
+
+function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux") {
+    let x0lastPos = lastBeamNodeClick.x
+    let y0lasPos = lastBeamNodeClick.y
+
+    let magnitud = valMagnitud;
+    let angle = valAngle;
+    let txt = magnitud + " N" + ", " + angle + " °";
+
+    const large = blockSnapSize * 2;
+    const strokeVal = 4;
+
+    const lx = large * Math.cos(angle * Math.PI / 180)
+    const ly = large * Math.sin(degToRad(angle))
+
+    if (color != "black") {
+        x0lastPos = x0;
+        y0lasPos = y0;
+        txt = valMagnitud
+    }
+
+    const group = new Konva.Group({ tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos });
+    const arrow = new Konva.Arrow({
+        x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
+        y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
+        points: [lx, -ly, 0, 0],
+        pointerLength: 15,
+        pointerWidth: 15,
+        fill: color,
+        stroke: color,
+        strokeWidth: strokeVal,
+        draggable: true
+    });
+
+    const magnitudValue = new Konva.Text({
+        x: lx + 4,
+        y: -ly,
+        text: txt,
+        fontSize: 15,
+        fontFamily: "Impact",
+        fill: color
+    });
+
+    group.add(arrow, magnitudValue);
+    layerForPaint.add(group);
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+
+    if (color == "black") {
+        const konvaElement = lastNodeClick;
+        //console.log("Konva es: \n"+konvaElement);
+        console.log("El dcl es: \n"+dcl.id);
+        //const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
+        const nodeParent = dcl.findNodeById(nodeId.id);
+        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
+        nodeParent.addKonvaForce(group)
+        group.setAttr("id", nodeId.id)
+    }
+
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+    modalForce.style.visibility = "hidden";
+
+    forceMovement(group, 2 * blockSnapSize, strokeVal)
+
+    return group;
 }
