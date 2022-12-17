@@ -2041,8 +2041,10 @@ function drawDCL() {
 
 
 function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux") {
-    let x0lastPos = lastBeamNodeClick.x
-    let y0lasPos = lastBeamNodeClick.y
+    let x0lastPos = nodeId.coordinate[0];
+    let y0lasPos = nodeId.coordinate[1];
+
+
 
     let magnitud = valMagnitud;
     let angle = valAngle;
