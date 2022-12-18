@@ -2042,9 +2042,14 @@ function drawDCL() {
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
 
+
+    var xCoord = []
+
     nodesInitialBeam.forEach(node => {
         drawForces(node);
         drawMoments(node);
+        //console.log(node.coo)
+        xCoord.push(node.coordinate[0])
     })
 
 
@@ -2054,8 +2059,28 @@ function drawDCL() {
         drawLink(node);
         drawForces(node);
         drawMoments(node);
+        xCoord.push(node.coordinate[0])
     })
-    //console.log("node\n"+ otherNodes);
+
+    for(var i=0; i<xCoord.length;i++){
+        xCoord[i] = xCoord[i]
+    }
+    const line = new Konva.Line({
+        x: 0,
+        y: 50,
+        points: [120+40, 70, 600, 70],
+        stroke: 'red',
+        strokeWidth: 10,
+        tension: 0
+      });
+      //Math.min(...xCoord)
+    //   x: Math.max(...xCoord)
+    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
+    group.add(line);
+    layer.add(group);
+    console.log("node\n"+ otherNodes);
+    console.log("lista xcoord\n"+ xCoord);
+
 }
 
 
