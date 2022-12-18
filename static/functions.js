@@ -2048,7 +2048,7 @@ function drawDCL() {
     nodesInitialBeam.forEach(node => {
         drawForces(node);
         drawMoments(node);
-        //console.log(node.coo)
+        drawVerticalLine(node.coordinate[0]); // linea de abajo
         xCoord.push(node.coordinate[0])
     })
 
@@ -2059,7 +2059,8 @@ function drawDCL() {
         drawLink(node);
         drawForces(node);
         drawMoments(node);
-        xCoord.push(node.coordinate[0])
+        drawVerticalLine(node.coordinate[0]); //linea de abajo
+        xCoord.push(node.coordinate[0]);
     })
 
     for(var i=0; i<xCoord.length;i++){
@@ -2068,18 +2069,37 @@ function drawDCL() {
     const line = new Konva.Line({
         x: 0,
         y: 50,
-        points: [120+40, 70, 600, 70],
+        points: [Math.min(...xCoord), 70, Math.max(...xCoord), 70],
         stroke: 'red',
         strokeWidth: 10,
         tension: 0
       });
-      //Math.min(...xCoord)
-    //   x: Math.max(...xCoord)
+
+
     const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
     group.add(line);
     layer.add(group);
+
     console.log("node\n"+ otherNodes);
     console.log("lista xcoord\n"+ xCoord);
+
+}
+
+function drawVerticalLine(xCoordinate){
+ 
+    const line = new Konva.Line({
+        x: 0,
+        y: 50,
+        points: [xCoordinate, 70+20,xCoordinate,70-20],
+        stroke: 'red',
+        strokeWidth: 10,
+        tension: 0
+      });
+
+
+    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
+    group.add(line);
+    layer.add(group);
 
 }
 
