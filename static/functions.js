@@ -2017,7 +2017,6 @@ function drawMoments(node){
 
 
 function drawDCL() {
-    console.log("LLAME A drawDCL");
     const allNodes = [dcl, ...dcl.getAllDecendents()]
 
     const nodesInitialBeam = allNodes.slice(0,2)
@@ -2042,6 +2041,12 @@ function drawDCL() {
 
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
+
+    nodesInitialBeam.forEach(node => {
+        drawForces(node);
+        drawMoments(node);
+    })
+
 
     otherNodes.forEach(node => {
         console.log(node, node.parent)
