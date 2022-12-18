@@ -2094,9 +2094,7 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
         const konvaElement = lastNodeClick;
         //console.log("Konva es: \n"+konvaElement);
         console.log("El dcl es: \n"+dcl.id);
-        //const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
         const nodeParent = dcl.findNodeById(nodeId.id);
-        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
         nodeParent.addKonvaForce(group)
         group.setAttr("id", nodeId.id)
     }
