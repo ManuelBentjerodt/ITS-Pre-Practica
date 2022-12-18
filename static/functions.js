@@ -751,6 +751,9 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
+        console.log("El dcl es FORCE: \n"+dcl.id);
+        console.log("El konva es: \n"+konvaElement.getAttr("id"));
+        console.log("NODE PARENT: "+ nodeParent.id);
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
         nodeParent.addKonvaForce(group)
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -1979,9 +1982,43 @@ function drawLink(node){
     }
 }
 
+
+function drawForces(node){
+
+    node.forces.forEach(force=>{
+        // console.log("FUERZA:"+force);
+        // console.log("MAGNITUD: "+force[0])
+        // console.log("COORDINATE: "+ node.coordinate[1] );
+        if (force !=null){
+        createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
+        }
+    })
+    //console.log("fuerzas: "+ node.forces);
+}
+
+function drawMoments(node){
+
+    node.moments.forEach(moment=>{
+        // console.log("FUERZA:"+force);
+        // console.log("MAGNITUD: "+force[0])
+        // console.log("COORDINATE: "+ node.coordinate[1] );
+        if (moment !=null){
+        //createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
+        createMomentEditTask(moment,"black",node.coordinate[0],node.coordinate[1],node);
+        }
+    })
+    console.log("fuerzas: "+ node.moments);
+}
+
+
+
+
+
+
+
 function drawDCL() {
     const allNodes = [dcl, ...dcl.getAllDecendents()]
-   
+
     const nodesInitialBeam = allNodes.slice(0,2)
     const otherNodes = allNodes.slice(2)
 
@@ -2005,10 +2042,213 @@ function drawDCL() {
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
 
+
+    var xCoord = []
+
+    nodesInitialBeam.forEach(node => {
+        drawForces(node);
+        drawMoments(node);
+        drawVerticalLine(node.coordinate[0]); // linea de abajo
+        xCoord.push(node.coordinate[0])
+    })
+
+
     otherNodes.forEach(node => {
         console.log(node, node.parent)
         createBeam2(node, node.parent)
         drawLink(node);
-        
+        drawForces(node);
+        drawMoments(node);
+        drawVerticalLine(node.coordinate[0]); //linea de abajo
+        xCoord.push(node.coordinate[0]);
     })
+
+    for(var i=0; i<xCoord.length;i++){
+        xCoord[i] = xCoord[i]
+    }
+    const line = new Konva.Line({
+        x: 0,
+        y: 50,
+        points: [Math.min(...xCoord), 70, Math.max(...xCoord), 70],
+        stroke: 'red',
+        strokeWidth: 6,
+        tension: 0
+      });
+
+
+    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
+    group.add(line);
+    layer.add(group);
+
+
+    xCoordSorted = xCoord.sort(function(a, b){return a-b});
+    console.log(xCoordSorted);
+
+
+    console.log("node\n"+ otherNodes);
+    console.log("lista xcoord\n"+ xCoord);
+
 }
+
+function drawVerticalLine(xCoordinate){
+ 
+    const line = new Konva.Line({
+        x: 0,
+        y: 50,
+        points: [xCoordinate, 70+20,xCoordinate,70-20],
+        stroke: 'red',
+        strokeWidth: 7,
+        tension: 0
+      });
+
+
+    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
+    group.add(line);
+    layer.add(group);
+
+}
+
+
+function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux") {
+    let x0lastPos = nodeId.coordinate[0];
+    let y0lasPos = nodeId.coordinate[1];
+
+
+
+    let magnitud = valMagnitud;
+    let angle = valAngle;
+    let txt = magnitud + " N" + ", " + angle + " °";
+
+    const large = blockSnapSize * 2;
+    const strokeVal = 4;
+
+    const lx = large * Math.cos(angle * Math.PI / 180)
+    const ly = large * Math.sin(degToRad(angle))
+
+    if (color != "black") {
+        x0lastPos = x0;
+        y0lasPos = y0;
+        txt = valMagnitud
+    }
+
+    const group = new Konva.Group({ tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos });
+    const arrow = new Konva.Arrow({
+        x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
+        y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
+        points: [lx, -ly, 0, 0],
+        pointerLength: 15,
+        pointerWidth: 15,
+        fill: color,
+        stroke: color,
+        strokeWidth: strokeVal,
+        draggable: true
+    });
+
+    const magnitudValue = new Konva.Text({
+        x: lx + 4,
+        y: -ly,
+        text: txt,
+        fontSize: 15,
+        fontFamily: "Impact",
+        fill: color
+    });
+
+    group.add(arrow, magnitudValue);
+    layerForPaint.add(group);
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+
+    if (color == "black") {
+        console.log("El dcl es: \n"+dcl.id);
+        const nodeParent = dcl.findNodeById(nodeId.id);
+        nodeParent.addKonvaForce(group)
+        group.setAttr("id", nodeId.id)
+    }
+
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+    modalForce.style.visibility = "hidden";
+
+    forceMovement(group, 2 * blockSnapSize, strokeVal)
+
+    return group;
+}
+
+
+function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, forFixedSupport = false) {
+    let x0lastPos = nodeId.coordinate[0];
+    let y0lastPos = nodeId.coordinate[1];
+
+    let magnitud = val;
+    let txt = magnitud + " Nm";
+
+    if (color != "black") {
+        x0lastPos = x0;
+        y0lastPos = y0;
+    }
+
+    let listOfPoints;
+    const positiveList = [17.68, 17.68, 18.63, 16.67, 19.53, 15.61, 20.36, 14.5, 21.14, 13.35, 21.85, 12.15, 22.49, 10.92, 23.06, 9.66, 23.56, 8.36, 23.99, 7.04, 24.34, 5.7, 24.62, 4.34, 24.82, 2.97, 24.95, 1.59, 25.0, 0.2, 24.97, -1.19, 24.87, -2.57, 24.69, -3.95, 24.43, -5.31, 24.1, -6.66, 23.69, -7.99, 23.21, -9.29, 22.66, -10.57, 22.04, -11.81, 21.35, -13.01, 20.59, -14.18, 19.77, -15.3, 18.89, -16.37, 17.96, -17.39, 16.96, -18.36, 15.92, -19.28, 14.82, -20.13, 13.68, -20.92, 12.5, -21.65, 11.28, -22.31, 10.02, -22.9, 8.74, -23.42, 7.42, -23.87, 6.09, -24.25, 4.73, -24.55, 3.36, -24.77, 1.98, -24.92, 0.59, -24.99, -0.79, -24.99, -2.18, -24.9, -3.56, -24.75, -4.93, -24.51, -6.28, -24.2, -7.61, -23.81, -8.92, -23.35, -10.2, -22.82, -11.46, -22.22, -12.67, -21.55, -13.85, -20.81, -14.98, -20.01, -16.07, -19.15, -17.11, -18.23, -18.09, -17.25, -19.02, -16.22, -19.89, -15.14, -20.7, -14.01, -21.45, -12.84, -22.13, -11.63, -22.74, -10.39, -23.28, -9.11, -23.75, -7.8, -24.15, -6.47, -24.47, -5.12, -24.72, -3.75, -24.89, -2.38, -24.98, -0.99, -25.0, 0.4, -24.94, 1.78, -24.8, 3.16, -24.58, 4.54, -24.3, 5.89, -23.93, 7.23, -23.49, 8.55, -22.98, 9.84, -22.4, 11.1, -21.75, 12.33, -21.03, 13.52, -20.25, 14.66, -19.4, 15.76, -18.5, 16.82, -17.54, 17.82, -16.52, 18.76, -15.45, 19.65, -14.34, 20.48, -13.18, 21.24, -11.98, 21.94, -10.74, 22.57, -9.48, 23.13, -8.18, 23.63, -6.85, 24.04, -5.51, 24.39, -4.15, 24.65, -2.77, 24.85, -1.39, 24.96, -0.0, 25.0]
+    const negativeList = [-17.68, 17.68, -18.63, 16.67, -19.53, 15.61, -20.36, 14.5, -21.14, 13.35, -21.85, 12.15, -22.49, 10.92, -23.06, 9.66, -23.56, 8.36, -23.99, 7.04, -24.34, 5.7, -24.62, 4.34, -24.82, 2.97, -24.95, 1.59, -25.0, 0.2, -24.97, -1.19, -24.87, -2.57, -24.69, -3.95, -24.43, -5.31, -24.1, -6.66, -23.69, -7.99, -23.21, -9.29, -22.66, -10.57, -22.04, -11.81, -21.35, -13.01, -20.59, -14.18, -19.77, -15.3, -18.89, -16.37, -17.96, -17.39, -16.96, -18.36, -15.92, -19.28, -14.82, -20.13, -13.68, -20.92, -12.5, -21.65, -11.28, -22.31, -10.02, -22.9, -8.74, -23.42, -7.42, -23.87, -6.09, -24.25, -4.73, -24.55, -3.36, -24.77, -1.98, -24.92, -0.59, -24.99, 0.79, -24.99, 2.18, -24.9, 3.56, -24.75, 4.93, -24.51, 6.28, -24.2, 7.61, -23.81, 8.92, -23.35, 10.2, -22.82, 11.46, -22.22, 12.67, -21.55, 13.85, -20.81, 14.98, -20.01, 16.07, -19.15, 17.11, -18.23, 18.09, -17.25, 19.02, -16.22, 19.89, -15.14, 20.7, -14.01, 21.45, -12.84, 22.13, -11.63, 22.74, -10.39, 23.28, -9.11, 23.75, -7.8, 24.15, -6.47, 24.47, -5.12, 24.72, -3.75, 24.89, -2.38, 24.98, -0.99, 25.0, 0.4, 24.94, 1.78, 24.8, 3.16, 24.58, 4.54, 24.3, 5.89, 23.93, 7.23, 23.49, 8.55, 22.98, 9.84, 22.4, 11.1, 21.75, 12.33, 21.03, 13.52, 20.25, 14.66, 19.4, 15.76, 18.5, 16.82, 17.54, 17.82, 16.52, 18.76, 15.45, 19.65, 14.34, 20.48, 13.18, 21.24, 11.98, 21.94, 10.74, 22.57, 9.48, 23.13, 8.18, 23.63, 6.85, 24.04, 5.51, 24.39, 4.15, 24.65, 2.77, 24.85, 1.39, 24.96, 0.0, 25.0]
+
+    if (magnitud < 0) {
+        listOfPoints = negativeList;
+
+    } else if (magnitud > 0) {
+        listOfPoints = positiveList;
+
+    } else {
+        if (color != "black") {
+            x0lastPos = x0;
+            y0lastPos = y0;
+            listOfPoints = positiveList;
+        }
+        return;
+    }
+
+
+    const group = new Konva.Group({ name: "moment", tension: magnitud, x: x0lastPos, y: y0lastPos });
+    const arrow = new Konva.Arrow({
+        x: 0,
+        y: 0,
+        points: listOfPoints,
+        pointerLength: 10,
+        pointerWidth: 10,
+        fill: color,
+        stroke: color,
+        strokeWidth: 4,
+        name: "subelement",
+    });
+
+    const magnitudValue = new Konva.Text({
+        x: 0 - blockSnapSize,
+        y: 0 - blockSnapSize,
+        text: txt,
+        fontSize: 15,
+        fontFamily: "Impact",
+        fill: color,
+    });
+
+    group.add(arrow, magnitudValue)
+
+    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+
+    if (color == "black") {
+        const nodeParent = dcl.findNodeById(nodeId.id);
+        nodeParent.addKonvaMoment(group);
+        group.setAttr("id",nodeId.id);
+    }
+
+    layerForPaint.add(group);
+
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+    // updateEquations();
+    // updateScorePanel();
+    return group;
+}
+
+
+
