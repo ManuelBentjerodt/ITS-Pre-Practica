@@ -2071,7 +2071,7 @@ function drawDCL() {
         y: 50,
         points: [Math.min(...xCoord), 70, Math.max(...xCoord), 70],
         stroke: 'red',
-        strokeWidth: 10,
+        strokeWidth: 6,
         tension: 0
       });
 
@@ -2079,6 +2079,11 @@ function drawDCL() {
     const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
     group.add(line);
     layer.add(group);
+
+
+    xCoordSorted = xCoord.sort(function(a, b){return a-b});
+    console.log(xCoordSorted);
+
 
     console.log("node\n"+ otherNodes);
     console.log("lista xcoord\n"+ xCoord);
@@ -2092,7 +2097,7 @@ function drawVerticalLine(xCoordinate){
         y: 50,
         points: [xCoordinate, 70+20,xCoordinate,70-20],
         stroke: 'red',
-        strokeWidth: 10,
+        strokeWidth: 7,
         tension: 0
       });
 
