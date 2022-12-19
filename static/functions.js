@@ -1993,7 +1993,7 @@ function drawForces(node){
         createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
         }
     })
-    //console.log("fuerzas: "+ node.forces);
+ 
 }
 
 function drawMoments(node){
@@ -2007,7 +2007,7 @@ function drawMoments(node){
         createMomentEditTask(moment,"black",node.coordinate[0],node.coordinate[1],node);
         }
     })
-    console.log("fuerzas: "+ node.moments);
+    
 }
 
 
@@ -2043,70 +2043,238 @@ function drawDCL() {
     drawLink(nodesInitialBeam[1]);
 
 
-    var xCoord = []
-
+    var xCoord = [];
+    var yCoord = [];
     nodesInitialBeam.forEach(node => {
         drawForces(node);
         drawMoments(node);
-        drawVerticalLine(node.coordinate[0]); // linea de abajo
+
+        drawVerticalLinesIndexes(node.coordinate[0]); // linea de abajo
+        drawHorizontalLinesIndexes(node.coordinate[1]); //lineas de al lado
+        drawSegmentedLinesHorizontal(node.coordinate[0],node.coordinate[1]);
+        drawSegmentedLinesVertical(node.coordinate[0],node.coordinate[1]);
+
+
         xCoord.push(node.coordinate[0])
+        yCoord.push(node.coordinate[1])
     })
 
-
+    
     otherNodes.forEach(node => {
         console.log(node, node.parent)
         createBeam2(node, node.parent)
         drawLink(node);
         drawForces(node);
         drawMoments(node);
-        drawVerticalLine(node.coordinate[0]); //linea de abajo
+
+        drawSegmentedLinesHorizontal(node.coordinate[0],node.coordinate[1]);
+        drawSegmentedLinesVertical(node.coordinate[0],node.coordinate[1]);
+        drawVerticalLinesIndexes(node.coordinate[0]); //linea de abajo
+        drawHorizontalLinesIndexes(node.coordinate[1]); //linea de al lado
         xCoord.push(node.coordinate[0]);
+        yCoord.push(node.coordinate[1]);
     })
 
-    for(var i=0; i<xCoord.length;i++){
-        xCoord[i] = xCoord[i]
-    }
-    const line = new Konva.Line({
+   //creacion de linea grande horizontal de metros//
+    const HorizontalLinePlace =  Math.max(...yCoord) + 100;
+    const horizontalLine = new Konva.Line({
         x: 0,
-        y: 50,
-        points: [Math.min(...xCoord), 70, Math.max(...xCoord), 70],
+        y: 0,
+        points: [Math.min(...xCoord), 520, Math.max(...xCoord), 520],
         stroke: 'red',
         strokeWidth: 6,
         tension: 0
       });
 
 
-    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
-    group.add(line);
+    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 0 });
+    group.add(horizontalLine);
     layer.add(group);
+    ///////
 
+   //creacion de linea grande vertical de metros//
+   const verticalLine = new Konva.Line({
+    x: 0,
+    y: 0,
+    points: [1100, Math.min(...yCoord), 1100, Math.max(...yCoord)],
+    stroke: 'red',
+    strokeWidth: 6,
+    tension: 0
+  });
 
-    xCoordSorted = xCoord.sort(function(a, b){return a-b});
-    console.log(xCoordSorted);
+    layer.add(verticalLine);
+///////
 
+    const xCoordSorted = xCoord.sort(function(a, b){return a-b});
+    const yCoordSorted = yCoord.sort(function(a, b){return a-b});
+    drawHorizontalMeters(xCoordSorted);
+    drawVerticalMeters(yCoordSorted);
+    
 
-    console.log("node\n"+ otherNodes);
-    console.log("lista xcoord\n"+ xCoord);
 
 }
 
-function drawVerticalLine(xCoordinate){
+function drawVerticalLinesIndexes(xCoordinate){
  
     const line = new Konva.Line({
         x: 0,
-        y: 50,
-        points: [xCoordinate, 70+20,xCoordinate,70-20],
+        y: 0,
+        points: [xCoordinate, 520+10,xCoordinate,520-10],
         stroke: 'red',
-        strokeWidth: 7,
+        strokeWidth: 6,
         tension: 0
       });
 
 
-    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 400 });
+    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 0 });
     group.add(line);
     layer.add(group);
 
 }
+
+function drawHorizontalLinesIndexes(yCoordinate){
+    lineLenght = 10;
+    const line = new Konva.Line({
+        x: 0,
+        y: 0,
+        points:[1100+lineLenght, yCoordinate,1100-lineLenght,yCoordinate],
+        stroke: 'red',
+        strokeWidth: 6,
+        tension: 0
+      });
+
+
+    const group = new Konva.Group({ name: "meters", tension: 0, x:0, y: 0 });
+    group.add(line);
+    layer.add(group);
+
+}
+function drawSegmentedLinesHorizontal(xCoordinate,yCoordinate){
+
+    //la linea esta ubicada actualmente en y: 520
+    // el largo de las lineas sera 10px. vemos cuantas caben desde el nodo a los 520
+    bigLineLenght = 520
+    lineLenght = 10;
+    distanceToLine = bigLineLenght-yCoordinate;
+    distanceBetweenSegments = 10;
+    numberOfSegments = Math.round(distanceToLine/(lineLenght+distanceBetweenSegments));
+
+    console.log("segmentos: " +numberOfSegments);
+    for (var i =0;i<numberOfSegments;i++){
+        const line = new Konva.Line({
+            x: 0,
+            y: 0,
+            points: [xCoordinate, yCoordinate+i*(lineLenght+distanceBetweenSegments),xCoordinate,yCoordinate+(lineLenght+distanceBetweenSegments)*i+10],
+            stroke: 'red',
+            strokeWidth: 2,
+            tension: 0
+          });
+          
+
+        layer.add(line);
+    }
+    
+
+
+}
+
+function drawSegmentedLinesVertical(xCoordinate,yCoordinate){
+
+    //la linea esta ubicada actualmente en y: 520
+    // el largo de las lineas sera 10px. vemos cuantas caben desde el nodo a los 520
+    bigLineLenght = 1100
+    lineLenght = 10;
+    distanceToLine = bigLineLenght-xCoordinate;
+    distanceBetweenSegments = 10;
+    numberOfSegments = Math.round(distanceToLine/(lineLenght+distanceBetweenSegments));
+
+    console.log("segmentos: " +numberOfSegments);
+    for (var i =0;i<numberOfSegments;i++){
+        const line = new Konva.Line({
+            x: 0,
+            y: 0,
+            points: [xCoordinate, yCoordinate+i*(lineLenght+distanceBetweenSegments),xCoordinate,yCoordinate+(lineLenght+distanceBetweenSegments)*i+10],
+            points: [xCoordinate+i*(lineLenght+distanceBetweenSegments),yCoordinate ,xCoordinate+(lineLenght+distanceBetweenSegments)*i+10,yCoordinate],
+
+            stroke: 'red',
+            strokeWidth: 2,
+            tension: 0
+          });
+          
+
+        layer.add(line);
+    }
+    
+
+
+}
+
+
+
+function drawHorizontalMeters(xCoordSorted){
+    maxValue = Math.max(...xCoordSorted);
+    offSet = 8;
+    for (var i=0;i<xCoordSorted.length;i++){
+
+
+        if(xCoordSorted[i] != maxValue){
+            segmentsAverage = (xCoordSorted[i]+ xCoordSorted[i+1])/2
+            meters = (xCoordSorted[i+1]-xCoordSorted[i])/40  
+            if (meters != 0){
+            const metersText = new Konva.Text({
+                x: segmentsAverage-offSet,
+                y: 550,
+                text: meters+"m",
+                fontSize: 15,
+                fontFamily: "Impact",
+                fill: "black"
+            });
+            layer.add(metersText);
+         }
+        }
+    }
+}
+
+function drawVerticalMeters(yCoordSorted){
+    maxValue = Math.max(...yCoordSorted);
+    offSet = 8;
+    for (var i=0;i<yCoordSorted.length;i++){
+
+
+        if(yCoordSorted[i] != maxValue){
+            segmentsAverage = (yCoordSorted[i]+ yCoordSorted[i+1])/2
+            meters = (yCoordSorted[i+1]-yCoordSorted[i])/40  
+
+            if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
+            const metersText = new Konva.Text({
+                x: 1120,
+                y: segmentsAverage-offSet,
+                text: meters+"m",
+                fontSize: 15,
+                fontFamily: "Impact",
+                fill: "black"
+            });
+            layer.add(metersText);
+         }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux") {
@@ -2160,7 +2328,6 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
     if (color == "black") {
-        console.log("El dcl es: \n"+dcl.id);
         const nodeParent = dcl.findNodeById(nodeId.id);
         nodeParent.addKonvaForce(group)
         group.setAttr("id", nodeId.id)
@@ -2249,6 +2416,5 @@ function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0,nodeId, layer
     // updateScorePanel();
     return group;
 }
-
 
 
