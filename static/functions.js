@@ -2076,6 +2076,7 @@ function drawDCL() {
     })
 
    //creacion de linea grande horizontal de metros//
+    const HorizontalLinePlace =  Math.max(...yCoord) + 100;
     const horizontalLine = new Konva.Line({
         x: 0,
         y: 0,
