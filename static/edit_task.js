@@ -46,6 +46,8 @@ listenHiddePanels();
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
 
-const dcl = recreateDcl(dclJSON)
-drawDCL(dcl)
+const dcl = recreateDcl(dclJSON);
+
+drawDCL(dcl);
+updateEquations();
 
