@@ -20,6 +20,7 @@ class Node {
         }
 
         this.isOrigin = false;
+        this.name = null;
     }
 
     setNodeWithObject({
@@ -29,13 +30,15 @@ class Node {
         childNodes,
         link,
         forces,
-        moments
+        moments,
+        isOrigin
         
         }, _id=this.id) {
 
         this.setCoordinate(coordinate);
         this.setParent(parent);
         this.setLink(link);
+        this.setIsOrigin(isOrigin);
 
         forces.forEach(force => {
             this.addForce(force[0], force[1])
@@ -51,6 +54,10 @@ class Node {
             joinNodes(this, node)
         })
         
+    }
+
+    setName(_name){
+        this.name = _name;
     }
 
     setIsOrigin(boolean){
