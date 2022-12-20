@@ -18,6 +18,8 @@ class Node {
             circle: null
             
         }
+
+        this.isOrigin = false;
     }
 
     setNodeWithObject({
@@ -49,6 +51,10 @@ class Node {
             joinNodes(this, node)
         })
         
+    }
+
+    setIsOrigin(boolean){
+        this.isOrigin = boolean;
     }
 
     setId(id) {
@@ -150,6 +156,31 @@ class Node {
         console.log(`could not find element by id (${_id}) ... returning null`);
         return null;
 
+    }
+
+    findOriginNode(root=this) {
+        const queue = [];
+        queue.push(root);
+
+        const discovered = [];
+        discovered.push(root);
+
+        while (queue.length) {
+            let actual = queue.shift();
+            
+            if (actual.isOrigin === true) {
+                return actual;
+            }
+            actual.childNodes.forEach( child => {
+                if (!(discovered.includes(child))) {
+                    discovered.push(child)
+                    queue.push(child)
+                }
+            });
+        }
+
+        console.log(`CRITICAL ERROR could not find origin... returning null`);
+        return null;
     }
 
     getAllDecendents(root=this) {
