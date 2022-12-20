@@ -43,7 +43,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     }
 
     let idByDate;
-    let idByDate2;
+
     if (_id) {
         idByDate = _id + -3 //-3 pq ya tiene sumado los 3 del circulo, no hay q suamrl odenuevo, es decir restar y sumar
     } else {
@@ -62,7 +62,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     });
 
     const circle1 = new Konva.Circle({
-        name: "subelementBeamCirculo1",
+        name: "subElementBeamCircle1",
         x: x0,
         y: y0,
         radius: nodeRadius,
@@ -72,7 +72,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     });
 
     const circle2 = new Konva.Circle({
-        name: "subelementBeamCirculo2",
+        name: "subElementBeamCircle2",
         x: x0 + x1,
         y: y0 + y1,
         radius: nodeRadius,
@@ -84,7 +84,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     group.add(line, circle1, circle2);
 
     paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
-    paintIfMouseOver(circle1, "#00FF00", nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
+    paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
     paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
 
     return group;
@@ -175,7 +175,7 @@ function createBeam2(_node=null, _parent=null) {
 
     const group = new Konva.Group({ name: "beam2", id: idByDate });
     const line = new Konva.Line({
-        name: "subelementBeamLine",
+        name: "subElementBeamLine",
         x: posXLine,
         y: posYLine,
         points: pointsLine,
@@ -185,7 +185,7 @@ function createBeam2(_node=null, _parent=null) {
     });
 
     const circle = new Konva.Circle({
-        name: "subelementBeamCirculo",
+        name: "subElementBeamCircle",
         x: posXCircle,
         y: posYCircle,
         radius: nodeRadius,
@@ -920,14 +920,19 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction
     btn.type = "button";
     // btn.style.backgroundColor = "yellow";
     // btn.style.background =  "url(prueba.png)";
-    btn.style.backgroundImage = image;
+    if (image){
+        btn.style.backgroundImage = image;
+    }
 
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel + "px";
     btn.style.backgroundSize = "cover"; // todo en button
     btn.id = idNameText;
 
-    // btn.innerText = btnText;
+    if (idNameText == "changeOriginBtn") {
+        btn.style.backgroundColor = "#99D9EA";
+        btn.innerText = btnText;
+    }
     btn.addEventListener("dblclick", () => {
 
         if (idNameText == "beamBtn") {
@@ -1020,7 +1025,7 @@ function createPanel(x0, y0) {
     const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalForce", "Force", showModalForce, null, null, null, imgForce);
     const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalMoment", "Moment", showModalMoment, null, null, null, imgMoment, null, imgForce);
     const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, null, null, null, imgBeam);
-
+    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, null, null, null, null);
 
     const topOfPanel = document.createElement("div");
     topOfPanel.style.width = widthPanel;
@@ -1041,6 +1046,7 @@ function createPanel(x0, y0) {
     panel.appendChild(btnConnectingRod);
     panel.appendChild(btnForce);
     panel.appendChild(btnMoment);
+    panel.appendChild(btnChangeOrigin)
 
     // panel.appendChild(containerForce);
     // panel.appendChild(containerCreateMoment);
@@ -1193,23 +1199,23 @@ function listenCreateElement() {
             console.log(nodeParent)
             console.log(e.target.getParent())
 
-            if (e.target.name() == "subelementBeamCirculo1") {
+            if (e.target.name() == "subElementBeamCircle1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => { return node.name() === "subelementBeamCirculo2" })[0];
+                const otherNode = parent.getChildren((node) => { return node.name() === "subElementBeamCircle2" })[0];
                 const otherNodePosition = getElementPos(otherNode);
 
-            } else if (e.target.name() == "subelementBeamCirculo2") {
+            } else if (e.target.name() == "subElementBeamCircle2") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => { return node.name() === "subelementBeamCirculo1" })[0]
+                const otherNode = parent.getChildren((node) => { return node.name() === "subElementBeamCircle1" })[0]
                 const otherNodePosition = getElementPos(otherNode);
 
-            } else if (e.target.name() == "subelementBeamCirculo") {
+            } else if (e.target.name() == "subElementBeamCircle") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
@@ -1793,12 +1799,42 @@ function paintElement(element, fillc, strokec, paintGroup) {
 }
 
 function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup = false) {
+    
     element.on("mouseenter", () => {
-        paintElement(element, nfillc, nstrokec, paintGroup);
+        let nfillcDef = nfillc;
+        let nstrokecDef = nstrokec;
+        if (element.name() === "subElementBeamCircle" ||element.name() === "subElementBeamCircle1" || element.name() === "subElementBeamCircle2 ") {
+            const NODE = dcl.findNodeById(element.getAttr("id"))
+
+            if (NODE.isOrigin) {
+                nfillcDef = originColorMouseOver;
+                nstrokecDef = originColorMouseOver;
+            } else {
+                nfillcDef = nfillc;
+                nstrokecDef = nstrokec;
+            }
+        }
+        paintElement(element, nfillcDef, nstrokec, paintGroup);
+        stage.container().style.cursor = 'pointer';
     })
 
     element.on("mouseleave", () => {
-        paintElement(element, ofillc, ostrokec, paintGroup);
+        let ofillcDef = ofillc;
+        let ostrokecDef = ostrokec;
+        if (element.name() === "subElementBeamCircle" ||element.name() === "subElementBeamCircle1" || element.name() === "subElementBeamCircle2 ") {
+            const NODE = dcl.findNodeById(element.getAttr("id"))   
+
+            if (NODE.isOrigin) {
+                ofillcDef = originColor;
+                ostrokecDef = originColor;
+            } else {
+                ofillcDef = nodeColor;
+                ostrokecDef = nodeColor;
+            }
+        }
+        
+        paintElement(element, ofillcDef, ostrokecDef, paintGroup);
+        stage.container().style.cursor = 'default';
     })
 }
 
@@ -2417,4 +2453,17 @@ function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0,nodeId, layer
     return group;
 }
 
+
+function changeOrigin(){
+    const newOriginNode = dcl.findNodeById(lastNodeClick.getAttr("id"));
+    const oldOriginNode = dcl.findOriginNode();
+    oldOriginNode.setIsOrigin(false);
+    newOriginNode.setIsOrigin(true);
+
+    oldOriginNode.konvaObjects.circle.setAttr("fill", "red");
+    newOriginNode.konvaObjects.circle.setAttr("fill", originColor);
+
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+}
 

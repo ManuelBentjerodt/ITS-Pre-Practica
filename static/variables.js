@@ -12,3 +12,6 @@ const nfillc = "#0000FF";
 const nstrokec = "#0000FF";
 const shadowFill = "#CF6412";
 const shadowStroke = "#FF7B17";
+const nodeColor = "red";
+const originColor = "green";
+const originColorMouseOver = "#00ff00";
