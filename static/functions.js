@@ -312,6 +312,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         shadow.hide();
 
         moveElementsAttached(nodeOtherCircle, otherCircle.position());
+        updateEquations();
 
     });
 
@@ -361,7 +362,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         shadow.hide();
 
         moveElementsAttached(nodeBeamCircle, beamCircle.position());
-
+        updateEquations();
     });
 }
 
@@ -806,12 +807,14 @@ function forceMovement(group, large, strokeVal) {
         const a = Math.sqrt(large ** 2 / ((x) ** 2 + (y) ** 2))
         arrow.points([a * x, a * y, 0, 0])
 
-        newAngle = radToDeg(Math.atan2(-y, x))
+        newAngle = Math.round(radToDeg(Math.atan2(-y, x)))
 
         arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
         arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
 
-        let txt = magnitudVal + " N" + ", " + Math.round(prettyDeg(newAngle))  + " °";
+        newAngle = prettyDeg(newAngle);
+
+        let txt = magnitudVal + " N" + ", " + newAngle  + " °";
         magnitud.setAttr("text", txt)
         magnitud.setAttr("x", a*x+10)
         magnitud.setAttr("y", a*y+10)
@@ -824,7 +827,7 @@ function forceMovement(group, large, strokeVal) {
         const node = dcl.findNodeById(group.getAttr("id"))
 
         const force = node.forces.find(force => {
-            return force[0] == magnitudVal && force[1] == angleVal
+            return force[0] == prettyDeg(magnitudVal) && force[1] == angleVal
         })
 
         angleVal = newAngle;
