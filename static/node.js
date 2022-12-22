@@ -15,7 +15,11 @@ class Node {
             link: null,
             forces: [],
             moments: [],
-            circle: null
+            circle: null,
+
+            forceXsupport: null,
+            forceYsupport: null,
+            momentSupport: null,
             
         }
 
@@ -129,6 +133,18 @@ class Node {
 
     setKonvaCircle(object) {
         this.konvaObjects.circle = object;
+    }
+
+    setKonvaForceXsupport(object) {
+        this.konvaObjects.forceXsupport = object;
+    }
+
+    setKonvaForceYsupport(object) { 
+        this.konvaObjects.forceYsupport = object;
+    }
+
+    setKonvaMomentSupport(object) {
+        this.konvaObjects.momentSupport = object;
     }
 
     updateAngleForce(index, newAngle) {

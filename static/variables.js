@@ -6,6 +6,9 @@ const blockSnapSize = 40;
 const widthStage = blockSnapSize * 36;
 const heightStage = blockSnapSize * 15;
 const nodeRadius = 5;
+const largeForce = 2*blockSnapSize;
+const strokeForce = 4;
+const lasForce = largeForce + strokeForce + 2*nodeRadius;
 const allDCLelements = [];
 
 const nfillc = "#0000FF";
