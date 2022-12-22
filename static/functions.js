@@ -742,13 +742,13 @@ function createConnectingRod(_node=null) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux") {
+function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux",typeForce = "N") {
     let x0lastPos = lastBeamNodeClick.x
     let y0lasPos = lastBeamNodeClick.y
 
     let magnitud = valMagnitud;
     let angle = valAngle;
-    let txt = magnitud + " N" + ", " + angle + " °";
+    let txt = magnitud + " "+ typeForce + ", " + angle + " °";
 
     const large = blockSnapSize * 2;
     const strokeVal = 4;
@@ -793,9 +793,6 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        // console.log("El dcl es FORCE: \n"+dcl.id);
-        // console.log("El konva es: \n"+konvaElement.getAttr("id"));
-        // console.log("NODE PARENT: "+ nodeParent.id);
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
         nodeParent.addKonvaForce(group)
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -944,11 +941,10 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal,nameForce) {
     const btn = document.createElement("button");
     btn.type = "button";
-    // btn.style.backgroundColor = "yellow";
-    // btn.style.background =  "url(prueba.png)";
+
     if (image){
         btn.style.backgroundImage = image;
     }
@@ -967,7 +963,8 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
         if (idNameText == "beamBtn") {
             efunction();
         } else if (idNameText == "forceBtn") {
-            efunction(inputMagnitud.value, inputAngle.value);
+            efunction(inputMagnitud.value, inputAngle.value,typeForce = nameForce );
+            console.log("El name force es: ",nameForce);
         } else if (idNameText == "momentBtn") {
             efunction(inputMagnitud.value)
         } else if (idNameText == "deleteElementBtn") {
@@ -1599,26 +1596,53 @@ function createModalForce(x0, y0) {
     modal.style.border = "40px";
     modal.style.visibility = "hidden";
     modal.style.zIndex = "1000";
-
+    
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
-
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle);
-
+    
+    
+    ////////////////////////
+    
+    
+    const select = document.createElement("select");
+    select.style.width = widthModal/2 + "px";
+    select.style.height = heightModal/3 + "px";
+    
+    const optionNewtons = document.createElement("option");
+    const optionKips = document.createElement("option");
+    const optionKiloNewtons = document.createElement("option");
+    
+    optionNewtons.value = "N";
+    optionKips.value = "kip";
+    optionKiloNewtons.value = "kN";
+    
+    optionNewtons.innerText = "KIPS (kip)";
+    optionKips.innerText = "Newtons (N)";
+    optionKiloNewtons.innerText = "Kilo Newtons (kN)";
+    
+    select.appendChild(optionKips);
+    select.appendChild(optionKiloNewtons);
+    select.appendChild(optionNewtons);
+    ////////////////////////
+    console.log("valor selected: ", select.value);
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle, nameForce = select.value);
+    
+    
+    
     const newtons = document.createElement("b");
     newtons.innerText = "N";
     newtons.type = "number";
     newtons.style.width = widthModal / 4 + "px";
     newtons.style.height = heightModal - 6 + "px";
-
+    
     const grados = document.createElement("b");
     grados.innerText = "º";
     grados.type = "number";
     grados.style.width = widthModal / 4 + "px";
     grados.style.height = heightModal - 6 + "px";
-
+    
     const containerForce = createContainer([inputCreateForceMagnitud, newtons, inputCreateForceAngle, grados]);
-
+    
     const topOfModal = document.createElement("div");
     topOfModal.style.width = widthModal;
     topOfModal.style.height = heightModalElement;
@@ -1631,6 +1655,7 @@ function createModalForce(x0, y0) {
     btnForce.innerText = "Crear";
     modal.appendChild(topOfModal);
     modal.appendChild(containerForce);
+    modal.appendChild(select);
     modal.appendChild(btnForce);
 
     return modal;
@@ -1738,6 +1763,7 @@ function drawLink(node){
 }
 
 function drawForces(node){
+    console.log(node);
     node.forces.forEach(force=>{
         if (force !=null){
         createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
@@ -1977,7 +2003,7 @@ function drawVerticalMeters(yCoordSorted){
     }
 }
 
-function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux") {
+function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux",typeForce = "N") {
     let x0lastPos = nodeId.coordinate[0];
     let y0lasPos = nodeId.coordinate[1];
 
@@ -1985,7 +2011,7 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
 
     let magnitud = valMagnitud;
     let angle = valAngle;
-    let txt = magnitud + " N" + ", " + angle + " °";
+    let txt = magnitud + " "+typeForce + ", " + angle + " °";
 
     const large = blockSnapSize * 2;
     const strokeVal = 4;
@@ -2620,4 +2646,12 @@ function createModalPinnedSupport(){
     modal.appendChild(button);
     return modal;
 }
+
+
+
+
+
+
+
+
 

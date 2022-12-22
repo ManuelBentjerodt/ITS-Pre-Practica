@@ -21,7 +21,8 @@ generateGrid(layer);
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
 const divKonvaContainer = document.querySelector("#container");
 
-const modalForce = createModalForce(250, 80); 
+const modalForce = createModalForce(250, 80);
+console.log("CHIDLDREN: ",modalForce.children[2].value); 
 const modalMoment = createModalMoment(250, 80); 
 const modalFixedSupport = createModalFixedSupport(250, 80);
 const modalRollerSupport = createModalRollerSupport(250, 80); 
