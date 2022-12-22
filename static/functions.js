@@ -219,6 +219,7 @@ function createBeam2(_node=null, _parent=null) {
     return group;
 }
 
+
 function moveElementsAttached(element, newPosition,distanceToY,distanceToX) {
     if (element.konvaObjects.link) {
         element.konvaObjects.link.position(newPosition);
