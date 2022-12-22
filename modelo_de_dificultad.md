@@ -20,25 +20,25 @@ Elementos de un ejercicio:
 - Numero de reacciones
 - Numero de rótulas (esto define numero de reacciones, es casi lo mismo)
 
-1. Nivel 1
+### 1. Nivel 1
 
 En el nivel 1 se encuentran ejercicios con 3 incógnitas, fuerzas perpendiculares y momentos.
 
 - adjuntar imagen
 
-2. Nivel 2
+### 2. Nivel 2
 
 En este nivel se encuentran ejercicios con 3 incognitas pero con fuerzas con ángulos. Esto requiere un paso más que es descomponer la fuerza.
 
-3. Nivel 3
+### 3. Nivel 3
 
 Este nivel agrega inclinación en el cuerpo. Barras que tienen cierto ángulo y no estan en el mismo eje X. Esto agrega dificultad al momento de calcular el momento.
 
-4. Nivel 4
+### 4. Nivel 4
 
 Fuerzas distribuidas. Geometría simple a avanzada pero con 3 reacciones todavía.
 
-5. Nivel 5
+### 5. Nivel 5
 
 Rótulas. Más de 3 incógnitas.
 
