@@ -2283,48 +2283,190 @@ function calculateEquations(){
         })
 
         if (node.link === "fixedSupport"){
+            const dx = (node.coordinate[0] - origin.coordinate[0])/blockSnapSize;
+            const dy = (node.coordinate[1] - origin.coordinate[1])/blockSnapSize;
+            
             if (node.linkRotation === "0"){
                 linkForcesX.push([`${node.name}x`, "positive"]);
                 linkForcesY.push([`${node.name}y`, "positive"]);
                 linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
             } else if (node.linkRotation === "90"){
                 linkForcesX.push([`${node.name}x`, "positive"]);
                 linkForcesY.push([`${node.name}y`, "negative"]);
                 linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
             } else if (node.linkRotation === "180"){
                 linkForcesX.push([`${node.name}x`, "negative"]);
                 linkForcesY.push([`${node.name}y`, "negative"]);
                 linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
+                
             } else if (node.linkRotation === "270"){
                 linkForcesX.push([`${node.name}x`, "negative"]);
                 linkForcesY.push([`${node.name}y`, "positive"]);
                 linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
             }
 
         } else if (node.link === "pinnedSupport"){
+            const dx = (node.coordinate[0] - origin.coordinate[0])/blockSnapSize;
+            const dy = (node.coordinate[1] - origin.coordinate[1])/blockSnapSize;
+
             if (node.linkRotation === "0"){
                 linkForcesX.push([`${node.name}x`, "positive"]);
                 linkForcesY.push([`${node.name}y`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
+                
+
             } else if (node.linkRotation === "90"){
                 linkForcesX.push([`${node.name}x`, "positive"]);
                 linkForcesY.push([`${node.name}y`, "negative"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
             } else if (node.linkRotation === "180"){
                 linkForcesX.push([`${node.name}x`, "negative"]);
                 linkForcesY.push([`${node.name}y`, "negative"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
+
+               
             } else if (node.linkRotation === "270"){
                 linkForcesX.push([`${node.name}x`, "negative"]);
                 linkForcesY.push([`${node.name}y`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
+
             }
 
         } else if (node.link === "rollerSupport"){
+            const dx = (node.coordinate[0] - origin.coordinate[0])/blockSnapSize;
+            const dy = (node.coordinate[1] - origin.coordinate[1])/blockSnapSize;
+    
             if (node.linkRotation === "0"){
                 linkForcesY.push([`${node.name}y`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
             } else if (node.linkRotation === "90"){
                 linkForcesX.push([`${node.name}x`, "positive"]);
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "negative"]);
+                }
+
             } else if (node.linkRotation === "180"){
                 linkForcesY.push([`${node.name}y`, "negative"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
             } else if (node.linkRotation === "270"){
                 linkForcesX.push([`${node.name}x`, "negative"]);
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "positive"]);
+                }
             }
 
         }
