@@ -21,6 +21,8 @@ class Node {
             
         }
 
+        this.linkRotation = null
+
         this.isOrigin = false;
         this.name = null;
     }
@@ -33,7 +35,8 @@ class Node {
         link,
         forces,
         moments,
-        isOrigin
+        isOrigin,
+        linkRotation
         
         }, _id=this.id) {
 
@@ -41,6 +44,7 @@ class Node {
         this.setParent(parent);
         this.setLink(link);
         this.setIsOrigin(isOrigin);
+        this.setLinkRotation(linkRotation);
 
         forces.forEach(force => {
             this.addForce(force[0], force[1])
@@ -56,6 +60,10 @@ class Node {
             joinNodes(this, node)
         })
         
+    }
+
+    setLinkRotation(rotation) {
+        this.linkRotation = rotation;
     }
 
     setName(_name){

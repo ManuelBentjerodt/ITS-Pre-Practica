@@ -22,22 +22,29 @@ generateGrid(layer);
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
 const divKonvaContainer = document.querySelector("#container");
 
-const panel = createPanel(250, 80);
+const modalForce = createModalForce(250, 80); 
+const modalMoment = createModalMoment(250, 80); 
+const modalFixedSupport = createModalFixedSupport(250, 80);
+const modalRollerSupport = createModalRollerSupport(250, 80); 
+const modalPinnedSupport = createModalPinnedSupport(250, 80);
 const delPanel = createDelPanel(0,0);
+const panel = createPanel(250, 80);
 
-const modalForce = createModalForce(250, 80); // NUEVO
-const modalMoment = createModalMoment(250,80) // nuevo
-
-divKonvaContainer.appendChild(panel);
-divKonvaContainer.appendChild(delPanel);
 divKonvaContainer.appendChild(modalForce);
 divKonvaContainer.appendChild(modalMoment);
+divKonvaContainer.appendChild(modalFixedSupport);
+divKonvaContainer.appendChild(modalRollerSupport);
+divKonvaContainer.appendChild(modalPinnedSupport);
+divKonvaContainer.appendChild(panel);
+divKonvaContainer.appendChild(delPanel);
 
 listenPanelMovement(panel);
 listenPanelMovement(delPanel);
-
-listenPanelMovement(modalMoment); // NUEVO
-listenPanelMovement(modalForce); // NUEVO
+listenPanelMovement(modalMoment); 
+listenPanelMovement(modalForce); 
+listenPanelMovement(modalFixedSupport);
+listenPanelMovement(modalRollerSupport); 
+listenPanelMovement(modalPinnedSupport);
 
 
 listenCreateElement();

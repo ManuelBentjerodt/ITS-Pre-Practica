@@ -118,9 +118,7 @@ function createBeam(nameBeam = "beam", _id=null, coordinates=null, _node=null) {
     secondNode.setKonvaCircle(line.getChildren()[2]);
     secondNode.setKonvaBeam(line);
 
-
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
+    hideAllPanels();
 
     return [originNode, line];
 }
@@ -209,14 +207,11 @@ function createBeam2(_node=null, _parent=null) {
         joinNodes(nodeParent, node)
     }
 
-  
     node.setKonvaBeam(group);
     node.setKonvaShadowBeam(shadowLine);
     node.setKonvaCircle(circle);
 
-
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
+    hideAllPanels();
 
     listenNodeMovement(group, shadowLine, "beam2");
     calculateEquations();
@@ -388,7 +383,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
 //------------------------------------------------------Links externos-----------------------------------------------//
 
-function createFixedSupport(_node=null) {
+function createFixedSupport(_node=null, rotation) {
     const colorStroke = "black"
 
     let x0;
@@ -431,15 +426,17 @@ function createFixedSupport(_node=null) {
     paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup = true);
 
+    hideAllPanels();
+
     if (nodeParent.link === null) {
         nodeParent.setLink("fixedSupport");
         nodeParent.setKonvaLink(group);
         nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+        nodeParent.setLinkRotation(rotation);
         nodeNameList[indexOfNodeNames][1] = nodeParent.id;
 
     } else {
-        panel.style.visibility = "hidden";
-        delPanel.style.visibility = "hidden";
+
         if (_node){
             nodeParent.setKonvaLink(group);
             nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
@@ -451,15 +448,14 @@ function createFixedSupport(_node=null) {
 
     layer.add(group);
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-
+  
     indexOfNodeNames += 1;
     updateEquations();
+    rotateKonvaObject(group, rotation);
     return group;
 }
 
-function createRollerSupport(_node=null) {
+function createRollerSupport(_node=null, rotation) {
     let ID;
     let nodeParent;
     let x0;
@@ -506,15 +502,17 @@ function createRollerSupport(_node=null) {
     paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup = true);
 
+    hideAllPanels();
 
     if (nodeParent.link === null) {
         nodeParent.setLink("rollerSupport");
         nodeParent.setKonvaLink(group);
+        nodeParent.setLinkRotation(rotation);
         nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
         nodeNameList[indexOfNodeNames][1] = nodeParent.id;
+
     } else {
-        panel.style.visibility = "hidden";
-        delPanel.style.visibility = "hidden";
+
         if (_node){
             nodeParent.setKonvaLink(group);
             nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
@@ -526,15 +524,14 @@ function createRollerSupport(_node=null) {
 
     layer.add(group);
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-
     indexOfNodeNames += 1;
     updateEquations();
+
+    rotateKonvaObject(group, rotation);
     return group;
 }
 
-function createPinnedSupport(_node=null) {
+function createPinnedSupport(_node=null, rotation) {
     let ID;
     let nodeParent;
     let x0;
@@ -573,15 +570,16 @@ function createPinnedSupport(_node=null) {
 
     paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = false);
 
+    hideAllPanels();
+
     if (nodeParent.link === null) {
         nodeParent.setLink("pinnedSupport");
         nodeParent.setKonvaLink(group);
+        nodeParent.setLinkRotation(rotation);
         nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
         nodeNameList[indexOfNodeNames][1] = nodeParent.id;
     } else {
-        panel.style.visibility = "hidden";
-        delPanel.style.visibility = "hidden";
-    
+       
         if (_node){
             nodeParent.setKonvaLink(group);
             nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
@@ -598,6 +596,7 @@ function createPinnedSupport(_node=null) {
 
     indexOfNodeNames += 1;
     updateEquations();
+    rotateKonvaObject(group, rotation);
     return group;
 }
 
@@ -827,12 +826,14 @@ function forceMovement(group, large, strokeVal) {
         const a = Math.sqrt(large ** 2 / ((x) ** 2 + (y) ** 2))
         arrow.points([a * x, a * y, 0, 0])
 
-        newAngle = radToDeg(Math.atan2(-y, x))
+        newAngle = Math.round(radToDeg(Math.atan2(-y, x)))
 
         arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
         arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
 
-        let txt = magnitudVal + " N" + ", " + Math.round(prettyDeg(newAngle))  + " °";
+        newAngle = prettyDeg(newAngle);
+
+        let txt = magnitudVal + " N" + ", " + newAngle  + " °";
         magnitud.setAttr("text", txt)
         magnitud.setAttr("x", a*x+10)
         magnitud.setAttr("y", a*y+10)
@@ -845,27 +846,13 @@ function forceMovement(group, large, strokeVal) {
         const node = dcl.findNodeById(group.getAttr("id"))
 
         const force = node.forces.find(force => {
-            return force[0] == magnitudVal && force[1] == angleVal
+            return force[0] == prettyDeg(magnitudVal) && force[1] == angleVal
         })
 
         angleVal = newAngle;
         force[1] = newAngle;
         updateEquations();
     })
-}
-
-function showModalForce() {
-    movePanelTo(modalForce, lastBeamNodeClick.x, lastBeamNodeClick.y);
-    modalForce.style.visibility = "visible";
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-}
-
-function showModalMoment() {
-    movePanelTo(modalMoment, lastBeamNodeClick.x, lastBeamNodeClick.y);
-    modalMoment.style.visibility = "visible";
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
 }
 
 function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, forFixedSupport = false) {
@@ -956,7 +943,7 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud = 0, valAngle = 0, element = 0, image) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal) {
     const btn = document.createElement("button");
     btn.type = "button";
     // btn.style.backgroundColor = "yellow";
@@ -970,22 +957,26 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction
     btn.style.backgroundSize = "cover"; // todo en button
     btn.id = idNameText;
 
-    if (idNameText == "changeOriginBtn") {
+    if (idNameText == "changeOriginBtn" || idNameText == "modalRotationBtn") {
         btn.style.backgroundColor = "#99D9EA";
         btn.innerText = btnText;
     }
     btn.addEventListener("dblclick", () => {
 
         if (idNameText == "beamBtn") {
-            execFunction();
+            efunction();
         } else if (idNameText == "forceBtn") {
-            execFunction(valMagnitud.value, valAngle.value);
+            efunction(inputMagnitud.value, inputAngle.value);
         } else if (idNameText == "momentBtn") {
-            execFunction(valMagnitud.value)
+            efunction(inputMagnitud.value)
         } else if (idNameText == "deleteElementBtn") {
-            execFunction(element);
-        } else {
-            execFunction();
+            efunction(element);
+        } else if (idNameText == "modalRotationBtn") {
+            efunction(null, rotation=selectObj.value);
+        } else if (idNameText == "modalBtn") {
+            efunction(modal);
+        } else  {
+            efunction();
         }
 
     });
@@ -1054,15 +1045,15 @@ function createPanel(x0, y0) {
     const imgFixedSupport = "url(images/fixedSupport.png)";
     const imgBeam = "url(images/beam.png)";
 
-    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "rollerSupportBtn", "Roller support ", createRollerSupport, null, null, null, imgRollerSupport);
-    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "pinnedSupportBtn", "Pinned support", createPinnedSupport, null, null, null, imgPinnedSupport);
-    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "fixedSupportBtn", "Fixed support", createFixedSupport, null, null, null, imgFixedSupport);
-    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, null, null, null, imgBallJoint);
-    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, null, null, null, imgConnectingRod);
-    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalForce", "Force", showModalForce, null, null, null, imgForce);
-    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalMoment", "Moment", showModalMoment, null, null, null, imgMoment, null, imgForce);
-    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, null, null, null, imgBeam);
-    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, null, null, null, null);
+    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image=imgRollerSupport, null, null, null, null,modal=modalRollerSupport);
+    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image=imgPinnedSupport, null, null, null, null, modal=modalPinnedSupport);
+    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image=image=imgFixedSupport, null, null, null, null, modal=modalFixedSupport);
+    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image=imgBallJoint);
+    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image=imgConnectingRod);
+    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image=imgForce, null, null, null, null, modalForce);
+    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image=imgMoment, null, null, null, null, modalMoment );
+    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image=imgBeam);
+    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin);
 
     const topOfPanel = document.createElement("div");
     topOfPanel.style.width = widthPanel;
@@ -1120,18 +1111,15 @@ function listenPanelMovement(panel) {
 }
 
 function movePanelTo(panelParam, x, y) {
-    if (panelParam == panel) {
+    if (panelParam != delPanel) {
         panelParam.style.left = getOffset(divKonvaContainer).left + x + "px";
         panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
 
-    } else if (panelParam == delPanel) {
+    } else {
         panelParam.style.left = getOffset(divKonvaContainer).left + x - panelParam.offsetWidth + "px";
         panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
 
-    } else if (panelParam == modalForce || panelParam == modalMoment) {
-        panelParam.style.left = getOffset(divKonvaContainer).left + x + "px";
-        panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
-    }
+    } 
 
 }
 
@@ -1234,22 +1222,14 @@ function listenCreateElement() {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
-                const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => { return node.name() === "subElementBeamCircle2" })[0];
-                const otherNodePosition = getElementPos(otherNode);
-
             } else if (e.target.name() == "subElementBeamCircle2") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
-                const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => { return node.name() === "subElementBeamCircle1" })[0]
-                const otherNodePosition = getElementPos(otherNode);
-
             } else if (e.target.name() == "subElementBeamCircle") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
-
+ 
             }
 
         }
@@ -1311,6 +1291,7 @@ function deleteElement(element) {
     delete element;
 
     recalculateNodeNames();
+    updateEquations();
 }
 
 function listenDeleteElement() {
@@ -1336,104 +1317,20 @@ function listenDeleteElement() {
     });
 }
 
-function listenHiddePanels() {
-    stage.on("click", () => {
-        panel.style.visibility = "hidden";
-        delPanel.style.visibility = "hidden";
-        modalForce.style.visibility = "hidden";
-        modalMoment.style.visibility = "hidden";
-    });
+function hideAllPanels() {
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+    modalForce.style.visibility = "hidden";
+    modalMoment.style.visibility = "hidden";
+    modalFixedSupport.style.visibility = "hidden";
+    modalRollerSupport.style.visibility = "hidden";
+    modalPinnedSupport.style.visibility = "hidden";
 }
 
-function replaceSupports() {
-    if (!resolvingTask) {
-        stage2 = Konva.Node.create(JSON.parse(stage.clone({ name: "stage2" }).toJSON()), 'container2');
-
-        let layer2 = stage2.find(element => {
-            return element.name() == "layer";
-        })[0];
-
-        const rollerSupports = layer2.find(element => {
-            return element.name() == "rollerSupport";
-        });
-        rollerSupports.forEach((item) => {
-            const posXY = { x: item.getAttr("x"), y: item.getAttr("y") }
-            createForce(`F${item.getAttr("id")}_y`, 270, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-            item.destroy();
-        })
-
-        const pinnedSupports = layer2.find(element => {
-            return element.name() == "pinnedSupport";
-        });
-        pinnedSupports.forEach((item) => {
-            const posXY = { x: item.getAttr("x"), y: item.getAttr("y") }
-            createForce(`F${item.getAttr("id")}_y`, 270, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-            createForce(`F${item.getAttr("id")}_x`, 180, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-            item.destroy();
-        })
-
-        const fixedSupports = layer2.find(element => {
-            return element.name() == "fixedSupport";
-        });
-        fixedSupports.forEach((item) => {
-            const posXY = { x: item.getAttr("x"), y: item.getAttr("y") }
-            createForce(`F${item.getAttr("id")}_y `, 270, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-            createForce(`F${item.getAttr("id")}_x `, 180, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-            createMoment(`M${item.getAttr("id")}`, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-            item.destroy();
-        })
-
-        const forces = layer2.find(element => {
-            return element.name() == "force";
-        });
-        forces.forEach((item) => {
-            const posXY = { x: item.getAttr("x"), y: item.getAttr("y") }
-            const magnitud = item.getAttr("tension")[0];
-            const angle = item.getAttr("tension")[1];
-            const angleRad = angle * Math.PI / 180;
-
-            if (0 == angle) { //
-                createForce(`${magnitud} N`, 0, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            } else if (0 < angle && angle < 90) { //
-                createForce(`${magnitud}*cos(${angle}) N`, 0, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                createForce(`${magnitud}*sin(${angle}) N`, 90, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            } else if (90 == angle) { //
-                createForce(`${magnitud} N`, 90, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            } else if (90 < angle && angle < 180) {
-                createForce(`${magnitud}*cos(${angle - 90}) N`, 180, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                createForce(`${magnitud}*sin(${angle - 90}) N`, 90, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            } else if (180 == angle) { //
-                createForce(`${magnitud} N`, 180, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            } else if (180 < angle && angle < 270) {
-                createForce(`${magnitud}*cos(${angle - 180}) N`, 180, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                createForce(`${magnitud}*sin(${angle - 180}) N`, 270, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            } else if (270 == angle) { //
-                createForce(`${magnitud} N`, 270, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            } else if (270 < angle && angle < 360) {
-                createForce(`${magnitud}*cos(${360 - angle}) N`, 0, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                createForce(`${magnitud}*sin(${360 - angle}) N`, 270, color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-                item.destroy();
-            }
-        });
-
-        const moments = layer2.find(element => {
-            return element.name() == "moment";
-        });
-
-        moments.forEach((item) => {
-            const posXY = { x: item.getAttr("x"), y: item.getAttr("y") }
-            createMoment(item.getAttr("tension"), color = "green", x0 = posXY.x, y0 = posXY.y, layerForPaint = layer2);
-            item.destroy();
-        });
-    }
-
+function listenHiddePanels() {
+    stage.on("click", () => {
+      hideAllPanels();
+    });
 }
 
 function updateCounts() {
@@ -1447,8 +1344,7 @@ function updateCounts() {
 //------------------------------------------------------Delete panel-----------------------------------------------//
 function delElement() {
     deleteElement(lastElementClick);
-    delPanel.style.visibility = "hidden";
-    panel.style.visibility = "hidden";
+    hideAllPanels();
 }
 
 function createDelPanel(x0 = 0, y0 = 0) {
@@ -1469,8 +1365,7 @@ function createDelPanel(x0 = 0, y0 = 0) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    //const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "eliminar", delElement,null,null,null,imgDelete);
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement, null, null, null, imgDelete);
+    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image=imgDelete);
 
     panel.appendChild(deleteElementBtn);
 
@@ -1707,7 +1602,7 @@ function createModalForce(x0, y0) {
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
 
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce, inputCreateForceMagnitud, inputCreateForceAngle);
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle);
 
     const newtons = document.createElement("b");
     newtons.innerText = "N";
@@ -1763,7 +1658,7 @@ function createModalMoment(x0, y0) {
 
     const inputCreateMoment = createInputMagnitud("input-create-moment", widthModal * 2, heightModalElement); // width panel*2
 
-    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment, inputCreateMoment);
+    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment,null, inputMagnitude=inputCreateMoment);
 
     const newtonsMetro = document.createElement("b");
     newtonsMetro.innerText = "Nm";
@@ -1827,16 +1722,17 @@ function getDate() {
 }
 
 function drawLink(node){
+    const rotation = parseInt(node.linkRotation);
     if (node.link === "rollerSupport") {
-        createRollerSupport(node);
+        createRollerSupport(node, rotation);
     } else if (node.link === "pinnedSupport") {
-        createPinnedSupport(node);
+        createPinnedSupport(node, rotation);
     } else if (node.link === "fixedSupport") {
-        createFixedSupport(node);
+        createFixedSupport(node, rotation);
     } else if (node.link === "ballJoint") {
-        createBallJoint(node);
+        createBallJoint(node), rotation;
     } else if (node.link === "connectingRod") {
-        createConnectingRod(node);
+        createConnectingRod(node, rotation);
     }
 }
 
@@ -2136,9 +2032,7 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
         group.setAttr("id", nodeId.id)
     }
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-    modalForce.style.visibility = "hidden";
+    hideAllPanels()
 
     forceMovement(group, 2 * blockSnapSize, strokeVal)
 
@@ -2228,8 +2122,7 @@ function changeOrigin(){
     oldOriginNode.konvaObjects.circle.setAttr("fill", "red");
     newOriginNode.konvaObjects.circle.setAttr("fill", originColor);
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
+    hideAllPanels();
 
     updateEquations();
 }
@@ -2383,16 +2276,191 @@ function calculateEquations(){
         })
 
         if (node.link === "fixedSupport"){
-            linkMoments.push(`${node.name}m`)
-            linkForcesX.push(`${node.name}x`)
-            linkForcesY.push(`${node.name}y`)
+            const dx = (node.coordinate[0] - origin.coordinate[0])/blockSnapSize;
+            const dy = (node.coordinate[1] - origin.coordinate[1])/blockSnapSize;
+            
+            if (node.linkRotation === "0"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
+            } else if (node.linkRotation === "90"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
+            } else if (node.linkRotation === "180"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
+                
+            } else if (node.linkRotation === "270"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
+            }
 
         } else if (node.link === "pinnedSupport"){
-            linkForcesX.push(`${node.name}x`)
-            linkForcesY.push(`${node.name}y`)
+            const dx = (node.coordinate[0] - origin.coordinate[0])/blockSnapSize;
+            const dy = (node.coordinate[1] - origin.coordinate[1])/blockSnapSize;
+
+            if (node.linkRotation === "0"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
+                
+
+            } else if (node.linkRotation === "90"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                }
+
+            } else if (node.linkRotation === "180"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
+
+               
+            } else if (node.linkRotation === "270"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}x`, "positive"]);
+                }
+
+            }
 
         } else if (node.link === "rollerSupport"){
-            linkForcesY.push(`${node.name}y`)
+            const dx = (node.coordinate[0] - origin.coordinate[0])/blockSnapSize;
+            const dy = (node.coordinate[1] - origin.coordinate[1])/blockSnapSize;
+    
+            if (node.linkRotation === "0"){
+                linkForcesY.push([`${node.name}y`, "positive"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                }
+
+            } else if (node.linkRotation === "90"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "positive"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "negative"]);
+                }
+
+            } else if (node.linkRotation === "180"){
+                linkForcesY.push([`${node.name}y`, "negative"]);
+
+                if (dx > 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "negative"]);
+                } else if (dx < 0){
+                    linkMoments.push([`${Math.abs(dx)}*${node.name}y`, "positive"]);
+                }
+
+            } else if (node.linkRotation === "270"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+
+                if (dy > 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "negative"]);
+                } else if (dy < 0){
+                    linkMoments.push([`${Math.abs(dy)}*${node.name}y`, "positive"]);
+                }
+            }
 
         }
     })
@@ -2422,16 +2490,23 @@ function calculateEquations(){
         }
     })
 
+
     linkForcesX.forEach(lfx => {
-        textForcesX += `+ ${lfx} `
+        if(lfx[1] === "positive") textForcesX += "+";
+        else if(lfx[1] === "negative") textForcesX += "-";
+        textForcesX += `${lfx[0]} `;
     })
 
     linkForcesY.forEach(lfy => {
-        textForcesY += `+ ${lfy} `
+        if(lfy[1] === "positive") textForcesY += "+";
+        else if(lfy[1] === "negative") textForcesY += "-";
+        textForcesY += `${lfy[0]} `;
     })
 
     linkMoments.forEach(lm => {
-        textMoments += `+ ${lm} `
+        if(lm[1] === "positive") textMoments += "+";
+        else if(lm[1] === "negative") textMoments += "-";
+        textMoments += `${lm[0]} `;
     })
 
     textForcesX += " = 0";
@@ -2451,5 +2526,97 @@ function updateEquations(){
     pFx.innerText = Fx;
     pFy.innerText = Fy;
     pM.innerText = M;
+}
+
+function rotateKonvaObject(object, angle=90){
+    object.rotation(angle);
+    object.getLayer().draw();
+}
+
+function showModal(modal) {
+    hideAllPanels();
+
+    movePanelTo(modal, lastBeamNodeClick.x, lastBeamNodeClick.y);
+    modal.style.visibility = "visible";
+
+}
+
+function createGenericModalRotation(x0, y0){ 
+    
+    const widthModal = 150;
+    const heightModal = 100;
+
+    const colorModal = "#DDDDDD";
+
+    const heightModalElement = heightModal / 3;
+
+    const modal = document.createElement("div");
+    modal.style.position = "absolute";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
+    modal.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    modal.style.width = widthModal + "px";
+    modal.style.height = heightModal + "px";
+    modal.style.backgroundColor = colorModal;
+    modal.style.borderColor = "black";
+    modal.style.border = "40px";
+    modal.style.visibility = "hidden";
+    modal.style.zIndex = "1000";
+
+    const select = document.createElement("select");
+    select.style.width = widthModal + "px";
+
+    const option0 = document.createElement("option");
+    const option90 = document.createElement("option");
+    const option180 = document.createElement("option");
+    const option270 = document.createElement("option");
+
+    option0.value = 0;
+    option90.value = 90;
+    option180.value = 180;
+    option270.value = 270;
+
+    option0.innerText = "Abajo";
+    option90.innerText = "Izquierda";
+    option180.innerText = "Arriba";
+    option270.innerText = "Derecha";
+
+    select.appendChild(option0);
+    select.appendChild(option90);
+    select.appendChild(option180);
+    select.appendChild(option270);
+
+    modal.appendChild(select);
+ 
+    return modal;
+}
+
+function createModalFixedSupport(){
+    const modal = createGenericModalRotation(0, 0);
+    modal.id = "modalFixedSupport";
+
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj=modal.children[0]);
+
+    modal.appendChild(button);
+    return modal;
+}
+
+function createModalRollerSupport(){
+    const modal = createGenericModalRotation(0, 0);
+    modal.id = "modalRollerSupport";
+
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj=modal.children[0]);
+
+    modal.appendChild(button);
+    return modal;
+}
+
+function createModalPinnedSupport(){
+    const modal = createGenericModalRotation(0, 0);
+    modal.id = "modalPinnedSupport";
+
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj=modal.children[0]);
+
+    modal.appendChild(button);
+    return modal;
 }
 
