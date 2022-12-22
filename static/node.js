@@ -15,9 +15,14 @@ class Node {
             link: null,
             forces: [],
             moments: [],
-            circle: null
+            circle: null,
+            segmentedLineX: null,
+            segmentedLineY: null
             
         }
+
+        this.isOrigin = false;
+        this.name = null;
     }
 
     setNodeWithObject({
@@ -27,13 +32,15 @@ class Node {
         childNodes,
         link,
         forces,
-        moments
+        moments,
+        isOrigin
         
         }, _id=this.id) {
 
         this.setCoordinate(coordinate);
         this.setParent(parent);
         this.setLink(link);
+        this.setIsOrigin(isOrigin);
 
         forces.forEach(force => {
             this.addForce(force[0], force[1])
@@ -49,6 +56,14 @@ class Node {
             joinNodes(this, node)
         })
         
+    }
+
+    setName(_name){
+        this.name = _name;
+    }
+
+    setIsOrigin(boolean){
+        this.isOrigin = boolean;
     }
 
     setId(id) {
@@ -102,6 +117,14 @@ class Node {
         this.konvaObjects.forces.push(object);
     }
 
+    addKonvaSegmentedLineX(object) {
+        this.konvaObjects.segmentedLineX = object;
+    }
+
+    addKonvaSegmentedLineY(object) {
+        this.konvaObjects.segmentedLineY = object;
+    }
+
     setKonvaShadowBeam(object) {
         this.konvaObjects.shadowBeam = object;
     }
@@ -150,6 +173,31 @@ class Node {
         console.log(`could not find element by id (${_id}) ... returning null`);
         return null;
 
+    }
+
+    findOriginNode(root=this) {
+        const queue = [];
+        queue.push(root);
+
+        const discovered = [];
+        discovered.push(root);
+
+        while (queue.length) {
+            let actual = queue.shift();
+            
+            if (actual.isOrigin === true) {
+                return actual;
+            }
+            actual.childNodes.forEach( child => {
+                if (!(discovered.includes(child))) {
+                    discovered.push(child)
+                    queue.push(child)
+                }
+            });
+        }
+
+        console.log(`CRITICAL ERROR could not find origin... returning null`);
+        return null;
     }
 
     getAllDecendents(root=this) {

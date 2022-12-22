@@ -31,19 +31,13 @@ function createShadowBeam(x0, y0, x1, y1, nameShadow = "shadow-beam") {
     return group
 }
 
-
 //------------------------------------------------------Beam-----------------------------------------------//
 
 function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (x0, y0) y se desplaza x1 horizontalmente ^ y1 verticalmente ( no va al punto (x1, y1))
-    let colorCircle = "red";
-    let dragg = true;
-    if (nameBeam == "initialBeam") {
-        colorCircle = "green";
-        // dragg = false;
-    }
 
+    let dragg = true;
     let idByDate;
-    let idByDate2;
+
     if (_id) {
         idByDate = _id + -3 //-3 pq ya tiene sumado los 3 del circulo, no hay q suamrl odenuevo, es decir restar y sumar
     } else {
@@ -62,21 +56,21 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     });
 
     const circle1 = new Konva.Circle({
-        name: "subelementBeamCirculo1",
+        name: "subElementBeamCircle1",
         x: x0,
         y: y0,
         radius: nodeRadius,
-        fill: colorCircle,
+        fill: originColor,
         draggable: dragg,
         id: idByDate + 2
     });
 
     const circle2 = new Konva.Circle({
-        name: "subelementBeamCirculo2",
+        name: "subElementBeamCircle2",
         x: x0 + x1,
         y: y0 + y1,
         radius: nodeRadius,
-        fill: "red",
+        fill: nodeColor,
         draggable: true,
         id: idByDate + 3
     });
@@ -84,7 +78,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     group.add(line, circle1, circle2);
 
     paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
-    paintIfMouseOver(circle1, "#00FF00", nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
+    paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
     paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
 
     return group;
@@ -175,7 +169,7 @@ function createBeam2(_node=null, _parent=null) {
 
     const group = new Konva.Group({ name: "beam2", id: idByDate });
     const line = new Konva.Line({
-        name: "subelementBeamLine",
+        name: "subElementBeamLine",
         x: posXLine,
         y: posYLine,
         points: pointsLine,
@@ -185,7 +179,7 @@ function createBeam2(_node=null, _parent=null) {
     });
 
     const circle = new Konva.Circle({
-        name: "subelementBeamCirculo",
+        name: "subElementBeamCircle",
         x: posXCircle,
         y: posYCircle,
         radius: nodeRadius,
@@ -225,11 +219,12 @@ function createBeam2(_node=null, _parent=null) {
     delPanel.style.visibility = "hidden";
 
     listenNodeMovement(group, shadowLine, "beam2");
+    calculateEquations();
 
     return group;
 }
 
-function moveElementsAttached(element, newPosition) {
+function moveElementsAttached(element, newPosition,distanceToY,distanceToX) {
     if (element.konvaObjects.link) {
         element.konvaObjects.link.position(newPosition);
     }
@@ -243,7 +238,18 @@ function moveElementsAttached(element, newPosition) {
             moment.position(newPosition);
         })
     }
+
+    if (element.konvaObjects.segmentedLineX) {
+        element.konvaObjects.segmentedLineX.position(newPosition);
+        element.konvaObjects.segmentedLineX.setAttr("points",[0,0,distanceToY,0]);
+    }
+
+    if (element.konvaObjects.segmentedLineY) {
+        element.konvaObjects.segmentedLineY.position(newPosition);
+        element.konvaObjects.segmentedLineY.setAttr("points",[0,0,0,distanceToX]);
+    }
 }
+
 function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
     let shadowList;
     let beamLine;
@@ -291,8 +297,10 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
         shadowList[0].position(circle2Pos);
         shadowList[0].points([0, 0, newX, newY]);
+        const distanceToX = widthStage-blockSnapSize-circle1Pos.x;
+        const distanceToY = heightStage-blockSnapSize-circle1Pos.y;
 
-        moveElementsAttached(nodeOtherCircle, otherCircle.position());
+        moveElementsAttached(nodeOtherCircle, otherCircle.position(),distanceToX,distanceToY);
     })
 
     otherCircle.on("dragend", () => {
@@ -315,7 +323,10 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         shadowList[0].position(beamLine.position());
         shadow.hide();
 
-        moveElementsAttached(nodeOtherCircle, otherCircle.position());
+        const distanceToX = widthStage-blockSnapSize-otherCircle.getAttr("x");
+        const distanceToY = heightStage-blockSnapSize-otherCircle.getAttr("y");
+
+        moveElementsAttached(nodeOtherCircle, otherCircle.position(),distanceToX,distanceToY);
 
     });
 
@@ -342,7 +353,10 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
             y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
         });
 
-        moveElementsAttached(nodeBeamCircle, beamCircle.position());
+        const distanceToX = widthStage-blockSnapSize-circle2Pos.x;
+        const distanceToY = heightStage-blockSnapSize-circle2Pos.y;
+
+        moveElementsAttached(nodeBeamCircle, beamCircle.position(),distanceToX,distanceToY);
     });
 
     beamCircle.on("dragend", () => {
@@ -364,15 +378,16 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         dcl.findNodeById(beamCircle.getAttr("id")).setCoordinate(newNodePos);
         shadow.hide();
 
-        moveElementsAttached(nodeBeamCircle, beamCircle.position());
+        const distanceToX = widthStage-blockSnapSize-circle2Pos.x;
+        const distanceToY = heightStage-blockSnapSize-circle2Pos.y;
+
+        moveElementsAttached(nodeBeamCircle, beamCircle.position(),distanceToX,distanceToY);
 
     });
 }
 
-
-
-
 //------------------------------------------------------Links externos-----------------------------------------------//
+
 function createFixedSupport(_node=null) {
     const colorStroke = "black"
 
@@ -418,13 +433,17 @@ function createFixedSupport(_node=null) {
 
     if (nodeParent.link === null) {
         nodeParent.setLink("fixedSupport");
-        nodeParent.setKonvaLink(group)
+        nodeParent.setKonvaLink(group);
+        nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+        nodeNameList[indexOfNodeNames][1] = nodeParent.id;
 
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         if (_node){
             nodeParent.setKonvaLink(group);
+            nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+            nodeNameList[indexOfNodeNames][1] = nodeParent.id;
         } else {
             return;
         }
@@ -435,9 +454,10 @@ function createFixedSupport(_node=null) {
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 
+    indexOfNodeNames += 1;
+    updateEquations();
     return group;
 }
-
 
 function createRollerSupport(_node=null) {
     let ID;
@@ -489,12 +509,16 @@ function createRollerSupport(_node=null) {
 
     if (nodeParent.link === null) {
         nodeParent.setLink("rollerSupport");
-        nodeParent.setKonvaLink(group)
+        nodeParent.setKonvaLink(group);
+        nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+        nodeNameList[indexOfNodeNames][1] = nodeParent.id;
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         if (_node){
             nodeParent.setKonvaLink(group);
+            nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+            nodeNameList[indexOfNodeNames][1] = nodeParent.id;
         } else {
             return;
         }
@@ -505,9 +529,10 @@ function createRollerSupport(_node=null) {
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 
+    indexOfNodeNames += 1;
+    updateEquations();
     return group;
 }
-
 
 function createPinnedSupport(_node=null) {
     let ID;
@@ -551,12 +576,16 @@ function createPinnedSupport(_node=null) {
     if (nodeParent.link === null) {
         nodeParent.setLink("pinnedSupport");
         nodeParent.setKonvaLink(group);
+        nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+        nodeNameList[indexOfNodeNames][1] = nodeParent.id;
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
     
         if (_node){
             nodeParent.setKonvaLink(group);
+            nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+            nodeNameList[indexOfNodeNames][1] = nodeParent.id;
         } else {
             return;
         }
@@ -567,11 +596,13 @@ function createPinnedSupport(_node=null) {
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 
+    indexOfNodeNames += 1;
+    updateEquations();
     return group;
 }
 
-
 //------------------------------------------------------Links internos-----------------------------------------------//
+
 function createBallJoint(_node=null) {
     let ID;
     let nodeParent;
@@ -608,12 +639,16 @@ function createBallJoint(_node=null) {
 
     if (nodeParent.link === null) {
         nodeParent.setLink("ballJoint");
-        nodeParent.setKonvaLink(group)
+        nodeParent.setKonvaLink(group);
+        nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+        nodeNameList[indexOfNodeNames][1] = nodeParent.id;
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         if (_node){
             nodeParent.setKonvaLink(group);
+            nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+            nodeNameList[indexOfNodeNames][1] = nodeParent.id;
         } else {
             return;
         }
@@ -624,9 +659,10 @@ function createBallJoint(_node=null) {
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 
+    indexOfNodeNames += 1;
+    updateEquations();
     return group;
 }
-
 
 function createConnectingRod(_node=null) {
     let ID;
@@ -678,13 +714,17 @@ function createConnectingRod(_node=null) {
 
     if (nodeParent.link === null) {
         nodeParent.setLink("connectingRod");
-        nodeParent.setKonvaLink(group)
+        nodeParent.setKonvaLink(group);
+        nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+        nodeNameList[indexOfNodeNames][1] = nodeParent.id;
 
     } else {
         panel.style.visibility = "hidden";
         delPanel.style.visibility = "hidden";
         if (_node){
             nodeParent.setKonvaLink(group);
+            nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
+            nodeNameList[indexOfNodeNames][1] = nodeParent.id;
         } else {
             return;
         }
@@ -695,11 +735,13 @@ function createConnectingRod(_node=null) {
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 
-    return group
+    indexOfNodeNames += 1;
+    updateEquations();
+    return group;
 }
 
-
 //------------------------------------------------------Forces y moments-----------------------------------------------//
+
 function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux") {
     let x0lastPos = lastBeamNodeClick.x
     let y0lasPos = lastBeamNodeClick.y
@@ -751,9 +793,9 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        console.log("El dcl es FORCE: \n"+dcl.id);
-        console.log("El konva es: \n"+konvaElement.getAttr("id"));
-        console.log("NODE PARENT: "+ nodeParent.id);
+        // console.log("El dcl es FORCE: \n"+dcl.id);
+        // console.log("El konva es: \n"+konvaElement.getAttr("id"));
+        // console.log("NODE PARENT: "+ nodeParent.id);
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
         nodeParent.addKonvaForce(group)
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -764,7 +806,7 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     modalForce.style.visibility = "hidden";
 
     forceMovement(group, 2 * blockSnapSize, strokeVal)
-
+    updateEquations();
     return group;
 }
 
@@ -808,6 +850,7 @@ function forceMovement(group, large, strokeVal) {
 
         angleVal = newAngle;
         force[1] = newAngle;
+        updateEquations();
     })
 }
 
@@ -817,15 +860,13 @@ function showModalForce() {
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 }
+
 function showModalMoment() {
     movePanelTo(modalMoment, lastBeamNodeClick.x, lastBeamNodeClick.y);
     modalMoment.style.visibility = "visible";
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 }
-
-
-
 
 function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, forFixedSupport = false) {
     let x0lastPos = lastBeamNodeClick.x
@@ -898,13 +939,13 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateEquations();
-    // updateScorePanel();
+    modalMoment.style.visibility = "hidden";
+    updateEquations();
     return group;
 }
 
-
 //------------------------------------------------------Funcionalidades-----------------------------------------------//
+
 function getOffset(element) {
     const rect = element.getBoundingClientRect();
     return {
@@ -913,21 +954,26 @@ function getOffset(element) {
     };
 }
 
-
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
+
 function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction, valMagnitud = 0, valAngle = 0, element = 0, image) {
     const btn = document.createElement("button");
     btn.type = "button";
     // btn.style.backgroundColor = "yellow";
     // btn.style.background =  "url(prueba.png)";
-    btn.style.backgroundImage = image;
+    if (image){
+        btn.style.backgroundImage = image;
+    }
 
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel + "px";
     btn.style.backgroundSize = "cover"; // todo en button
     btn.id = idNameText;
 
-    // btn.innerText = btnText;
+    if (idNameText == "changeOriginBtn") {
+        btn.style.backgroundColor = "#99D9EA";
+        btn.innerText = btnText;
+    }
     btn.addEventListener("dblclick", () => {
 
         if (idNameText == "beamBtn") {
@@ -941,11 +987,10 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, execFunction
         } else {
             execFunction();
         }
-        //updateAll();
+
     });
     return btn;
 }
-
 
 function createInputMagnitud(idParam, widthPanel, heightPanel) {
     const input = document.createElement("input");
@@ -957,7 +1002,6 @@ function createInputMagnitud(idParam, widthPanel, heightPanel) {
 
     return input;
 }
-
 
 function createInputAngle(idParam, widthPanel, heightPanel) {
     const input = document.createElement("input");
@@ -972,7 +1016,6 @@ function createInputAngle(idParam, widthPanel, heightPanel) {
     return input;
 }
 
-
 function createContainer(list) {
     const container = document.createElement("div");
     container.style.display = "flex";
@@ -982,7 +1025,6 @@ function createContainer(list) {
 
     return container;
 }
-
 
 function createPanel(x0, y0) {
     const widthPanel = 240;
@@ -1020,7 +1062,7 @@ function createPanel(x0, y0) {
     const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalForce", "Force", showModalForce, null, null, null, imgForce);
     const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalMoment", "Moment", showModalMoment, null, null, null, imgMoment, null, imgForce);
     const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, null, null, null, imgBeam);
-
+    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, null, null, null, null);
 
     const topOfPanel = document.createElement("div");
     topOfPanel.style.width = widthPanel;
@@ -1032,7 +1074,6 @@ function createPanel(x0, y0) {
     topOfPanel.align = "center";
 
     panel.appendChild(topOfPanel);
-    // panel.appendChild(btnBeam);
     panel.appendChild(btnBeam2)
     panel.appendChild(btnRollerSupport);
     panel.appendChild(btnPinnedSupport)
@@ -1041,13 +1082,10 @@ function createPanel(x0, y0) {
     panel.appendChild(btnConnectingRod);
     panel.appendChild(btnForce);
     panel.appendChild(btnMoment);
-
-    // panel.appendChild(containerForce);
-    // panel.appendChild(containerCreateMoment);
+    panel.appendChild(btnChangeOrigin)
 
     return panel;
 }
-
 
 function listenPanelMovement(panel) {
     let mousePosition;
@@ -1081,14 +1119,15 @@ function listenPanelMovement(panel) {
     return mousePosition;
 }
 
-
 function movePanelTo(panelParam, x, y) {
     if (panelParam == panel) {
         panelParam.style.left = getOffset(divKonvaContainer).left + x + "px";
         panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
+
     } else if (panelParam == delPanel) {
         panelParam.style.left = getOffset(divKonvaContainer).left + x - panelParam.offsetWidth + "px";
         panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
+
     } else if (panelParam == modalForce || panelParam == modalMoment) {
         panelParam.style.left = getOffset(divKonvaContainer).left + x + "px";
         panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
@@ -1096,17 +1135,16 @@ function movePanelTo(panelParam, x, y) {
 
 }
 
-
 function getXY() {
     const mouseXY = stage.getPointerPosition();
     if (mouseXY) {
         return { x: mouseXY.x, y: mouseXY.y };
+        
     } else {
         console.log("Fallo en getXY()");
         return { x: 800, y: 800 };
     }
 }
-
 
 function roundXY(mouseXY) {
     const { x, y } = mouseXY;
@@ -1115,8 +1153,8 @@ function roundXY(mouseXY) {
     return { x: X, y: Y };
 }
 
-
 //------------------------------------------------------Puntaje-----------------------------------------------//
+
 function createScorePanel(x0, y0) {
     const widthPanel = 240;
     const heightPanel = 40;
@@ -1181,7 +1219,6 @@ function prettyDeg(deg) {
     return deg;
 }
 
-
 function listenCreateElement() {
     stage.on("dblclick", (e) => {
         if (e.target != stage && e.target) {
@@ -1190,26 +1227,26 @@ function listenCreateElement() {
             lastBeamNodeClick.y = mouseXY.y;
             lastNodeClick = e.target;
             const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
-            console.log(nodeParent)
-            console.log(e.target.getParent())
+            // console.log(nodeParent)
+            // console.log(e.target.getParent())
 
-            if (e.target.name() == "subelementBeamCirculo1") {
+            if (e.target.name() == "subElementBeamCircle1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => { return node.name() === "subelementBeamCirculo2" })[0];
+                const otherNode = parent.getChildren((node) => { return node.name() === "subElementBeamCircle2" })[0];
                 const otherNodePosition = getElementPos(otherNode);
 
-            } else if (e.target.name() == "subelementBeamCirculo2") {
+            } else if (e.target.name() == "subElementBeamCircle2") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
                 const parent = e.target.getParent();
-                const otherNode = parent.getChildren((node) => { return node.name() === "subelementBeamCirculo1" })[0]
+                const otherNode = parent.getChildren((node) => { return node.name() === "subElementBeamCircle1" })[0]
                 const otherNodePosition = getElementPos(otherNode);
 
-            } else if (e.target.name() == "subelementBeamCirculo") {
+            } else if (e.target.name() == "subElementBeamCircle") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
 
@@ -1218,14 +1255,6 @@ function listenCreateElement() {
         }
     });
 }
-
-
-
-
-
-
-
-
 
 function destroyAttachedKonvaElements(node) {
     if (node.konvaObjects.beam) node.konvaObjects.beam.destroy();
@@ -1280,8 +1309,9 @@ function deleteElement(element) {
 
     element.destroy();
     delete element;
-}
 
+    recalculateNodeNames();
+}
 
 function listenDeleteElement() {
     stage.on("dblclick", (e) => {
@@ -1306,7 +1336,6 @@ function listenDeleteElement() {
     });
 }
 
-
 function listenHiddePanels() {
     stage.on("click", () => {
         panel.style.visibility = "hidden";
@@ -1315,16 +1344,6 @@ function listenHiddePanels() {
         modalMoment.style.visibility = "hidden";
     });
 }
-
-
-function updateAll() {
-    if (!resolvingTask) {
-        // updateEquations();
-        // updateScorePanel();
-        // replaceSupports();
-    }
-}
-
 
 function replaceSupports() {
     if (!resolvingTask) {
@@ -1417,7 +1436,6 @@ function replaceSupports() {
 
 }
 
-
 function updateCounts() {
     stage.find((element) => {
         if (element.name() == "fixedSupport") countFixedSupport += 1;
@@ -1425,7 +1443,6 @@ function updateCounts() {
         else if (element.name() == "fixedSupport") countFixedSupport += 1;
     });
 }
-
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
 function delElement() {
@@ -1459,7 +1476,6 @@ function createDelPanel(x0 = 0, y0 = 0) {
 
     return panel;
 }
-
 
 function createHashElements(stage) {
     const hash = {
@@ -1558,195 +1574,6 @@ function hashOfErros() {
 
 }
 
-function compare(stage1, stage2) { //stage1 student  stage2 solution
-    ERRORS = hashOfErros();
-
-    const hashElementsStage1 = createHashElements(stage1);
-    const hashElementsStage2 = createHashElements(stage2);
-
-    const initBeam1 = hashElementsStage1.initialBeam[0];
-    const initBeam2 = hashElementsStage2.initialBeam[0];
-
-    const initBeam1Pos = getStartEndBeam(initBeam1);
-    const initBeam2Pos = getStartEndBeam(initBeam2);
-
-    let verifyedInitialBeam = true;
-    if (comparePositions(initBeam1Pos.end, initBeam2Pos.end)) { //comparamos que la beam inicial este bien posicionada
-        console.log("Beam inicial bien posicionada!");
-    } else {
-        console.log("Beam inicial mal posicionada!");
-        verifyedInitialBeam = false;
-        ERRORS.ERRORinitialBeam.add("OJO: Atencion con la beam inicial");
-    }
-
-    let verifyedBeams = hashElementsStage1.beams.length == hashElementsStage2.beams.length;
-    if (!verifyedBeams) ERRORS.ERRORbeams.add("OJO: Atencion con la cantidad de beams (no iniciales)");
-    hashElementsStage1.beams.forEach(beam1 => {
-        let beam1Pos = getStartEndBeam(beam1);
-        let verify = false;
-        hashElementsStage2.beams.forEach(beam2 => {
-            let beam2Pos = getStartEndBeam(beam2);
-            if (comparePositions(beam1Pos.start, beam2Pos.start) && comparePositions(beam1Pos.end, beam2Pos.end)) {
-                console.log("LOL Estoy dentro de la condicion")
-                verify = true;
-            }
-        });
-        verifyedBeams &&= verify;
-    });
-    if (!verifyedBeams) ERRORS.ERRORbeams.add("OJO: Atencion con la posicion de alguna beam");
-
-    let verifyedAD = hashElementsStage1.rollerSupports.length == hashElementsStage2.rollerSupports.length;
-    if (!verifyedAD) ERRORS.ERRORrollerSupports.add("OJO: Atencion con la cantidad de supports deslizantes");
-    hashElementsStage1.rollerSupports.forEach(ad1 => {
-        let ad1Pos = getElementPos(ad1);
-        let verify = false;
-        hashElementsStage2.rollerSupports.forEach(ad2 => {
-            let ad2Pos = getElementPos(ad2);
-            if (comparePositions(ad1Pos, ad2Pos)) {
-                verify = true;
-            }
-        });
-        verifyedAD &&= verify;
-    });
-    if (!verifyedAD) ERRORS.ERRORrollerSupports.add("OJO: Atencion con la posicion de algun support deslizante");
-
-    let verifyedAND = hashElementsStage1.pinnedSupports.length == hashElementsStage2.pinnedSupports.length;
-    if (!verifyedAND) ERRORS.ERRORpinnedSupports.add("OJO: Atencion con la cantidad de supports no deslizantes");
-    hashElementsStage1.pinnedSupports.forEach(and1 => {
-        let and1Pos = getElementPos(and1);
-        let verify = false;
-        hashElementsStage2.pinnedSupports.forEach(and2 => {
-            let and2Pos = getElementPos(and2);
-            if (comparePositions(and1Pos, and2Pos)) {
-                verify = true;
-            }
-        });
-        verifyedAND &&= verify;
-    });
-    if (!verifyedAND) ERRORS.ERRORpinnedSupports.add("OJO: Atencion con la posicion de algun support no deslizante");
-
-    let verifyedFixedSupports = hashElementsStage1.fixedSupports.length == hashElementsStage2.fixedSupports.length;
-    if (!verifyedFixedSupports) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la cantidad de fixedSupports");
-    hashElementsStage1.fixedSupports.forEach(e1 => {
-        let e1Pos = getElementPos(e1);
-        let verify = false;
-        hashElementsStage2.fixedSupports.forEach(e2 => {
-            let e2Pos = getElementPos(e2);
-            if (comparePositions(e1Pos, e2Pos)) {
-                verify = true;
-            }
-        });
-        verifyedFixedSupports &&= verify;
-    });
-    if (!verifyedFixedSupports) ERRORS.ERRORfixedSupports.add("OJO: Atencion con la posicion de algun fixedSupport");
-
-    let verifyedBallJoints = hashElementsStage1.ballJoints.length == hashElementsStage2.ballJoints.length;
-    if (!verifyedBallJoints) ERRORS.ERRORballJoints.add("OJO: Atencion con la cantidad de ballJoints");
-    hashElementsStage1.ballJoints.forEach(r1 => {
-        let r1Pos = getElementPos(r1);
-        let verify = false;
-        hashElementsStage2.ballJoints.forEach(r2 => {
-            let r2Pos = getElementPos(r2);
-            if (comparePositions(r1Pos, r2Pos)) {
-                verify = true;
-            }
-        });
-        verifyedBallJoints &&= verify;
-    });
-    if (!verifyedBallJoints) ERRORS.ERRORballJoints.add("OJO: Atencion con la posicion de alguna ballJoint");
-
-    let verifyedConnectingRods = hashElementsStage1.connectingRods.length == hashElementsStage2.connectingRods.length;
-    if (!verifyedConnectingRods) ERRORS.ERRORconnectingRods.add("OJO: Atencion con la cantidad de connectingRods");
-    hashElementsStage1.connectingRods.forEach(b1 => {
-        let b1Pos = getElementPos(b1);
-        let verify = false;
-        hashElementsStage2.connectingRods.forEach(b2 => {
-            let b2Pos = getElementPos(b2);
-            if (comparePositions(b1Pos, b2Pos)) {
-                verify = true;
-            }
-        });
-        verifyedConnectingRods &&= verify;
-    });
-    if (!verifyedConnectingRods) ERRORS.ERRORballJoints.add("OJO: Atencion con la posicion de alguna connectingRod");
-
-    let verifyedMN = hashElementsStage1.momentsNegativos.length == hashElementsStage2.momentsNegativos.length;
-    if (!verifyedMN) ERRORS.ERRORmomentsNegativos.add("OJO: Atencion con la cantidad de moments negativos");
-    hashElementsStage1.connectingRods.forEach(mn1 => {
-        let mn1Pos = getElementPos(mn1);
-        let verify = false;
-        let aux = false;
-        hashElementsStage2.connectingRods.forEach(mn2 => {
-            let mn2Pos = getElementPos(mn2);
-            if (comparePositions(mn1Pos, mn2Pos)) {
-                if (mn1.getAttr("tension") == mn2.getAttr("tension")) {
-                    verify = true;
-                } else {
-                    ERRORS.ERRORmomentsNegativos.add("OJO: Atencion con la magnitud de algun moment negativo");
-                    aux = true;
-                }
-            }
-        });
-        verifyedMN &&= verify;
-        if (!verify && !aux) ERRORS.ERRORmomentsNegativos.add("OJO: Atencion con la posicion de algun moment negativo");
-    });
-
-    let verifyedMP = hashElementsStage1.momentsPositivos.length == hashElementsStage2.momentsPositivos.length;
-    if (!verifyedMP) ERRORS.ERRORmomentsPositivos.add("OJO: Atencion con la cantidad de moments positivos");
-    hashElementsStage1.momentsPositivos.forEach(mp1 => {
-        let mp1Pos = getElementPos(mp1);
-        let verify = false;
-        let aux = false;
-        hashElementsStage2.momentsPositivos.forEach(mp2 => {
-            let mp2Pos = getElementPos(mp2);
-            if (comparePositions(mp1Pos, mp2Pos)) {
-                if (mp1.getAttr("tension") == mp2.getAttr("tension")) {
-                    verify = true;
-                } else {
-                    ERRORS.ERRORmomentsPositivos.add("OJO: Atencion con la magnitud de algun moment positivo");
-                    aux = true;
-                }
-            }
-        });
-        verifyedMP &&= verify;
-        if (!verify && !aux) ERRORS.ERRORmomentsPositivos.add("OJO: Atencion con la posicion de algun moment positivo");
-    });
-
-    let verifyedForces = hashElementsStage1.forces.length == hashElementsStage2.forces.length;
-    if (!verifyedForces) ERRORS.ERRORforces.add("OJO: Atencion con la cantidad de forces");
-    hashElementsStage1.forces.forEach(f1 => {
-        let f1Pos = getElementPos(f1);
-        let verify = false;
-        let aux = false;
-        hashElementsStage2.forces.forEach(f2 => {
-            let f2Pos = getElementPos(f2);
-            if (comparePositions(f1Pos, f2Pos)) {
-                if (compareforces(f1.getAttr("tension"), f2.getAttr("tension"))) {
-                    verify = true;
-                } else {
-                    ERRORS.ERRORforces.add("OJO: Atencion con la magnitud o angulo de algun force");
-                    aux = true;
-                }
-            }
-        });
-        verifyedForces &&= verify;
-        if (!verify && !aux) ERRORS.ERRORforces.add("OJO: Atencion con la posicion de alguna force");
-    });
-
-
-    console.log("verificaciones")
-    const listOfConditions = [verifyedInitialBeam, verifyedBeams, verifyedAD, verifyedAND, verifyedFixedSupports, verifyedBallJoints, verifyedConnectingRods, verifyedMP, verifyedMN, verifyedForces]
-    console.log(listOfConditions)
-    taskResolvedSuccefully = true
-    listOfConditions.forEach(element => {
-        taskResolvedSuccefully &&= element
-    })
-    console.log(taskResolvedSuccefully)
-    // console.clear();
-    console.log(ERRORS);
-
-}
-
 function showHints() {
     compare(stage, stageSolution);
     let txt = "";
@@ -1793,12 +1620,46 @@ function paintElement(element, fillc, strokec, paintGroup) {
 }
 
 function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup = false) {
+    
     element.on("mouseenter", () => {
-        paintElement(element, nfillc, nstrokec, paintGroup);
+        let nfillcDef = nfillc;
+        let nstrokecDef = nstrokec;
+
+        if (element.name() === "subElementBeamCircle" ||element.name() === "subElementBeamCircle1" || element.name() === "subElementBeamCircle2") {
+            const NODE = dcl.findNodeById(element.getAttr("id"))
+
+            if (NODE.isOrigin) {
+                nfillcDef = originColorMouseOver;
+                nstrokecDef = originColorMouseOver;
+
+            } else {
+                nfillcDef = nfillc;
+                nstrokecDef = nstrokec;
+            }
+        }
+        paintElement(element, nfillcDef, nstrokecDef, paintGroup);
+        stage.container().style.cursor = 'pointer';
     })
 
     element.on("mouseleave", () => {
-        paintElement(element, ofillc, ostrokec, paintGroup);
+        let ofillcDef = ofillc;
+        let ostrokecDef = ostrokec;
+    
+        if (element.name() === "subElementBeamCircle" ||element.name() === "subElementBeamCircle1" || element.name() === "subElementBeamCircle2") {
+            const NODE = dcl.findNodeById(element.getAttr("id"))   
+ 
+            if (NODE.isOrigin) {
+                ofillcDef = originColor;
+                ostrokecDef = originColor;
+
+            } else {
+                ofillcDef = nodeColor;
+                ostrokecDef = nodeColor;
+            }
+        }
+        
+        paintElement(element, ofillcDef, ostrokecDef, paintGroup);
+        stage.container().style.cursor = 'default';
     })
 }
 
@@ -1821,8 +1682,6 @@ function generateGrid(layer) {
         }));
     }
 }
-
-
 
 function createModalForce(x0, y0) {
 
@@ -1931,7 +1790,6 @@ function createModalMoment(x0, y0) {
     return modal;
 }
 
-
 function jsonToObject(json) {
     const object = JSON.parse(json);
     return object;
@@ -1939,6 +1797,7 @@ function jsonToObject(json) {
 
 function createNodeWithObject(object, _id) {
     const node = new Node(null, id=_id);
+    node.setIsOrigin(true);
     node.setNodeWithObject(object, node.id);
     return node;
 }
@@ -1967,7 +1826,6 @@ function getDate() {
     return date;
 }
 
-
 function drawLink(node){
     if (node.link === "rollerSupport") {
         createRollerSupport(node);
@@ -1982,13 +1840,8 @@ function drawLink(node){
     }
 }
 
-
 function drawForces(node){
-
     node.forces.forEach(force=>{
-        // console.log("FUERZA:"+force);
-        // console.log("MAGNITUD: "+force[0])
-        // console.log("COORDINATE: "+ node.coordinate[1] );
         if (force !=null){
         createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
         }
@@ -1999,22 +1852,12 @@ function drawForces(node){
 function drawMoments(node){
 
     node.moments.forEach(moment=>{
-        // console.log("FUERZA:"+force);
-        // console.log("MAGNITUD: "+force[0])
-        // console.log("COORDINATE: "+ node.coordinate[1] );
         if (moment !=null){
-        //createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
         createMomentEditTask(moment,"black",node.coordinate[0],node.coordinate[1],node);
         }
     })
     
 }
-
-
-
-
-
-
 
 function drawDCL() {
     const allNodes = [dcl, ...dcl.getAllDecendents()]
@@ -2025,7 +1868,7 @@ function drawDCL() {
     let [x0, y0] = nodesInitialBeam[0].coordinate;
     let [x1, y1] = nodesInitialBeam[1].coordinate;
 
-    const initalBeam = createBeam(
+    const initialBeam = createBeam(
         nameBeam="initialBeam",
         _id=nodesInitialBeam[1].id,
         coordinates=[
@@ -2035,9 +1878,11 @@ function drawDCL() {
         _node=nodesInitialBeam[1]
     )[1];
 
+    initialBeam.getChildren()[1].setAttr("fill", nodeColor);
+
     const shadowBeam = createShadowBeam(x0,y0,x1-x0,y1-y0);
     shadowBeam.hide();
-    listenNodeMovement(initalBeam, shadowBeam, "initialBeam");
+    listenNodeMovement(initialBeam, shadowBeam, "initialBeam");
 
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
@@ -2051,9 +1896,8 @@ function drawDCL() {
 
         drawVerticalLinesIndexes(node.coordinate[0]); // linea de abajo
         drawHorizontalLinesIndexes(node.coordinate[1]); //lineas de al lado
-        drawSegmentedLinesHorizontal(node.coordinate[0],node.coordinate[1]);
-        drawSegmentedLinesVertical(node.coordinate[0],node.coordinate[1]);
-
+        node.addKonvaSegmentedLineY(drawSegmentedLinesHorizontal(node));
+        node.addKonvaSegmentedLineX(drawSegmentedLinesVertical(node));
 
         xCoord.push(node.coordinate[0])
         yCoord.push(node.coordinate[1])
@@ -2061,26 +1905,29 @@ function drawDCL() {
 
     
     otherNodes.forEach(node => {
-        console.log(node, node.parent)
         createBeam2(node, node.parent)
         drawLink(node);
         drawForces(node);
         drawMoments(node);
-
-        drawSegmentedLinesHorizontal(node.coordinate[0],node.coordinate[1]);
-        drawSegmentedLinesVertical(node.coordinate[0],node.coordinate[1]);
+        console.log(node);
+        node.addKonvaSegmentedLineY(drawSegmentedLinesHorizontal(node));
+        node.addKonvaSegmentedLineX(drawSegmentedLinesVertical(node));
         drawVerticalLinesIndexes(node.coordinate[0]); //linea de abajo
         drawHorizontalLinesIndexes(node.coordinate[1]); //linea de al lado
         xCoord.push(node.coordinate[0]);
         yCoord.push(node.coordinate[1]);
+        console.log(node)
     })
+
+    //console.log(dcl.findOriginNode())
+    dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
    //creacion de linea grande horizontal de metros//
     const HorizontalLinePlace =  Math.max(...yCoord) + 100;
     const horizontalLine = new Konva.Line({
         x: 0,
         y: 0,
-        points: [Math.min(...xCoord), 520, Math.max(...xCoord), 520],
+        points: [Math.min(...xCoord), heightStage-blockSnapSize, Math.max(...xCoord), heightStage-blockSnapSize],
         stroke: 'red',
         strokeWidth: 6,
         tension: 0
@@ -2096,7 +1943,7 @@ function drawDCL() {
    const verticalLine = new Konva.Line({
     x: 0,
     y: 0,
-    points: [1100, Math.min(...yCoord), 1100, Math.max(...yCoord)],
+    points: [widthStage-blockSnapSize, Math.min(...yCoord), widthStage-blockSnapSize, Math.max(...yCoord)],
     stroke: 'red',
     strokeWidth: 6,
     tension: 0
@@ -2115,11 +1962,11 @@ function drawDCL() {
 }
 
 function drawVerticalLinesIndexes(xCoordinate){
- 
+    lineLenght = 10;
     const line = new Konva.Line({
         x: 0,
         y: 0,
-        points: [xCoordinate, 520+10,xCoordinate,520-10],
+        points: [xCoordinate, heightStage-blockSnapSize+lineLenght,xCoordinate,heightStage-blockSnapSize-lineLenght],
         stroke: 'red',
         strokeWidth: 6,
         tension: 0
@@ -2137,7 +1984,7 @@ function drawHorizontalLinesIndexes(yCoordinate){
     const line = new Konva.Line({
         x: 0,
         y: 0,
-        points:[1100+lineLenght, yCoordinate,1100-lineLenght,yCoordinate],
+        points:[widthStage-blockSnapSize+lineLenght, yCoordinate,widthStage-blockSnapSize-lineLenght,yCoordinate],
         stroke: 'red',
         strokeWidth: 6,
         tension: 0
@@ -2149,67 +1996,40 @@ function drawHorizontalLinesIndexes(yCoordinate){
     layer.add(group);
 
 }
-function drawSegmentedLinesHorizontal(xCoordinate,yCoordinate){
 
-    //la linea esta ubicada actualmente en y: 520
-    // el largo de las lineas sera 10px. vemos cuantas caben desde el nodo a los 520
-    bigLineLenght = 520
-    lineLenght = 10;
-    distanceToLine = bigLineLenght-yCoordinate;
-    distanceBetweenSegments = 10;
-    numberOfSegments = Math.round(distanceToLine/(lineLenght+distanceBetweenSegments));
+function drawSegmentedLinesHorizontal(node){
+    const line = new Konva.Line({
+        id:node.id,
+        x: node.coordinate[0],
+        y: node.coordinate[1],
+        points: [0, 0, widthStage-blockSnapSize-node.coordinate[0],0],
+        stroke: 'red',
+        strokeWidth: 2,
+        dash: [10,4]
+      });
 
-    console.log("segmentos: " +numberOfSegments);
-    for (var i =0;i<numberOfSegments;i++){
-        const line = new Konva.Line({
-            x: 0,
-            y: 0,
-            points: [xCoordinate, yCoordinate+i*(lineLenght+distanceBetweenSegments),xCoordinate,yCoordinate+(lineLenght+distanceBetweenSegments)*i+10],
-            stroke: 'red',
-            strokeWidth: 2,
-            tension: 0
-          });
-          
-
-        layer.add(line);
-    }
-    
-
+    layer.add(line);
+    return line;
 
 }
 
-function drawSegmentedLinesVertical(xCoordinate,yCoordinate){
+function drawSegmentedLinesVertical(node){
 
-    //la linea esta ubicada actualmente en y: 520
-    // el largo de las lineas sera 10px. vemos cuantas caben desde el nodo a los 520
-    bigLineLenght = 1100
-    lineLenght = 10;
-    distanceToLine = bigLineLenght-xCoordinate;
-    distanceBetweenSegments = 10;
-    numberOfSegments = Math.round(distanceToLine/(lineLenght+distanceBetweenSegments));
+    const line = new Konva.Line({
+        id:node.id,
+        x: node.coordinate[0],
+        y: node.coordinate[1],
+        points: [0, 0, 0,heightStage-blockSnapSize-node.coordinate[1]],
+        stroke: 'red',
+        strokeWidth: 2,
+        dash: [10,4]
+      });
 
-    console.log("segmentos: " +numberOfSegments);
-    for (var i =0;i<numberOfSegments;i++){
-        const line = new Konva.Line({
-            x: 0,
-            y: 0,
-            points: [xCoordinate, yCoordinate+i*(lineLenght+distanceBetweenSegments),xCoordinate,yCoordinate+(lineLenght+distanceBetweenSegments)*i+10],
-            points: [xCoordinate+i*(lineLenght+distanceBetweenSegments),yCoordinate ,xCoordinate+(lineLenght+distanceBetweenSegments)*i+10,yCoordinate],
-
-            stroke: 'red',
-            strokeWidth: 2,
-            tension: 0
-          });
-          
-
-        layer.add(line);
-    }
-    
+    layer.add(line);
+    return line;
 
 
 }
-
-
 
 function drawHorizontalMeters(xCoordSorted){
     maxValue = Math.max(...xCoordSorted);
@@ -2223,7 +2043,7 @@ function drawHorizontalMeters(xCoordSorted){
             if (meters != 0){
             const metersText = new Konva.Text({
                 x: segmentsAverage-offSet,
-                y: 550,
+                y: heightStage-blockSnapSize+10,
                 text: meters+"m",
                 fontSize: 15,
                 fontFamily: "Impact",
@@ -2247,7 +2067,7 @@ function drawVerticalMeters(yCoordSorted){
 
             if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
             const metersText = new Konva.Text({
-                x: 1120,
+                x: widthStage-blockSnapSize+10,
                 y: segmentsAverage-offSet,
                 text: meters+"m",
                 fontSize: 15,
@@ -2259,23 +2079,6 @@ function drawVerticalMeters(yCoordSorted){
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux") {
     let x0lastPos = nodeId.coordinate[0];
@@ -2341,7 +2144,6 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
 
     return group;
 }
-
 
 function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, forFixedSupport = false) {
     let x0lastPos = nodeId.coordinate[0];
@@ -2417,4 +2219,237 @@ function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0,nodeId, layer
     return group;
 }
 
+function changeOrigin(){
+    const newOriginNode = dcl.findNodeById(lastNodeClick.getAttr("id"));
+    const oldOriginNode = dcl.findOriginNode();
+    oldOriginNode.setIsOrigin(false);
+    newOriginNode.setIsOrigin(true);
+
+    oldOriginNode.konvaObjects.circle.setAttr("fill", "red");
+    newOriginNode.konvaObjects.circle.setAttr("fill", originColor);
+
+    panel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+
+    updateEquations();
+}
+
+function distanceXYnodes(node1, node2){
+    const [x1, y1] = node1.coordinate
+    const [x2, y2] = node2.coordinate
+    return {x: x1-x2, y: y1-y2, distance: ((x1-x2)**2 + (y1-y2)**2)**(0.5)}
+}
+
+function recalculateNodeNames(){
+    console.log("recalculando nombres")
+    const allNodes = dcl.getAllDecendents();
+
+    indexOfNodeNames = 0;
+    allNodes.forEach(node => {
+        if (node.link){
+            node.setName(nodeNameList[indexOfNodeNames][0]);
+            indexOfNodeNames += 1;
+        }
+    })
+    
+}
+
+function calculateEquations(){
+    const origin = dcl.findOriginNode()
+
+    const moments = [];
+    const forcesX = [];
+    const forcesY = [];
+
+    const linkMoments = [];
+    const linkForcesX = [];
+    const linkForcesY = [];
+
+    const allNodes = [dcl, ...dcl.getAllDecendents()];
+
+    allNodes.forEach(node => {
+        const diff = distanceXYnodes(node, origin);
+        const distX = Math.abs(diff.x / blockSnapSize);
+        const distY = Math.abs(diff.y / blockSnapSize);
+
+        node.moments.forEach(moment => {
+            moments.push(moment);
+        })
+
+        node.forces.forEach(force => {
+            const [magnitud, angle] = force;
+            if(0 == angle){
+                forcesX.push([-magnitud, `N`]);
+                if (diff.y > 0){
+                    moments.push([[-magnitud, `N`], [distY, `m`]]);
+                } else if (diff.y < 0){
+                    moments.push([[magnitud, `N`], [distY, `m`]]);
+                }
+            } else if (0 < angle && angle < 90){
+                forcesX.push([-magnitud, `cos(${angle})N`]);
+                forcesY.push([-magnitud, `sin(${angle})N`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                    // Same  Slope
+                } else {
+                    if (diff.x > 0){
+                        moments.push([[-magnitud, `sin(${angle})N`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[magnitud, `sin(${angle})N`], [distX, `m`]]);
+                    }
+                    if (diff.y > 0){
+                        moments.push([[-magnitud, `cos(${angle})N`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[magnitud, `cos(${angle})N`], [distY, `m`]]);
+                    } 
+                }
+        
+            } else if (90 == angle){
+                forcesY.push([-magnitud, `N`]);
+                if (diff.x > 0){
+                    moments.push([[-magnitud, `N`], [distX, `m`]]);
+                } else if (diff.x < 0){
+                    moments.push([[magnitud, `N`], [distX, `m`]]);
+                }
+
+            } else if (90 < angle && angle < 180){
+                forcesX.push([magnitud, `cos(${180 - angle})N`]);
+                forcesY.push([-magnitud, `sin(${180 - angle})N`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                    // Same  Slope
+                } else {
+                    if (diff.x > 0){
+                        moments.push([[-magnitud, `sin(${angle - 90})N`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[magnitud, `sin(${angle - 90})N`], [distX, `m`]]);
+                    }
+                    if (diff.y > 0){
+                        moments.push([[magnitud, `cos(${angle - 90})N`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[-magnitud, `cos(${angle - 90})N`], [distY, `m`]]);
+                    } 
+                }
+                
+            } else if (180 == angle){
+                forcesX.push([magnitud, `N`]);
+                if (diff.y > 0){
+                    moments.push([[magnitud, `N`], [distY, `m`]]);
+                } else if (diff.y < 0){
+                    moments.push([[-magnitud, `N`], [distY, `m`]]);
+                }
+            } else if (180 < angle && angle < 270){
+                forcesX.push([magnitud, `cos(${angle - 180})N`]);
+                forcesY.push([magnitud, `sin(${angle - 180})N`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                    // Same  Slope
+                } else {
+                    if (diff.x > 0){
+                        moments.push([[magnitud, `sin(${angle - 180})N`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[-magnitud, `sin(${angle - 180})N`], [distX, `m`]]);
+                    }
+                    if (diff.y > 0){
+                        moments.push([[magnitud, `cos(${angle - 180})N`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[-magnitud, `cos(${angle - 180})N`], [distY, `m`]]);
+                    } 
+                }
+                
+            } else if (270 == angle){
+                forcesY.push([magnitud, `N`]);
+                if (diff.x > 0){
+                    moments.push([[magnitud, `N`], [distX, `m`]]);
+                } else if (diff.x < 0){
+                    moments.push([[-magnitud, `N`], [distX, `m`]]);
+                }
+            } else if (270 < angle && angle < 360){
+                forcesX.push([-magnitud, `cos(${360 - angle})N`]);
+                forcesY.push([magnitud, `sin(${360 - angle})N`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                    // Same  Slope
+                } else {
+                    if (diff.x > 0){
+                        moments.push([[magnitud, `sin(${360 - angle})N`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[-magnitud, `sin(${360 - angle})N`], [distX, `m`]]);
+                    }
+                    if (diff.y > 0){
+                        moments.push([[-magnitud, `cos(${360 - angle})N`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[magnitud, `cos(${360 - angle})N`], [distY, `m`]]);
+                    } 
+                }
+                
+            }
+        })
+
+        if (node.link === "fixedSupport"){
+            linkMoments.push(`${node.name}m`)
+            linkForcesX.push(`${node.name}x`)
+            linkForcesY.push(`${node.name}y`)
+
+        } else if (node.link === "pinnedSupport"){
+            linkForcesX.push(`${node.name}x`)
+            linkForcesY.push(`${node.name}y`)
+
+        } else if (node.link === "rollerSupport"){
+            linkForcesY.push(`${node.name}y`)
+
+        }
+    })
+
+    let textForcesX = "ΣFx: ";
+    let textForcesY = "ΣFy: ";
+    let textMoments = "ΣM: ";
+
+    forcesX.forEach(force => {
+        if (force[0] > 0) textForcesX += "+";    
+        textForcesX += `${force[0]}${force[1]} `;
+    })
+
+    forcesY.forEach(force => {
+        if (force[0] > 0) textForcesX += "+";    
+        textForcesY += `${force[0]}${force[1]} `;
+    })
+
+    moments.forEach(moment => {
+        if(typeof moment === "number"){
+            if (moment > 0) textMoments += "+";
+            textMoments += `${moment}Nm `;
+        } else {
+            if (moment[0][0] > 0) textMoments += `+${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;   
+            else textMoments += `${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;   
+            
+        }
+    })
+
+    linkForcesX.forEach(lfx => {
+        textForcesX += `+ ${lfx} `
+    })
+
+    linkForcesY.forEach(lfy => {
+        textForcesY += `+ ${lfy} `
+    })
+
+    linkMoments.forEach(lm => {
+        textMoments += `+ ${lm} `
+    })
+
+    textForcesX += " = 0";
+    textForcesY += " = 0";
+    textMoments += " = 0";
+
+    return [textForcesX, textForcesY, textMoments];
+}
+
+function updateEquations(){
+    const [Fx, Fy, M] = calculateEquations();
+
+    const pFx = document.querySelector("#forcesX");
+    const pFy = document.querySelector("#forcesY");
+    const pM  = document.querySelector("#moments");
+
+    pFx.innerText = Fx;
+    pFy.innerText = Fy;
+    pM.innerText = M;
+}
 

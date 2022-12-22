@@ -43,6 +43,8 @@ const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede
 const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
 shadowLine.hide();
 
+dcl.setIsOrigin(true);
+
 //------------------------------------------------------Eventos usuario-----------------------------------------------//
 listenNodeMovement(group, shadowLine, "initialBeam");
 listenCreateElement();
