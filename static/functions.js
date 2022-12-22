@@ -2582,10 +2582,10 @@ function createGenericModalRotation(x0, y0){
     option180.value = 180;
     option270.value = 270;
 
-    option0.innerText = "Down";
-    option90.innerText = "Left";
-    option180.innerText = "Up";
-    option270.innerText = "Right";
+    option0.innerText = "Abajo";
+    option90.innerText = "Izquierda";
+    option180.innerText = "Arriba";
+    option270.innerText = "Derecha";
 
     select.appendChild(option0);
     select.appendChild(option90);
