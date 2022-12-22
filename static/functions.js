@@ -2283,16 +2283,49 @@ function calculateEquations(){
         })
 
         if (node.link === "fixedSupport"){
-            linkMoments.push(`${node.name}m`)
-            linkForcesX.push(`${node.name}x`)
-            linkForcesY.push(`${node.name}y`)
+            if (node.linkRotation === "0"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+            } else if (node.linkRotation === "90"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+            } else if (node.linkRotation === "180"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+            } else if (node.linkRotation === "270"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+                linkMoments.push([`${node.name}m`, "positive"]);
+            }
 
         } else if (node.link === "pinnedSupport"){
-            linkForcesX.push(`${node.name}x`)
-            linkForcesY.push(`${node.name}y`)
+            if (node.linkRotation === "0"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+            } else if (node.linkRotation === "90"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+            } else if (node.linkRotation === "180"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "negative"]);
+            } else if (node.linkRotation === "270"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+                linkForcesY.push([`${node.name}y`, "positive"]);
+            }
 
         } else if (node.link === "rollerSupport"){
-            linkForcesY.push(`${node.name}y`)
+            if (node.linkRotation === "0"){
+                linkForcesY.push([`${node.name}y`, "positive"]);
+            } else if (node.linkRotation === "90"){
+                linkForcesX.push([`${node.name}x`, "positive"]);
+            } else if (node.linkRotation === "180"){
+                linkForcesY.push([`${node.name}y`, "negative"]);
+            } else if (node.linkRotation === "270"){
+                linkForcesX.push([`${node.name}x`, "negative"]);
+            }
 
         }
     })
@@ -2322,16 +2355,23 @@ function calculateEquations(){
         }
     })
 
+
     linkForcesX.forEach(lfx => {
-        textForcesX += `+ ${lfx} `
+        if(lfx[1] === "positive") textForcesX += "+";
+        else if(lfx[1] === "negative") textForcesX += "-";
+        textForcesX += `${lfx[0]} `;
     })
 
     linkForcesY.forEach(lfy => {
-        textForcesY += `+ ${lfy} `
+        if(lfy[1] === "positive") textForcesY += "+";
+        else if(lfy[1] === "negative") textForcesY += "-";
+        textForcesY += `${lfy[0]} `;
     })
 
     linkMoments.forEach(lm => {
-        textMoments += `+ ${lm} `
+        if(lm[1] === "positive") textMoments += "+";
+        else if(lm[1] === "negative") textMoments += "-";
+        textMoments += `${lm[0]} `;
     })
 
     textForcesX += " = 0";
