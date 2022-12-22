@@ -792,41 +792,41 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
 function forceMovement(group, large, strokeVal) {
     const arrow = group.getChildren()[0];
     const magnitud = group.getChildren()[1];
-    const magnitudVal = parseFloat(group.getAttr("tension")[0])
-    let angleVal = parseInt(group.getAttr("tension")[1])
+    const magnitudVal = parseFloat(group.getAttr("tension")[0]);
+    let angleVal = parseInt(group.getAttr("tension")[1]);
 
     let newAngle;
     arrow.on("dragmove", () => {
 
-        const mouseXY = getXY()
+        const mouseXY = getXY();
 
-        const x = mouseXY.x - group.getAttr("x")
-        const y = mouseXY.y - group.getAttr("y")
+        const x = mouseXY.x - group.getAttr("x");
+        const y = mouseXY.y - group.getAttr("y");
 
-        const a = Math.sqrt(large ** 2 / ((x) ** 2 + (y) ** 2))
-        arrow.points([a * x, a * y, 0, 0])
+        const a = Math.sqrt(large ** 2 / ((x) ** 2 + (y) ** 2));
+        arrow.points([a * x, a * y, 0, 0]);
 
-        newAngle = Math.round(radToDeg(Math.atan2(-y, x)))
+        newAngle = Math.round(radToDeg(Math.atan2(-y, x)));
 
-        arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
-        arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
+        arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)));
+        arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)));
 
         newAngle = prettyDeg(newAngle);
 
         let txt = magnitudVal + " N" + ", " + newAngle  + " °";
-        magnitud.setAttr("text", txt)
-        magnitud.setAttr("x", a*x+10)
-        magnitud.setAttr("y", a*y+10)
+        magnitud.setAttr("text", txt);
+        magnitud.setAttr("x", a*x+10);
+        magnitud.setAttr("y", a*y+10);
 
     })
 
     arrow.on("dragend", () => {
-        group.setAttr("tension", [magnitudVal, newAngle])
+        group.setAttr("tension", [magnitudVal, newAngle]);
 
-        const node = dcl.findNodeById(group.getAttr("id"))
+        const node = dcl.findNodeById(group.getAttr("id"));
 
         const force = node.forces.find(force => {
-            return force[0] == prettyDeg(magnitudVal) && force[1] == angleVal
+            return force[0] == prettyDeg(magnitudVal) && force[1] == angleVal;
         })
 
         angleVal = newAngle;
