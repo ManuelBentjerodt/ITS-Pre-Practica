@@ -8,7 +8,8 @@ class xReference {
         this.konvaLine = null,
         this.meters = [],
         this.indexes = [],
-        this.segmentedLines = []
+        this.segmentedLines = [],
+        this.segmented = []
     }
 
     myCoord(){
@@ -24,7 +25,7 @@ class xReference {
             id: this.id
         });
         this.drawIndexes();
-        this.drawSegmentedLines();
+        //this.drawSegmentedLines();
         return this.konvaLine;
     }
 
@@ -37,11 +38,16 @@ class xReference {
     }
 
     addPoint(point){
+        this.points.push(point);
+        this.createSegmentedLine(point);
+        this.updateSegmentedLines();
+        
         point.on("dragmove", () => {
         this.buildLine();
         this.drawIndexes();
-        this.drawSegmentedLines();});
-        this.points.push(point);
+        //this.drawSegmentedLines();
+        this.updateSegmentedLines();
+        });
     }
 
     deletePoint(point){
@@ -71,6 +77,7 @@ class xReference {
             this.konvaLine.setAttr("points",[Math.min(...xList),heightStage-5*blockSnapSize,Math.max(...xList),heightStage-5*blockSnapSize]);
             const xSorted = xList.sort(function(a, b){return a-b});
             this.drawMeters(xSorted);
+            
         }
       }
 
@@ -91,9 +98,8 @@ class xReference {
                 segmentsAverage = (sortedList[i]+ sortedList[i+1])/2
                 meters = (sortedList[i+1]-sortedList[i])/40  
     
-                if (meters != 0 && sortedList[i+1] != sortedList[i]){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
-                console.log("sortedList[i+1] "+sortedList[i+1]);
-                console.log("sortedList[i] "+sortedList[i]);
+                if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
+                
                 const metersText = new Konva.Text({
                     x: segmentsAverage-offSet,
                     y: heightStage-4*blockSnapSize+10,
@@ -119,6 +125,7 @@ class xReference {
         for (let i=0;i<this.points.length;i++){
             lineLenght = 10;
             const line = new Konva.Line({
+                id: this.points[i].getAttr("id"),
                 x: 0,
                 y: 0,
                 points:[this.points[i].getAttr("x"),heightStage-5*blockSnapSize+lineLenght,this.points[i].getAttr("x"),heightStage-5*blockSnapSize-lineLenght],
@@ -126,7 +133,7 @@ class xReference {
                 strokeWidth: 6,
                 tension: 0
               });
-
+              
             this.indexes.push(line);
             layer.add(line);
         }
@@ -141,7 +148,10 @@ class xReference {
         }
 
         for (let i=0;i<this.points.length;i++){
+         
+            
             const line = new Konva.Line({
+                id: this.points[i].getAttr("id"),
                 x: 0,
                 y: 0,
                 points: [this.points[i].getAttr("x"),this.points[i].getAttr("y"),this.points[i].getAttr("x"),heightStage-5*blockSnapSize],
@@ -151,15 +161,56 @@ class xReference {
               });
               this.segmentedLines.push(line);
               layer.add(line);
-        }
 
+        }//sec for
       }
 
+    //   setAttr("points",[0,0,0,distanceToX]);
+
+
+      createSegmentedLine(point){
+        console.log("id: "+point.getAttr("id"));
+        const line = new Konva.Line({
+            id: point.getAttr("id"),
+            x: point.getAttr("x"),
+            y: point.getAttr("y"),
+            points: [0,0,0,heightStage-5*blockSnapSize-point.getAttr("y")],
+            stroke: 'black',
+            strokeWidth: 3,
+            dash: [10,4],
+            visible: true
+          });
+          this.segmented.push(line);
+          layer.add(line);
+
+      }
+      updateSegmentedLines(){
+        
+        for (let i=0;i<this.points.length;i++){
+            for (let j=0;j<this.segmented.length;j++){
+                if (this.points[i].getAttr("id") == this.segmented[j].getAttr("id")){
+                    this.segmented[j].setAttr("x",this.points[i].getAttr("x"));
+                    this.segmented[j].setAttr("y",this.points[i].getAttr("y"));
+                    this.segmented[j].setAttr("points",[0,0,0,heightStage-5*blockSnapSize-this.points[i].getAttr("y")]);
+                    this.segmented[j].setAttr("visible",true);
+                }
+            }
+        }
+        //ver cual lineas mostrar
+        for (let i=0;i<this.segmented.length;i++){
+            for (let j=0;j<this.segmented.length;j++){
+                console.log("segmented uno: ",this.segmented[i].getAttr("x"));
+                console.log("segmented dos: ",this.segmented[j].getAttr("y"));
+                console.log("\n");
+                if (this.segmented[i].getAttr("x") == this.segmented[j].getAttr("x") && this.segmented[j].getAttr("y") > this.segmented[i].getAttr("y")){
+                    this.segmented[i].setAttr("visible",false);
+                }
+            }
+        }
 
 
 
-
-
+      }
 
 
 

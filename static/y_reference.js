@@ -8,7 +8,8 @@ class yReference {
         this.konvaLine = null,
         this.meters = [],
         this.indexes = [],
-        this.segmentedLines = []
+        this.segmentedLines = [],
+        this.segmented = []
     }
 
     myCoord(){
@@ -24,7 +25,7 @@ class yReference {
             id: this.id
         });
         this.drawIndexes();
-        this.drawSegmentedLines();
+        //this.drawSegmentedLines();
         return this.konvaLine;
     }
 
@@ -37,11 +38,16 @@ class yReference {
     }
 
     addPoint(point){
+        this.points.push(point);
+        this.createSegmentedLine(point);
+        this.updateSegmentedLines();
+
         point.on("dragmove", () => {
         this.buildLine();
         this.drawIndexes();
-        this.drawSegmentedLines();});
-        this.points.push(point);
+        this.updateSegmentedLines();
+        //this.drawSegmentedLines();
+    });
     }
 
     deletePoint(point){
@@ -151,11 +157,49 @@ class yReference {
       }
 
 
+      updateSegmentedLines(){
+        
+        for (let i=0;i<this.points.length;i++){
+            for (let j=0;j<this.segmented.length;j++){
+                if (this.points[i].getAttr("id") == this.segmented[j].getAttr("id")){
+                    this.segmented[j].setAttr("x",this.points[i].getAttr("x"));
+                    this.segmented[j].setAttr("y",this.points[i].getAttr("y"));
+                    this.segmented[j].setAttr("points",[0,0,widthStage-5*blockSnapSize-this.points[i].getAttr("x"),0]);
+                    this.segmented[j].setAttr("visible",true);
+                }
+            }
+        }
+        //ver cual lineas mostrar
+        for (let i=0;i<this.segmented.length;i++){
+            for (let j=0;j<this.segmented.length;j++){
+                if (this.segmented[i].getAttr("y") == this.segmented[j].getAttr("y") && this.segmented[j].getAttr("x") > this.segmented[i].getAttr("x")){
+                    this.segmented[i].setAttr("visible",false);
+                }
+            }
+        }
 
 
 
+      }
 
 
+
+      createSegmentedLine(point){
+        console.log("id: "+point.getAttr("id"));
+        const line = new Konva.Line({
+            id: point.getAttr("id"),
+            x: point.getAttr("x"),
+            y: point.getAttr("y"),
+            points: [0,0,widthStage-5*blockSnapSize-point.getAttr("y"),0],
+            stroke: 'black',
+            strokeWidth: 3,
+            dash: [10,4],
+            visible: true
+          });
+          this.segmented.push(line);
+          layer.add(line);
+
+      }
 
 
 
