@@ -26,7 +26,10 @@
     <script src="{%static '/variables.js'%}"></script>
     <script src="{%static '/functions.js'%}"></script>
     <script src="{%static '/create_task.js'%}"></script>
-    
+    <script src="{%static '/y_reference.js'%}"></script>
+    <script src="{%static '/x_reference.js'%}"></script>
+    <script src="{%static '/creacion_referencias.js'%}"></script>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}

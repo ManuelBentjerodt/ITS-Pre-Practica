@@ -53,6 +53,7 @@ shadowLine.hide();
 
 dcl.setIsOrigin(true);
 
+
 //------------------------------------------------------Eventos usuario-----------------------------------------------//
 listenNodeMovement(group, shadowLine, "initialBeam");
 listenCreateElement();

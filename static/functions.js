@@ -1624,7 +1624,7 @@ function createModalForce(x0, y0) {
     select.appendChild(optionKiloNewtons);
     select.appendChild(optionNewtons);
     ////////////////////////
-    console.log("valor selected: ", select.value);
+    console.log("valor selected:", select.value)
     const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle, nameForce = select.value);
     
     
