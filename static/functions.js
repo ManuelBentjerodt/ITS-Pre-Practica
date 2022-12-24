@@ -118,6 +118,13 @@ function createBeam(nameBeam = "beam", _id=null, coordinates=null, _node=null) {
     secondNode.setKonvaCircle(line.getChildren()[2]);
     secondNode.setKonvaBeam(line);
 
+    x_reference.addPoint(line.getChildren()[1]);
+    x_reference.addPoint(line.getChildren()[2]);
+
+    y_reference.addPoint(line.getChildren()[1]);
+    y_reference.addPoint(line.getChildren()[2]);
+
+
     hideAllPanels();
 
     return [originNode, line];
@@ -211,6 +218,10 @@ function createBeam2(_node=null, _parent=null) {
     node.setKonvaShadowBeam(shadowLine);
     node.setKonvaCircle(circle);
 
+
+    x_reference.addPoint(circle);
+    y_reference.addPoint(circle);
+    
     hideAllPanels();
 
     listenNodeMovement(group, shadowLine, "beam2");
@@ -1955,14 +1966,14 @@ function drawSegmentedLinesVertical(node){
 }
 
 function drawHorizontalMeters(xCoordSorted){
-    maxValue = Math.max(...xCoordSorted);
-    offSet = 8;
+    const maxValue = Math.max(...xCoordSorted);
+    const offSet = 8;
     for (var i=0;i<xCoordSorted.length;i++){
 
 
         if(xCoordSorted[i] != maxValue){
-            segmentsAverage = (xCoordSorted[i]+ xCoordSorted[i+1])/2
-            meters = (xCoordSorted[i+1]-xCoordSorted[i])/40  
+            const segmentsAverage = (xCoordSorted[i]+ xCoordSorted[i+1])/2
+            const meters = (xCoordSorted[i+1]-xCoordSorted[i])/40  
             if (meters != 0){
             const metersText = new Konva.Text({
                 x: segmentsAverage-offSet,
@@ -1979,14 +1990,14 @@ function drawHorizontalMeters(xCoordSorted){
 }
 
 function drawVerticalMeters(yCoordSorted){
-    maxValue = Math.max(...yCoordSorted);
-    offSet = 8;
+    const maxValue = Math.max(...yCoordSorted);
+    const offSet = 8;
     for (var i=0;i<yCoordSorted.length;i++){
 
 
         if(yCoordSorted[i] != maxValue){
-            segmentsAverage = (yCoordSorted[i]+ yCoordSorted[i+1])/2
-            meters = (yCoordSorted[i+1]-yCoordSorted[i])/40  
+            const segmentsAverage = (yCoordSorted[i]+ yCoordSorted[i+1])/2
+            const meters = (yCoordSorted[i+1]-yCoordSorted[i])/40  
 
             if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
             const metersText = new Konva.Text({

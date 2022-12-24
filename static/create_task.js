@@ -45,6 +45,29 @@ listenPanelMovement(modalForce);
 listenPanelMovement(modalFixedSupport);
 listenPanelMovement(modalRollerSupport); 
 listenPanelMovement(modalPinnedSupport);
+
+
+//------------------------------------------------------Creacion referencia-----------------------------------------------//
+
+
+x_reference = new xReference([0,heightStage-5*blockSnapSize]);
+y_reference = new yReference([widthStage-5*blockSnapSize,0]);
+
+x_reference.createKonvaLine();
+y_reference.createKonvaLine();
+
+x_reference.buildLine();
+y_reference.buildLine();
+
+
+x_reference.updateSegmentedLines();
+y_reference.updateSegmentedLines();
+
+
+layer.add(x_reference.getKonvaLine());
+layer.add(y_reference.getKonvaLine());
+
+
 //------------------------------------------------------elements dcl-----------------------------------------------//
 
 const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida

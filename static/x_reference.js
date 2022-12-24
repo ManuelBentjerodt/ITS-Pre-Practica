@@ -41,11 +41,12 @@ class xReference {
         this.points.push(point);
         this.createSegmentedLine(point);
         this.updateSegmentedLines();
-        
-        point.on("dragmove", () => {
         this.buildLine();
         this.drawIndexes();
-        //this.drawSegmentedLines();
+
+        point.on("dragend", () => {
+        this.buildLine();
+        this.drawIndexes();
         this.updateSegmentedLines();
         });
     }
@@ -74,7 +75,11 @@ class xReference {
                 
                 xList.push(this.points[i].getAttr("x"));
             }      
-            this.konvaLine.setAttr("points",[Math.min(...xList),heightStage-5*blockSnapSize,Math.max(...xList),heightStage-5*blockSnapSize]);
+
+            const xRoundedMin = Math.round(Math.min(...xList)/blockSnapSize)*blockSnapSize;
+            const xRoundedMax = Math.round(Math.max(...xList)/blockSnapSize)*blockSnapSize;
+
+            this.konvaLine.setAttr("points",[xRoundedMin,heightStage-5*blockSnapSize,xRoundedMax,heightStage-5*blockSnapSize]);
             const xSorted = xList.sort(function(a, b){return a-b});
             this.drawMeters(xSorted);
             
@@ -83,8 +88,8 @@ class xReference {
 
 
       drawMeters(sortedList){
-        maxValue = Math.max(...sortedList);
-        offSet = 8;
+        const maxValue = Math.max(...sortedList);
+        const offSet = 8;
 
         for (let i=0;i<this.meters.length;i++){
             this.meters[i].destroy();
@@ -95,8 +100,8 @@ class xReference {
 
             if(sortedList[i] != maxValue){
                 
-                segmentsAverage = (sortedList[i]+ sortedList[i+1])/2
-                meters = (sortedList[i+1]-sortedList[i])/40  
+                const segmentsAverage = (sortedList[i]+ sortedList[i+1])/2
+                const meters = (sortedList[i+1]-sortedList[i])/40  
     
                 if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
                 
@@ -123,12 +128,13 @@ class xReference {
         }
 
         for (let i=0;i<this.points.length;i++){
-            lineLenght = 10;
+            const lineLenght = 10;
+            const xRounded = Math.round(this.points[i].getAttr("x")/blockSnapSize)*blockSnapSize;
             const line = new Konva.Line({
                 id: this.points[i].getAttr("id"),
-                x: 0,
-                y: 0,
-                points:[this.points[i].getAttr("x"),heightStage-5*blockSnapSize+lineLenght,this.points[i].getAttr("x"),heightStage-5*blockSnapSize-lineLenght],
+                x: xRounded,
+                y: heightStage-5*blockSnapSize-lineLenght,
+                points:[0,0,0,2*lineLenght],
                 stroke: 'black',
                 strokeWidth: 6,
                 tension: 0
@@ -141,35 +147,9 @@ class xReference {
       }
 
 
-      drawSegmentedLines(){
-
-        for (let i=0;i<this.segmentedLines.length;i++){
-            this.segmentedLines[i].destroy();
-        }
-
-        for (let i=0;i<this.points.length;i++){
-         
-            
-            const line = new Konva.Line({
-                id: this.points[i].getAttr("id"),
-                x: 0,
-                y: 0,
-                points: [this.points[i].getAttr("x"),this.points[i].getAttr("y"),this.points[i].getAttr("x"),heightStage-5*blockSnapSize],
-                stroke: 'black',
-                strokeWidth: 3,
-                dash: [10,4]
-              });
-              this.segmentedLines.push(line);
-              layer.add(line);
-
-        }//sec for
-      }
-
-    //   setAttr("points",[0,0,0,distanceToX]);
-
+    
 
       createSegmentedLine(point){
-        console.log("id: "+point.getAttr("id"));
         const line = new Konva.Line({
             id: point.getAttr("id"),
             x: point.getAttr("x"),
@@ -189,9 +169,19 @@ class xReference {
         for (let i=0;i<this.points.length;i++){
             for (let j=0;j<this.segmented.length;j++){
                 if (this.points[i].getAttr("id") == this.segmented[j].getAttr("id")){
-                    this.segmented[j].setAttr("x",this.points[i].getAttr("x"));
-                    this.segmented[j].setAttr("y",this.points[i].getAttr("y"));
-                    this.segmented[j].setAttr("points",[0,0,0,heightStage-5*blockSnapSize-this.points[i].getAttr("y")]);
+
+                    let beforeY = this.points[i].getAttr("y");
+
+
+                    this.segmented[j].setAttr("x",Math.round(this.points[i].getAttr("x")/blockSnapSize)*blockSnapSize);
+                    this.segmented[j].setAttr("y",Math.round( this.points[i].getAttr("y")/blockSnapSize)*blockSnapSize);
+
+
+                    this.segmented[j].setAttr("points",[0,0,0,heightStage-5*blockSnapSize-Math.round( this.points[i].getAttr("y")/blockSnapSize)*blockSnapSize]);
+
+
+
+
                     this.segmented[j].setAttr("visible",true);
                 }
             }
@@ -199,9 +189,7 @@ class xReference {
         //ver cual lineas mostrar
         for (let i=0;i<this.segmented.length;i++){
             for (let j=0;j<this.segmented.length;j++){
-                console.log("segmented uno: ",this.segmented[i].getAttr("x"));
-                console.log("segmented dos: ",this.segmented[j].getAttr("y"));
-                console.log("\n");
+            
                 if (this.segmented[i].getAttr("x") == this.segmented[j].getAttr("x") && this.segmented[j].getAttr("y") > this.segmented[i].getAttr("y")){
                     this.segmented[i].setAttr("visible",false);
                 }
@@ -212,10 +200,60 @@ class xReference {
 
       }
 
+      deletePoint(point){
+        for (let i=0;i<this.segmented.length;i++){
+            if (this.segmented[i].getAttr("id") == point.getAttr("id")){
+                this.points[i].destroy();
+            }
+        }
+        for (let i=0;i<this.indexes.length;i++){
+            if (this.indexes[i].getAttr("id") == point.getAttr("id")){
+                this.indexes[i].destroy();
+            }
+        }
+        for (let i=0;i<this.points.length;i++){
+            if (this.points[i].getAttr("id") == point.getAttr("id")){
+                this.points[i].destroy();
+            }
+        }
+        
+        
+      }
 
 
-
+      hideAll(){
+        for (let i=0;i<this.segmented.length;i++){
+            this.segmented[i].setAttr("visible",false);
+        }
+        for (let i=0;i<this.indexes.length;i++){
+            this.indexes[i].setAttr("visible",false);
+        }
+        for (let i=0;i<this.points.length;i++){
+            this.points[i].setAttr("visible",false);
+        }
+        for (let i=0;i<this.meters.length;i++){
+            this.meters[i].setAttr("visible",false);
+        }
+        this.konvaLine.setAttr("visible",false);
+      }
     
+        showAll(){
+            for (let i=0;i<this.segmented.length;i++){
+                this.segmented[i].setAttr("visible",true);
+            }
+            for (let i=0;i<this.indexes.length;i++){
+                this.indexes[i].setAttr("visible",true);
+            }
+            for (let i=0;i<this.points.length;i++){
+                this.points[i].setAttr("visible",true);
+            }
+            for (let i=0;i<this.meters.length;i++){
+                this.meters[i].setAttr("visible",true);
+            }
+            this.konvaLine.setAttr("visible",true);
+          }
+
+
 }
 
 

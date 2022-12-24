@@ -41,8 +41,10 @@ class yReference {
         this.points.push(point);
         this.createSegmentedLine(point);
         this.updateSegmentedLines();
-
-        point.on("dragmove", () => {
+        this.buildLine();
+        this.drawIndexes();
+        
+        point.on("dragend", () => {
         this.buildLine();
         this.drawIndexes();
         this.updateSegmentedLines();
@@ -82,8 +84,8 @@ class yReference {
 
 
       drawMeters(sortedList){
-        maxValue = Math.max(...sortedList);
-        offSet = 8;
+        const maxValue = Math.max(...sortedList);
+        const offSet = 8;
 
         for (let i=0;i<this.meters.length;i++){
             this.meters[i].destroy();
@@ -93,8 +95,8 @@ class yReference {
         for (var i=0;i<sortedList.length;i++){
 
             if(sortedList[i] != maxValue){
-                segmentsAverage = (sortedList[i]+ sortedList[i+1])/2
-                meters = (sortedList[i+1]-sortedList[i])/40  
+                const segmentsAverage = (sortedList[i]+ sortedList[i+1])/2
+                const meters = (sortedList[i+1]-sortedList[i])/40  
     
                 if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
                 const metersText = new Konva.Text({
@@ -118,7 +120,7 @@ class yReference {
         }
 
         for (let i=0;i<this.points.length;i++){
-            lineLenght = 10;
+            const lineLenght = 10;
             const line = new Konva.Line({
                 x: 0,
                 y: 0,
@@ -185,7 +187,6 @@ class yReference {
 
 
       createSegmentedLine(point){
-        console.log("id: "+point.getAttr("id"));
         const line = new Konva.Line({
             id: point.getAttr("id"),
             x: point.getAttr("x"),
