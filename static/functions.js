@@ -221,7 +221,7 @@ function createBeam2(_node=null, _parent=null) {
 
     x_reference.addPoint(circle);
     y_reference.addPoint(circle);
-    
+
     hideAllPanels();
 
     listenNodeMovement(group, shadowLine, "beam2");
@@ -1266,8 +1266,11 @@ function deleteElement(element) {
         const idx = parentNode.childNodes.findIndex(child => {
             child.id === node.id
         })
-        parentNode.childNodes.splice(idx, 1)
+        parentNode.childNodes.splice(idx, 1);
 
+        x_reference.deletePoint(node.konvaObjects.circle)
+        y_reference.deletePoint(node.konvaObjects.circle)
+       
         node.getAllDecendents().forEach(decendent => {
             destroyAttachedKonvaElements(decendent);
             delete decendent;
@@ -1828,13 +1831,7 @@ function drawDCL() {
         drawForces(node);
         drawMoments(node);
 
-        drawVerticalLinesIndexes(node.coordinate[0]); // linea de abajo
-        drawHorizontalLinesIndexes(node.coordinate[1]); //lineas de al lado
-        node.addKonvaSegmentedLineY(drawSegmentedLinesHorizontal(node));
-        node.addKonvaSegmentedLineX(drawSegmentedLinesVertical(node));
-
-        xCoord.push(node.coordinate[0])
-        yCoord.push(node.coordinate[1])
+        
     })
 
     
@@ -1844,12 +1841,6 @@ function drawDCL() {
         drawForces(node);
         drawMoments(node);
         console.log(node);
-        node.addKonvaSegmentedLineY(drawSegmentedLinesHorizontal(node));
-        node.addKonvaSegmentedLineX(drawSegmentedLinesVertical(node));
-        drawVerticalLinesIndexes(node.coordinate[0]); //linea de abajo
-        drawHorizontalLinesIndexes(node.coordinate[1]); //linea de al lado
-        xCoord.push(node.coordinate[0]);
-        yCoord.push(node.coordinate[1]);
         console.log(node)
     })
 

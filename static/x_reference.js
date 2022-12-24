@@ -9,7 +9,8 @@ class xReference {
         this.meters = [],
         this.indexes = [],
         this.segmentedLines = [],
-        this.segmented = []
+        this.segmented = [],
+        this.xPosition = heightStage-2*blockSnapSize
     }
 
     myCoord(){
@@ -79,7 +80,7 @@ class xReference {
             const xRoundedMin = Math.round(Math.min(...xList)/blockSnapSize)*blockSnapSize;
             const xRoundedMax = Math.round(Math.max(...xList)/blockSnapSize)*blockSnapSize;
 
-            this.konvaLine.setAttr("points",[xRoundedMin,heightStage-5*blockSnapSize,xRoundedMax,heightStage-5*blockSnapSize]);
+            this.konvaLine.setAttr("points",[xRoundedMin,this.xPosition,xRoundedMax,this.xPosition]);
             const xSorted = xList.sort(function(a, b){return a-b});
             this.drawMeters(xSorted);
             
@@ -89,7 +90,7 @@ class xReference {
 
       drawMeters(sortedList){
         const maxValue = Math.max(...sortedList);
-        const offSet = 8;
+        const offSet = 7;
 
         for (let i=0;i<this.meters.length;i++){
             this.meters[i].destroy();
@@ -100,14 +101,14 @@ class xReference {
 
             if(sortedList[i] != maxValue){
                 
-                const segmentsAverage = (sortedList[i]+ sortedList[i+1])/2
-                const meters = (sortedList[i+1]-sortedList[i])/40  
+                const segmentsAverage = (sortedList[i]+ sortedList[i+1])/2;
+                const meters = Math.round((sortedList[i+1]-sortedList[i])/40);  
     
                 if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
                 
                 const metersText = new Konva.Text({
                     x: segmentsAverage-offSet,
-                    y: heightStage-4*blockSnapSize+10,
+                    y: this.xPosition+10,
                     text: meters+"m",
                     fontSize: 15,
                     fontFamily: "Impact",
@@ -133,7 +134,7 @@ class xReference {
             const line = new Konva.Line({
                 id: this.points[i].getAttr("id"),
                 x: xRounded,
-                y: heightStage-5*blockSnapSize-lineLenght,
+                y: this.xPosition-lineLenght,
                 points:[0,0,0,2*lineLenght],
                 stroke: 'black',
                 strokeWidth: 6,
@@ -150,11 +151,12 @@ class xReference {
     
 
       createSegmentedLine(point){
+
         const line = new Konva.Line({
             id: point.getAttr("id"),
             x: point.getAttr("x"),
-            y: point.getAttr("y"),
-            points: [0,0,0,heightStage-5*blockSnapSize-point.getAttr("y")],
+            y: point.getAttr("y")+nodeRadius,
+            points: [0,0,0,this.xPosition-point.getAttr("y")],
             stroke: 'black',
             strokeWidth: 3,
             dash: [10,4],
@@ -170,18 +172,12 @@ class xReference {
             for (let j=0;j<this.segmented.length;j++){
                 if (this.points[i].getAttr("id") == this.segmented[j].getAttr("id")){
 
-                    let beforeY = this.points[i].getAttr("y");
-
 
                     this.segmented[j].setAttr("x",Math.round(this.points[i].getAttr("x")/blockSnapSize)*blockSnapSize);
                     this.segmented[j].setAttr("y",Math.round( this.points[i].getAttr("y")/blockSnapSize)*blockSnapSize);
 
 
-                    this.segmented[j].setAttr("points",[0,0,0,heightStage-5*blockSnapSize-Math.round( this.points[i].getAttr("y")/blockSnapSize)*blockSnapSize]);
-
-
-
-
+                    this.segmented[j].setAttr("points",[0,nodeRadius,0,this.xPosition-Math.round( this.points[i].getAttr("y")/blockSnapSize)*blockSnapSize]);
                     this.segmented[j].setAttr("visible",true);
                 }
             }
@@ -203,7 +199,7 @@ class xReference {
       deletePoint(point){
         for (let i=0;i<this.segmented.length;i++){
             if (this.segmented[i].getAttr("id") == point.getAttr("id")){
-                this.points[i].destroy();
+                this.segmented[i].destroy();
             }
         }
         for (let i=0;i<this.indexes.length;i++){
@@ -217,7 +213,9 @@ class xReference {
             }
         }
         
-        
+        this.buildLine();
+        this.updateSegmentedLines();
+        this.drawIndexes();
       }
 
 
