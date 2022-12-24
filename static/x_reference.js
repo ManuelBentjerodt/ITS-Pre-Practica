@@ -10,7 +10,7 @@ class xReference {
         this.indexes = [],
         this.segmentedLines = [],
         this.segmented = [],
-        this.xPosition = heightStage-2*blockSnapSize
+        this.xPosition = heightStage-blockSnapSize
     }
 
     myCoord(){
@@ -200,16 +200,14 @@ class xReference {
         for (let i=0;i<this.segmented.length;i++){
             if (this.segmented[i].getAttr("id") == point.getAttr("id")){
                 this.segmented[i].destroy();
+                this.segmented.splice(i,1);
             }
         }
-        for (let i=0;i<this.indexes.length;i++){
-            if (this.indexes[i].getAttr("id") == point.getAttr("id")){
-                this.indexes[i].destroy();
-            }
-        }
+        
         for (let i=0;i<this.points.length;i++){
             if (this.points[i].getAttr("id") == point.getAttr("id")){
                 this.points[i].destroy();
+                this.points.splice(i,1);
             }
         }
         
@@ -219,15 +217,18 @@ class xReference {
       }
 
 
+
+
+
+
+
+
       hideAll(){
         for (let i=0;i<this.segmented.length;i++){
             this.segmented[i].setAttr("visible",false);
         }
         for (let i=0;i<this.indexes.length;i++){
             this.indexes[i].setAttr("visible",false);
-        }
-        for (let i=0;i<this.points.length;i++){
-            this.points[i].setAttr("visible",false);
         }
         for (let i=0;i<this.meters.length;i++){
             this.meters[i].setAttr("visible",false);
@@ -241,9 +242,6 @@ class xReference {
             }
             for (let i=0;i<this.indexes.length;i++){
                 this.indexes[i].setAttr("visible",true);
-            }
-            for (let i=0;i<this.points.length;i++){
-                this.points[i].setAttr("visible",true);
             }
             for (let i=0;i<this.meters.length;i++){
                 this.meters[i].setAttr("visible",true);

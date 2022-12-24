@@ -1273,8 +1273,13 @@ function deleteElement(element) {
        
         node.getAllDecendents().forEach(decendent => {
             destroyAttachedKonvaElements(decendent);
+            x_reference.deletePoint(decendent.konvaObjects.circle);
+            y_reference.deletePoint(decendent.konvaObjects.circle);
+       
             delete decendent;
         })
+
+      
 
         destroyAttachedKonvaElements(node);
         delete node;
