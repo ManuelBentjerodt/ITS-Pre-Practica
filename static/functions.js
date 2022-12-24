@@ -118,6 +118,13 @@ function createBeam(nameBeam = "beam", _id=null, coordinates=null, _node=null) {
     secondNode.setKonvaCircle(line.getChildren()[2]);
     secondNode.setKonvaBeam(line);
 
+    x_reference.addPoint(line.getChildren()[1]);
+    x_reference.addPoint(line.getChildren()[2]);
+
+    y_reference.addPoint(line.getChildren()[1]);
+    y_reference.addPoint(line.getChildren()[2]);
+
+
     hideAllPanels();
 
     return [originNode, line];
@@ -211,6 +218,10 @@ function createBeam2(_node=null, _parent=null) {
     node.setKonvaShadowBeam(shadowLine);
     node.setKonvaCircle(circle);
 
+
+    x_reference.addPoint(circle);
+    y_reference.addPoint(circle);
+
     hideAllPanels();
 
     listenNodeMovement(group, shadowLine, "beam2");
@@ -219,7 +230,8 @@ function createBeam2(_node=null, _parent=null) {
     return group;
 }
 
-function moveElementsAttached(element, newPosition) {
+
+function moveElementsAttached(element, newPosition,distanceToY,distanceToX) {
     if (element.konvaObjects.link) {
         element.konvaObjects.link.position(newPosition);
     }
@@ -232,6 +244,16 @@ function moveElementsAttached(element, newPosition) {
         element.konvaObjects.moments.forEach(moment => {
             moment.position(newPosition);
         })
+    }
+
+    if (element.konvaObjects.segmentedLineX) {
+        element.konvaObjects.segmentedLineX.position(newPosition);
+        element.konvaObjects.segmentedLineX.setAttr("points",[0,0,distanceToY,0]);
+    }
+
+    if (element.konvaObjects.segmentedLineY) {
+        element.konvaObjects.segmentedLineY.position(newPosition);
+        element.konvaObjects.segmentedLineY.setAttr("points",[0,0,0,distanceToX]);
     }
 }
 
@@ -282,8 +304,10 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
         shadowList[0].position(circle2Pos);
         shadowList[0].points([0, 0, newX, newY]);
+        const distanceToX = widthStage-blockSnapSize-circle1Pos.x;
+        const distanceToY = heightStage-blockSnapSize-circle1Pos.y;
 
-        moveElementsAttached(nodeOtherCircle, otherCircle.position());
+        moveElementsAttached(nodeOtherCircle, otherCircle.position(),distanceToX,distanceToY);
     })
 
     otherCircle.on("dragend", () => {
@@ -306,8 +330,10 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         shadowList[0].position(beamLine.position());
         shadow.hide();
 
-        moveElementsAttached(nodeOtherCircle, otherCircle.position());
-        updateEquations();
+        const distanceToX = widthStage-blockSnapSize-otherCircle.getAttr("x");
+        const distanceToY = heightStage-blockSnapSize-otherCircle.getAttr("y");
+
+        moveElementsAttached(nodeOtherCircle, otherCircle.position(),distanceToX,distanceToY);
 
     });
 
@@ -334,7 +360,10 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
             y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
         });
 
-        moveElementsAttached(nodeBeamCircle, beamCircle.position());
+        const distanceToX = widthStage-blockSnapSize-circle2Pos.x;
+        const distanceToY = heightStage-blockSnapSize-circle2Pos.y;
+
+        moveElementsAttached(nodeBeamCircle, beamCircle.position(),distanceToX,distanceToY);
     });
 
     beamCircle.on("dragend", () => {
@@ -356,8 +385,11 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
         dcl.findNodeById(beamCircle.getAttr("id")).setCoordinate(newNodePos);
         shadow.hide();
 
-        moveElementsAttached(nodeBeamCircle, beamCircle.position());
-        updateEquations();
+        const distanceToX = widthStage-blockSnapSize-circle2Pos.x;
+        const distanceToY = heightStage-blockSnapSize-circle2Pos.y;
+
+        moveElementsAttached(nodeBeamCircle, beamCircle.position(),distanceToX,distanceToY);
+
     });
 }
 
@@ -721,13 +753,13 @@ function createConnectingRod(_node=null) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux") {
+function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux",typeForce = "N") {
     let x0lastPos = lastBeamNodeClick.x
     let y0lasPos = lastBeamNodeClick.y
 
     let magnitud = valMagnitud;
     let angle = valAngle;
-    let txt = magnitud + " N" + ", " + angle + " °";
+    let txt = magnitud + " "+ typeForce + ", " + angle + " °";
 
     const large = blockSnapSize * 2;
     const strokeVal = 4;
@@ -772,9 +804,6 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        console.log("El dcl es FORCE: \n"+dcl.id);
-        console.log("El konva es: \n"+konvaElement.getAttr("id"));
-        console.log("NODE PARENT: "+ nodeParent.id);
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
         nodeParent.addKonvaForce(group)
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -923,11 +952,10 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal,nameForce) {
     const btn = document.createElement("button");
     btn.type = "button";
-    // btn.style.backgroundColor = "yellow";
-    // btn.style.background =  "url(prueba.png)";
+
     if (image){
         btn.style.backgroundImage = image;
     }
@@ -946,7 +974,8 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
         if (idNameText == "beamBtn") {
             efunction();
         } else if (idNameText == "forceBtn") {
-            efunction(inputMagnitud.value, inputAngle.value);
+            efunction(inputMagnitud.value, inputAngle.value,typeForce = nameForce );
+            console.log("El name force es: ",nameForce);
         } else if (idNameText == "momentBtn") {
             efunction(inputMagnitud.value)
         } else if (idNameText == "deleteElementBtn") {
@@ -1195,10 +1224,9 @@ function listenCreateElement() {
             lastBeamNodeClick.y = mouseXY.y;
             lastNodeClick = e.target;
             const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            // console.log(nodeParent)
+            // console.log(e.target.getParent())
 
-            console.log(nodeParent)
-            console.log(e.target.getParent())
-            
             if (e.target.name() == "subElementBeamCircle1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
@@ -1238,8 +1266,11 @@ function deleteElement(element) {
         const idx = parentNode.childNodes.findIndex(child => {
             child.id === node.id
         })
-        parentNode.childNodes.splice(idx, 1)
+        parentNode.childNodes.splice(idx, 1);
 
+        x_reference.deletePoint(node.konvaObjects.circle)
+        y_reference.deletePoint(node.konvaObjects.circle)
+       
         node.getAllDecendents().forEach(decendent => {
             destroyAttachedKonvaElements(decendent);
             delete decendent;
@@ -1579,26 +1610,53 @@ function createModalForce(x0, y0) {
     modal.style.border = "40px";
     modal.style.visibility = "hidden";
     modal.style.zIndex = "1000";
-
+    
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
-
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle);
-
+    
+    
+    ////////////////////////
+    
+    
+    const select = document.createElement("select");
+    select.style.width = widthModal/2 + "px";
+    select.style.height = heightModal/3 + "px";
+    
+    const optionNewtons = document.createElement("option");
+    const optionKips = document.createElement("option");
+    const optionKiloNewtons = document.createElement("option");
+    
+    optionNewtons.value = "N";
+    optionKips.value = "kip";
+    optionKiloNewtons.value = "kN";
+    
+    optionNewtons.innerText = "KIPS (kip)";
+    optionKips.innerText = "Newtons (N)";
+    optionKiloNewtons.innerText = "Kilo Newtons (kN)";
+    
+    select.appendChild(optionKips);
+    select.appendChild(optionKiloNewtons);
+    select.appendChild(optionNewtons);
+    ////////////////////////
+    console.log("valor selected:", select.value)
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle, nameForce = select.value);
+    
+    
+    
     const newtons = document.createElement("b");
     newtons.innerText = "N";
     newtons.type = "number";
     newtons.style.width = widthModal / 4 + "px";
     newtons.style.height = heightModal - 6 + "px";
-
+    
     const grados = document.createElement("b");
     grados.innerText = "º";
     grados.type = "number";
     grados.style.width = widthModal / 4 + "px";
     grados.style.height = heightModal - 6 + "px";
-
+    
     const containerForce = createContainer([inputCreateForceMagnitud, newtons, inputCreateForceAngle, grados]);
-
+    
     const topOfModal = document.createElement("div");
     topOfModal.style.width = widthModal;
     topOfModal.style.height = heightModalElement;
@@ -1611,6 +1669,7 @@ function createModalForce(x0, y0) {
     btnForce.innerText = "Crear";
     modal.appendChild(topOfModal);
     modal.appendChild(containerForce);
+    modal.appendChild(select);
     modal.appendChild(btnForce);
 
     return modal;
@@ -1718,6 +1777,7 @@ function drawLink(node){
 }
 
 function drawForces(node){
+    console.log(node);
     node.forces.forEach(force=>{
         if (force !=null){
         createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node);
@@ -1771,14 +1831,7 @@ function drawDCL() {
         drawForces(node);
         drawMoments(node);
 
-        drawVerticalLinesIndexes(node.coordinate[0]); // linea de abajo
-        drawHorizontalLinesIndexes(node.coordinate[1]); //lineas de al lado
-        drawSegmentedLinesHorizontal(node.coordinate[0],node.coordinate[1]);
-        drawSegmentedLinesVertical(node.coordinate[0],node.coordinate[1]);
-
-
-        xCoord.push(node.coordinate[0])
-        yCoord.push(node.coordinate[1])
+        
     })
 
     
@@ -1787,16 +1840,11 @@ function drawDCL() {
         drawLink(node);
         drawForces(node);
         drawMoments(node);
-
-        drawSegmentedLinesHorizontal(node.coordinate[0],node.coordinate[1]);
-        drawSegmentedLinesVertical(node.coordinate[0],node.coordinate[1]);
-        drawVerticalLinesIndexes(node.coordinate[0]); //linea de abajo
-        drawHorizontalLinesIndexes(node.coordinate[1]); //linea de al lado
-        xCoord.push(node.coordinate[0]);
-        yCoord.push(node.coordinate[1]);
+        console.log(node);
+        console.log(node)
     })
 
-    console.log(dcl.findOriginNode())
+    //console.log(dcl.findOriginNode())
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
    //creacion de linea grande horizontal de metros//
@@ -1804,7 +1852,7 @@ function drawDCL() {
     const horizontalLine = new Konva.Line({
         x: 0,
         y: 0,
-        points: [Math.min(...xCoord), 520, Math.max(...xCoord), 520],
+        points: [Math.min(...xCoord), heightStage-blockSnapSize, Math.max(...xCoord), heightStage-blockSnapSize],
         stroke: 'red',
         strokeWidth: 6,
         tension: 0
@@ -1820,7 +1868,7 @@ function drawDCL() {
    const verticalLine = new Konva.Line({
     x: 0,
     y: 0,
-    points: [1100, Math.min(...yCoord), 1100, Math.max(...yCoord)],
+    points: [widthStage-blockSnapSize, Math.min(...yCoord), widthStage-blockSnapSize, Math.max(...yCoord)],
     stroke: 'red',
     strokeWidth: 6,
     tension: 0
@@ -1839,11 +1887,11 @@ function drawDCL() {
 }
 
 function drawVerticalLinesIndexes(xCoordinate){
- 
+    lineLenght = 10;
     const line = new Konva.Line({
         x: 0,
         y: 0,
-        points: [xCoordinate, 520+10,xCoordinate,520-10],
+        points: [xCoordinate, heightStage-blockSnapSize+lineLenght,xCoordinate,heightStage-blockSnapSize-lineLenght],
         stroke: 'red',
         strokeWidth: 6,
         tension: 0
@@ -1861,7 +1909,7 @@ function drawHorizontalLinesIndexes(yCoordinate){
     const line = new Konva.Line({
         x: 0,
         y: 0,
-        points:[1100+lineLenght, yCoordinate,1100-lineLenght,yCoordinate],
+        points:[widthStage-blockSnapSize+lineLenght, yCoordinate,widthStage-blockSnapSize-lineLenght,yCoordinate],
         stroke: 'red',
         strokeWidth: 6,
         tension: 0
@@ -1874,79 +1922,53 @@ function drawHorizontalLinesIndexes(yCoordinate){
 
 }
 
-function drawSegmentedLinesHorizontal(xCoordinate,yCoordinate){
+function drawSegmentedLinesHorizontal(node){
+    const line = new Konva.Line({
+        id:node.id,
+        x: node.coordinate[0],
+        y: node.coordinate[1],
+        points: [0, 0, widthStage-blockSnapSize-node.coordinate[0],0],
+        stroke: 'red',
+        strokeWidth: 2,
+        dash: [10,4]
+      });
 
-    //la linea esta ubicada actualmente en y: 520
-    // el largo de las lineas sera 10px. vemos cuantas caben desde el nodo a los 520
-    bigLineLenght = 520
-    lineLenght = 10;
-    distanceToLine = bigLineLenght-yCoordinate;
-    distanceBetweenSegments = 10;
-    numberOfSegments = Math.round(distanceToLine/(lineLenght+distanceBetweenSegments));
-
-    console.log("segmentos: " +numberOfSegments);
-    for (var i =0;i<numberOfSegments;i++){
-        const line = new Konva.Line({
-            x: 0,
-            y: 0,
-            points: [xCoordinate, yCoordinate+i*(lineLenght+distanceBetweenSegments),xCoordinate,yCoordinate+(lineLenght+distanceBetweenSegments)*i+10],
-            stroke: 'red',
-            strokeWidth: 2,
-            tension: 0
-          });
-          
-
-        layer.add(line);
-    }
-    
-
+    layer.add(line);
+    return line;
 
 }
 
-function drawSegmentedLinesVertical(xCoordinate,yCoordinate){
+function drawSegmentedLinesVertical(node){
 
-    //la linea esta ubicada actualmente en y: 520
-    // el largo de las lineas sera 10px. vemos cuantas caben desde el nodo a los 520
-    bigLineLenght = 1100
-    lineLenght = 10;
-    distanceToLine = bigLineLenght-xCoordinate;
-    distanceBetweenSegments = 10;
-    numberOfSegments = Math.round(distanceToLine/(lineLenght+distanceBetweenSegments));
+    const line = new Konva.Line({
+        id:node.id,
+        x: node.coordinate[0],
+        y: node.coordinate[1],
+        points: [0, 0, 0,heightStage-blockSnapSize-node.coordinate[1]],
+        stroke: 'red',
+        strokeWidth: 2,
+        dash: [10,4]
+      });
 
-    console.log("segmentos: " +numberOfSegments);
-    for (var i =0;i<numberOfSegments;i++){
-        const line = new Konva.Line({
-            x: 0,
-            y: 0,
-            points: [xCoordinate, yCoordinate+i*(lineLenght+distanceBetweenSegments),xCoordinate,yCoordinate+(lineLenght+distanceBetweenSegments)*i+10],
-            points: [xCoordinate+i*(lineLenght+distanceBetweenSegments),yCoordinate ,xCoordinate+(lineLenght+distanceBetweenSegments)*i+10,yCoordinate],
-
-            stroke: 'red',
-            strokeWidth: 2,
-            tension: 0
-          });
-          
-
-        layer.add(line);
-    }
-    
+    layer.add(line);
+    return line;
 
 
 }
 
 function drawHorizontalMeters(xCoordSorted){
-    maxValue = Math.max(...xCoordSorted);
-    offSet = 8;
+    const maxValue = Math.max(...xCoordSorted);
+    const offSet = 8;
     for (var i=0;i<xCoordSorted.length;i++){
 
 
         if(xCoordSorted[i] != maxValue){
-            segmentsAverage = (xCoordSorted[i]+ xCoordSorted[i+1])/2
-            meters = (xCoordSorted[i+1]-xCoordSorted[i])/40  
+            const segmentsAverage = (xCoordSorted[i]+ xCoordSorted[i+1])/2
+            const meters = (xCoordSorted[i+1]-xCoordSorted[i])/40  
             if (meters != 0){
             const metersText = new Konva.Text({
                 x: segmentsAverage-offSet,
-                y: 550,
+                y: heightStage-blockSnapSize+10,
                 text: meters+"m",
                 fontSize: 15,
                 fontFamily: "Impact",
@@ -1959,18 +1981,18 @@ function drawHorizontalMeters(xCoordSorted){
 }
 
 function drawVerticalMeters(yCoordSorted){
-    maxValue = Math.max(...yCoordSorted);
-    offSet = 8;
+    const maxValue = Math.max(...yCoordSorted);
+    const offSet = 8;
     for (var i=0;i<yCoordSorted.length;i++){
 
 
         if(yCoordSorted[i] != maxValue){
-            segmentsAverage = (yCoordSorted[i]+ yCoordSorted[i+1])/2
-            meters = (yCoordSorted[i+1]-yCoordSorted[i])/40  
+            const segmentsAverage = (yCoordSorted[i]+ yCoordSorted[i+1])/2
+            const meters = (yCoordSorted[i+1]-yCoordSorted[i])/40  
 
             if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
             const metersText = new Konva.Text({
-                x: 1120,
+                x: widthStage-blockSnapSize+10,
                 y: segmentsAverage-offSet,
                 text: meters+"m",
                 fontSize: 15,
@@ -1983,7 +2005,7 @@ function drawVerticalMeters(yCoordSorted){
     }
 }
 
-function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux") {
+function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux",typeForce = "N") {
     let x0lastPos = nodeId.coordinate[0];
     let y0lasPos = nodeId.coordinate[1];
 
@@ -1991,7 +2013,7 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
 
     let magnitud = valMagnitud;
     let angle = valAngle;
-    let txt = magnitud + " N" + ", " + angle + " °";
+    let txt = magnitud + " "+typeForce + ", " + angle + " °";
 
     const large = blockSnapSize * 2;
     const strokeVal = 4;
@@ -2626,4 +2648,12 @@ function createModalPinnedSupport(){
     modal.appendChild(button);
     return modal;
 }
+
+
+
+
+
+
+
+
 
