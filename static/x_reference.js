@@ -158,7 +158,7 @@ class xReference {
             y: point.getAttr("y")+nodeRadius,
             points: [0,0,0,this.xPosition-point.getAttr("y")],
             stroke: 'black',
-            strokeWidth: 3,
+            strokeWidth: 2,
             dash: [10,4],
             visible: true
           });

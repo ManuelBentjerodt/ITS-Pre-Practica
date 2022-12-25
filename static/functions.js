@@ -753,13 +753,15 @@ function createConnectingRod(_node=null) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux",typeForce = "N") {
+function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux",typeForce) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lasPos = lastBeamNodeClick.y
 
     let magnitud = valMagnitud;
     let angle = valAngle;
-    let txt = magnitud + " "+ typeForce + ", " + angle + " °";
+    console.log("typeForce: "+typeof(typeForce));
+    let txt = magnitud + " " +typeForce+ ", " + angle + " °";
+    console.log("txt: "+txt);
 
     const large = blockSnapSize * 2;
     const strokeVal = 4;
@@ -952,7 +954,7 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal,nameForce) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal,selectType) {
     const btn = document.createElement("button");
     btn.type = "button";
 
@@ -974,8 +976,9 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
         if (idNameText == "beamBtn") {
             efunction();
         } else if (idNameText == "forceBtn") {
-            efunction(inputMagnitud.value, inputAngle.value,typeForce = nameForce );
-            console.log("El name force es: ",nameForce);
+            const forceString = JSON.stringify(selectType.value);
+            console.log("El name force en CREATE BUTTON ES: ",forceString);
+            efunction(inputMagnitud.value, inputAngle.value,typeForce = forceString);
         } else if (idNameText == "momentBtn") {
             efunction(inputMagnitud.value)
         } else if (idNameText == "deleteElementBtn") {
@@ -991,6 +994,34 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
     });
     return btn;
 }
+
+function createSelectTypeForce(idParam, widthPanel, heightPanel) {
+    const select = document.createElement("select");
+    select.style.width = widthPanel/2 + "px";
+    select.style.height = heightPanel/3 + "px";
+    select.setAttribute("id", idParam);
+
+    const optionNewtons = document.createElement("option");
+    const optionKips = document.createElement("option");
+    const optionKiloNewtons = document.createElement("option");
+    
+    optionNewtons.value = "N";
+    optionKips.value = "kip";
+    optionKiloNewtons.value = "kN";
+    
+    optionNewtons.innerText = "KIPS (kip)";
+    optionKips.innerText = "Newtons (N)";
+    optionKiloNewtons.innerText = "Kilo Newtons (kN)";
+    
+    select.appendChild(optionKips);
+    select.appendChild(optionKiloNewtons);
+    select.appendChild(optionNewtons);
+    return select;
+}
+
+
+
+
 
 function createInputMagnitud(idParam, widthPanel, heightPanel) {
     const input = document.createElement("input");
@@ -1618,38 +1649,14 @@ function createModalForce(x0, y0) {
     
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
-    
-    
-    ////////////////////////
-    
-    
-    const select = document.createElement("select");
-    select.style.width = widthModal/2 + "px";
-    select.style.height = heightModal/3 + "px";
-    
-    const optionNewtons = document.createElement("option");
-    const optionKips = document.createElement("option");
-    const optionKiloNewtons = document.createElement("option");
-    
-    optionNewtons.value = "N";
-    optionKips.value = "kip";
-    optionKiloNewtons.value = "kN";
-    
-    optionNewtons.innerText = "KIPS (kip)";
-    optionKips.innerText = "Newtons (N)";
-    optionKiloNewtons.innerText = "Kilo Newtons (kN)";
-    
-    select.appendChild(optionKips);
-    select.appendChild(optionKiloNewtons);
-    select.appendChild(optionNewtons);
-    ////////////////////////
-    console.log("valor selected:", select.value)
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle, nameForce = select.value);
-    
+    const selectTypeForce = createSelectTypeForce("select-type-force",widthModal, heightModalElement);
+   
+
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle,null,null,null,selectTypeForce);
     
     
     const newtons = document.createElement("b");
-    newtons.innerText = "N";
+    newtons.innerText = selectTypeForce.value;
     newtons.type = "number";
     newtons.style.width = widthModal / 4 + "px";
     newtons.style.height = heightModal - 6 + "px";
@@ -1660,7 +1667,7 @@ function createModalForce(x0, y0) {
     grados.style.width = widthModal / 4 + "px";
     grados.style.height = heightModal - 6 + "px";
     
-    const containerForce = createContainer([inputCreateForceMagnitud, newtons, inputCreateForceAngle, grados]);
+    const containerForce = createContainer([inputCreateForceMagnitud, newtons, inputCreateForceAngle, grados,selectTypeForce]);
     
     const topOfModal = document.createElement("div");
     topOfModal.style.width = widthModal;
@@ -1674,7 +1681,7 @@ function createModalForce(x0, y0) {
     btnForce.innerText = "Crear";
     modal.appendChild(topOfModal);
     modal.appendChild(containerForce);
-    modal.appendChild(select);
+    //modal.appendChild(select);
     modal.appendChild(btnForce);
 
     return modal;

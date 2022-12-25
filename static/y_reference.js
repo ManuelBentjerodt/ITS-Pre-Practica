@@ -49,7 +49,6 @@ class yReference {
         this.buildLine();
         this.drawIndexes();
         this.updateSegmentedLines();
-        //this.drawSegmentedLines();
     });
     }
 
@@ -182,7 +181,7 @@ class yReference {
             y: point.getAttr("y"),
             points: [0,0,this.yPosition-point.getAttr("y"),0],
             stroke: 'black',
-            strokeWidth: 3,
+            strokeWidth: 2,
             dash: [10,4],
             visible: true
           });
