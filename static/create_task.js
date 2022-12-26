@@ -1,3 +1,5 @@
+let turnToRealDCLFlag = false;
+
 const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null;
 let lastElementClick = undefined;
@@ -82,6 +84,8 @@ listenNodeMovement(group, shadowLine, "initialBeam");
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
+
+turnToRealDCL();
 
 
 

@@ -230,6 +230,11 @@ function createBeam2(_node=null, _parent=null) {
     return group;
 }
 
+function changePosWithSetAttr(element, x, y) {
+    element.setAttr("x", x);
+    element.setAttr("y", y);
+}
+
 
 function moveElementsAttached(element, newPosition,distanceToY,distanceToX) {
     if (element.konvaObjects.link) {
@@ -245,6 +250,32 @@ function moveElementsAttached(element, newPosition,distanceToY,distanceToX) {
             moment.position(newPosition);
         })
     }
+    // if (element.konvaObjects.forceXsupport) {
+    //     if (element.linkRotation === "0") {
+    //         changePosWithSetAttr(element.konvaObjects.forceXsupport, newPosition.x + lasForce, newPosition.y)
+    //     } else if (element.linkRotation === "90") {
+    //         changePosWithSetAttr(element.konvaObjects.forceXsupport, newPosition.x + largeForce, newPosition.y)
+    //     } else if (element.linkRotation === "180") {
+    //         changePosWithSetAttr(element.konvaObjects.forceXsupport, newPosition.x - lasForce, newPosition.y)
+    //     } else if (element.linkRotation === "270") {
+    //         changePosWithSetAttr(element.konvaObjects.forceXupport, newPosition.x - largeForce, newPosition.y)
+    //     }
+        
+    // }
+    // if (element.konvaObjects.forceYsupport) {
+    //     if (element.linkRotation === "0") {
+    //         changePosWithSetAttr(element.konvaObjects.forceYsupport, newPosition.x, newPosition.y - lasForce)
+    //     } else if (element.linkRotation === "90") {
+    //         changePosWithSetAttr(element.konvaObjects.forceYsupport, newPosition.x, newPosition.y + largeForce)
+    //     } else if (element.linkRotation === "180") {
+    //         changePosWithSetAttr(element.konvaObjects.forceYsupport, newPosition.x, newPosition.y + lasForce)
+    //     } else if (element.linkRotation === "270") {
+    //         changePosWithSetAttr(element.konvaObjects.forceYsupport, newPosition.x, newPosition.y - largeForce)
+    //     }
+    // }
+    // if (element.konvaObjects.momentSupport) {
+    //     element.konvaObjects.momentSupport.position(newPosition);
+    // }
 
     if (element.konvaObjects.segmentedLineX) {
         element.konvaObjects.segmentedLineX.position(newPosition);
@@ -280,11 +311,36 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
     const nodeOtherCircle = dcl.findNodeById(otherCircle.getAttr("id"));
 
     otherCircle.on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
+        if (!turnToRealDCLFlag){
+            shadow.show();
+            shadow.moveToTop();
+        }
     });
 
     otherCircle.on("dragmove", () => {
+        if (!turnToRealDCLFlag){
+            const circle1Pos = otherCircle.getPosition();
+            const circle2Pos = beamCircle.getPosition();
+            const shadowCircle1Pos = shadowList[1].getPosition();
+    
+            const newX = shadowCircle1Pos.x - circle2Pos.x
+            const newY = shadowCircle1Pos.y - circle2Pos.y
+            const angle = Math.atan2(newY, newX);
+    
+            beamLine.position(circle1Pos);
+            beamLine.points([-nodeRadius * Math.cos(angle), -nodeRadius * Math.sin(angle), circle2Pos.x - circle1Pos.x, circle2Pos.y - circle1Pos.y]);
+    
+            otherCircle.position({ x: circle1Pos.x, y: circle1Pos.y });
+            shadowList[1].position({
+                x: Math.round(circle1Pos.x / blockSnapSize) * blockSnapSize,
+                y: Math.round(circle1Pos.y / blockSnapSize) * blockSnapSize
+            });
+    
+            shadowList[0].position(circle2Pos);
+            shadowList[0].points([0, 0, newX, newY]);
+    
+            moveElementsAttached(nodeOtherCircle, otherCircle.position());
+        }
         const circle1Pos = otherCircle.getPosition();
         const circle2Pos = beamCircle.getPosition();
         const shadowCircle1Pos = shadowList[1].getPosition();
@@ -311,8 +367,29 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
     })
 
     otherCircle.on("dragend", () => {
-        const circle2Pos = beamCircle.getPosition();
-        const shadowCircle1Pos = shadowList[1].getPosition();
+        if (!turnToRealDCLFlag){
+            const circle2Pos = beamCircle.getPosition();
+            const shadowCircle1Pos = shadowList[1].getPosition();
+    
+            const newX = circle2Pos.x - shadowCircle1Pos.x;
+            const newY = circle2Pos.y - shadowCircle1Pos.y;
+            const angle = Math.atan2(newY, newX);
+    
+            beamLine.position(shadowCircle1Pos);
+            beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), newX, newY]);
+            otherCircle.position({
+                x: shadowCircle1Pos.x,
+                y: shadowCircle1Pos.y
+            });
+    
+            const newNodePos = [shadowCircle1Pos.x, shadowCircle1Pos.y];
+            dcl.findNodeById(otherCircle.getAttr("id")).setCoordinate(newNodePos);
+            shadowList[0].position(beamLine.position());
+            shadow.hide();
+    
+            moveElementsAttached(nodeOtherCircle, otherCircle.position());
+            updateEquations();
+        }
 
         const newX = circle2Pos.x - shadowCircle1Pos.x;
         const newY = circle2Pos.y - shadowCircle1Pos.y;
@@ -338,12 +415,58 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
     });
 
     beamCircle.on("dragstart", () => {
-        shadow.show();
-        shadow.moveToTop();
+        if (!turnToRealDCLFlag){
+            shadow.show();
+            shadow.moveToTop();
+        }
 
     });
 
     beamCircle.on("dragmove", () => {
+        if (!turnToRealDCLFlag){
+            const linePos = beamLine.getPosition();
+            const circle2Pos = beamCircle.getPosition();
+    
+            const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
+            const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+            const angle = Math.atan2(newY, newX);
+    
+            beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), circle2Pos.x - linePos.x, circle2Pos.y - linePos.y])
+            shadowList[0].points([0, 0, newX, newY])
+    
+            beamCircle.position({ x: circle2Pos.x, y: circle2Pos.y })
+            shadowList[2].position({
+                x: Math.round(circle2Pos.x / blockSnapSize) * blockSnapSize,
+                y: Math.round(circle2Pos.y / blockSnapSize) * blockSnapSize
+            });
+    
+            moveElementsAttached(nodeBeamCircle, beamCircle.position());
+        }
+    });
+
+    beamCircle.on("dragend", () => {
+        if (!turnToRealDCLFlag){
+            const linePos = beamLine.getPosition();
+            const circle2Pos = beamCircle.getPosition();
+            const shadowCircle2Pos = shadowList[2].getPosition();
+    
+            const newX = Math.round((circle2Pos.x - linePos.x) / blockSnapSize) * blockSnapSize
+            const newY = Math.round((circle2Pos.y - linePos.y) / blockSnapSize) * blockSnapSize
+            const angle = Math.atan2(newY, newX);
+    
+            beamLine.points([nodeRadius * Math.cos(angle), nodeRadius * Math.sin(angle), newX, newY])
+            beamCircle.position({
+                x: shadowCircle2Pos.x,
+                y: shadowCircle2Pos.y
+            });
+    
+            const newNodePos = [shadowCircle2Pos.x, shadowCircle2Pos.y];
+            dcl.findNodeById(beamCircle.getAttr("id")).setCoordinate(newNodePos);
+            shadow.hide();
+    
+            moveElementsAttached(nodeBeamCircle, beamCircle.position());
+            updateEquations();
+        }
         const linePos = beamLine.getPosition();
         const circle2Pos = beamCircle.getPosition();
 
@@ -761,8 +884,8 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     let angle = valAngle;
     let txt = magnitud + " "+ typeForce + ", " + angle + " °";
 
-    const large = blockSnapSize * 2;
-    const strokeVal = 4;
+    const large = largeForce;
+    const strokeVal = strokeForce
 
     const lx = large * Math.cos(angle * Math.PI / 180)
     const ly = large * Math.sin(degToRad(angle))
@@ -821,55 +944,57 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
 function forceMovement(group, large, strokeVal) {
     const arrow = group.getChildren()[0];
     const magnitud = group.getChildren()[1];
-    const magnitudVal = parseFloat(group.getAttr("tension")[0])
-    let angleVal = parseInt(group.getAttr("tension")[1])
+    const magnitudVal = parseFloat(group.getAttr("tension")[0]);
+    let angleVal = parseInt(group.getAttr("tension")[1]);
 
     let newAngle;
     arrow.on("dragmove", () => {
-
-        const mouseXY = getXY()
-
-        const x = mouseXY.x - group.getAttr("x")
-        const y = mouseXY.y - group.getAttr("y")
-
-        const a = Math.sqrt(large ** 2 / ((x) ** 2 + (y) ** 2))
-        arrow.points([a * x, a * y, 0, 0])
-
-        newAngle = Math.round(radToDeg(Math.atan2(-y, x)))
-
-        arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
-        arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
-
-        newAngle = prettyDeg(newAngle);
-
-        let txt = magnitudVal + " N" + ", " + newAngle  + " °";
-        magnitud.setAttr("text", txt)
-        magnitud.setAttr("x", a*x+10)
-        magnitud.setAttr("y", a*y+10)
-
+        if (!turnToRealDCLFlag){
+            const mouseXY = getXY();
+    
+            const x = mouseXY.x - group.getAttr("x");
+            const y = mouseXY.y - group.getAttr("y");
+    
+            const a = Math.sqrt(large ** 2 / ((x) ** 2 + (y) ** 2));
+            arrow.points([a * x, a * y, 0, 0]);
+    
+            newAngle = Math.round(radToDeg(Math.atan2(-y, x)));
+    
+            arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)));
+            arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)));
+    
+            newAngle = prettyDeg(newAngle);
+    
+            let txt = magnitudVal + " N" + ", " + newAngle  + " °";
+            magnitud.setAttr("text", txt);
+            magnitud.setAttr("x", a*x+10);
+            magnitud.setAttr("y", a*y+10);
+        }
     })
 
     arrow.on("dragend", () => {
-        group.setAttr("tension", [magnitudVal, newAngle])
-
-        const node = dcl.findNodeById(group.getAttr("id"))
-
-        const force = node.forces.find(force => {
-            return force[0] == prettyDeg(magnitudVal) && force[1] == angleVal
-        })
-
-        angleVal = newAngle;
-        force[1] = newAngle;
-        updateEquations();
+        if (!turnToRealDCLFlag){
+            group.setAttr("tension", [magnitudVal, newAngle]);
+    
+            const node = dcl.findNodeById(group.getAttr("id"));
+    
+            const force = node.forces.find(force => {
+                return force[0] == prettyDeg(magnitudVal) && force[1] == angleVal;
+            })
+    
+            angleVal = newAngle;
+            force[1] = newAngle;
+            updateEquations();
+        }
     })
 }
 
-function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, forFixedSupport = false) {
+function createMoment(val, color = "black", x0 = 0, y0 = 0) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lastPos = lastBeamNodeClick.y
 
     let magnitud = val;
-    let txt = magnitud + " Nm";
+    let txt = magnitud;
 
     if (color != "black") {
         x0lastPos = x0;
@@ -882,17 +1007,22 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
 
     if (magnitud < 0) {
         listOfPoints = negativeList;
+        txt += " Nm";
 
     } else if (magnitud > 0) {
         listOfPoints = positiveList;
+        txt += " Nm";
 
     } else {
+       
         if (color != "black") {
+            
             x0lastPos = x0;
             y0lastPos = y0;
             listOfPoints = positiveList;
+        } else {
+            return;
         }
-        return;
     }
 
 
@@ -931,7 +1061,7 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
         group.setAttr("id", konvaElement.getAttr("id"));
     }
 
-    layerForPaint.add(group);
+    layer.add(group);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -1218,7 +1348,7 @@ function prettyDeg(deg) {
 
 function listenCreateElement() {
     stage.on("dblclick", (e) => {
-        if (e.target != stage && e.target) {
+        if (e.target != stage && e.target && !turnToRealDCLFlag) {
             const mouseXY = roundXY(getXY());
             lastBeamNodeClick.x = mouseXY.x;
             lastBeamNodeClick.y = mouseXY.y;
@@ -1297,6 +1427,8 @@ function deleteElement(element) {
             const idx = node.moments.indexOf(val)
             node.moments.splice(idx, 1)
         }
+
+        
     }
 
     element.destroy();
@@ -1308,7 +1440,8 @@ function deleteElement(element) {
 
 function listenDeleteElement() {
     stage.on("dblclick", (e) => {
-        if (e.target && e.target.getParent()) {
+        console.log(turnToRealDCLFlag)
+        if (e.target && e.target.getParent() && !turnToRealDCLFlag) {
             const element = e.target.getParent();
             const name = element.name();
             if (name == "beam" ||
@@ -1320,10 +1453,12 @@ function listenDeleteElement() {
                 name == "force" ||
                 name == "moment" ||
                 name == "beam2") {
-                const mouseXY = roundXY(getXY());
-                lastElementClick = element;
-                delPanel.style.visibility = "visible";
-                movePanelTo(delPanel, mouseXY.x, mouseXY.y);
+               
+                    const mouseXY = roundXY(getXY());
+                    lastElementClick = element;
+                    delPanel.style.visibility = "visible";
+                    movePanelTo(delPanel, mouseXY.x, mouseXY.y);
+                
             }
         }
     });
@@ -2650,6 +2785,210 @@ function createModalPinnedSupport(){
 }
 
 
+function removeDraggableFromAllNodes(){
+    const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
+    const allNodes = [dcl, ...dcl.getAllDecendents()];
+    allNodes.forEach(node => {
+        const beam = node.konvaObjects.beam
+        if (beam){
+            beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
+                child.setAttr("draggable", false);
+            })
+        }
+        const forces = node.konvaObjects.forces;
+        console.log(forces)
+        forces.forEach(force => {
+        
+            force.getChildren()[0].setAttr("draggable", false);
+
+        })
+    })
+}
+
+function addDraggableToAllNodes(){
+    const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
+    const allNodes = [dcl, ...dcl.getAllDecendents()];
+    allNodes.forEach(node => {
+        const beam = node.konvaObjects.beam
+        if (beam){
+            beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
+                child.setAttr("draggable", true);
+               
+            })
+        }
+
+        const forces = node.konvaObjects.forces;
+        forces.forEach(force => {
+            force.setAttr("draggable", true);
+            force.getChildren()[0].setAttr("draggable", true);
+        })
+    })
+}
+
+function turnToRealDCL(){
+    const check = document.querySelector("#turnToRealDCL");
+    
+    check.addEventListener("change", () => {
+        const allNodes = [dcl, ...dcl.getAllDecendents()];
+        
+        if(check.checked){
+            removeDraggableFromAllNodes();
+            turnToRealDCLFlag = true;
+            
+            allNodes.forEach(node => {
+                const [x, y] = node.coordinate;
+                
+                if (node.link === "fixedSupport") {
+                    node.konvaObjects.link.hide();
+                    if (node.linkRotation ===  "0"){
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                        
+                    } else if (node.linkRotation === "90") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                        
+
+                    } else if (node.linkRotation === "180") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                
+                    } else if (node.linkRotation === "270") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                    }
+                }
+                else if (node.link === "pinnedSupport") {
+                    node.konvaObjects.link.hide();
+                    node.konvaObjects.link.hide();
+                    if (node.linkRotation ===  "0"){
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        
+                    } else if (node.linkRotation === "90") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        
+                    } else if (node.linkRotation === "180") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                
+                    } else if (node.linkRotation === "270") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                    }
+                }
+                else if (node.link === "rollerSupport") {
+                    node.konvaObjects.link.hide();
+                    if (node.linkRotation ===  "0"){
+                        if (!node.konvaObjects.forceYsuppot){
+                            const forceY = createForce(`${node.name}x`, 270, "green", x, y-lasForce);
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsuppot.show();
+                        
+                    } else if (node.linkRotation === "90") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y);
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                    
+                    } else if (node.linkRotation === "180") {
+                        if (!node.konvaObjects.forceYsuppoty){
+                            const forceY = createForce(`${node.name}x`, 90, "green", x, y+lasForce);
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsuppoty.show();
+                    } else if (node.linkRotation === "270") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y);
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                    }
+                }
+                
+            })
+
+        } else {
+            addDraggableToAllNodes();
+            turnToRealDCLFlag = false;
+            allNodes.forEach(node => {
+                const [x, y] = node.coordinate;
+                if (node.link) {
+                    node.konvaObjects.link.show();
+                    if (node.konvaObjects.forceXsupport) node.konvaObjects.forceXsupport.hide();
+                    if (node.konvaObjects.forceYsupport) node.konvaObjects.forceYsupport.hide();
+                    if (node.konvaObjects.momentSupport) node.konvaObjects.momentSupport.hide();
+                }
+            
+            })      
+        }
+    })
+
+
+}
 
 
 
@@ -2657,3 +2996,208 @@ function createModalPinnedSupport(){
 
 
 
+
+function removeDraggableFromAllNodes(){
+    const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
+    const allNodes = [dcl, ...dcl.getAllDecendents()];
+    allNodes.forEach(node => {
+        const beam = node.konvaObjects.beam
+        if (beam){
+            beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
+                child.setAttr("draggable", false);
+            })
+        }
+        const forces = node.konvaObjects.forces;
+        console.log(forces)
+        forces.forEach(force => {
+        
+            force.getChildren()[0].setAttr("draggable", false);
+
+        })
+    })
+}
+
+function addDraggableToAllNodes(){
+    const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
+    const allNodes = [dcl, ...dcl.getAllDecendents()];
+    allNodes.forEach(node => {
+        const beam = node.konvaObjects.beam
+        if (beam){
+            beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
+                child.setAttr("draggable", true);
+               
+            })
+        }
+
+        const forces = node.konvaObjects.forces;
+        forces.forEach(force => {
+            force.setAttr("draggable", true);
+            force.getChildren()[0].setAttr("draggable", true);
+        })
+    })
+}
+
+function turnToRealDCL(){
+    const check = document.querySelector("#turnToRealDCL");
+    
+    check.addEventListener("change", () => {
+        const allNodes = [dcl, ...dcl.getAllDecendents()];
+        
+        if(check.checked){
+            removeDraggableFromAllNodes();
+            turnToRealDCLFlag = true;
+            
+            allNodes.forEach(node => {
+                const [x, y] = node.coordinate;
+                
+                if (node.link === "fixedSupport") {
+                    node.konvaObjects.link.hide();
+                    if (node.linkRotation ===  "0"){
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                        
+                    } else if (node.linkRotation === "90") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                        
+
+                    } else if (node.linkRotation === "180") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                
+                    } else if (node.linkRotation === "270") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        if (!node.konvaObjects.moment){
+                            const moment = createMoment(`${node.name}m`, "green", x, y)
+                            node.setKonvaMomentSupport(moment);
+                        } else node.konvaObjects.moment.show();
+                    }
+                }
+                else if (node.link === "pinnedSupport") {
+                    node.konvaObjects.link.hide();
+                    node.konvaObjects.link.hide();
+                    if (node.linkRotation ===  "0"){
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        
+                    } else if (node.linkRotation === "90") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                        
+                    } else if (node.linkRotation === "180") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 90, "green", x, y+lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                
+                    } else if (node.linkRotation === "270") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y)
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                        if (!node.konvaObjects.forceYsupport){
+                            const forceY = createForce(`${node.name}y`, 270, "green", x, y-lasForce)
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsupport.show();
+                    }
+                }
+                else if (node.link === "rollerSupport") {
+                    node.konvaObjects.link.hide();
+                    if (node.linkRotation ===  "0"){
+                        if (!node.konvaObjects.forceYsuppot){
+                            const forceY = createForce(`${node.name}x`, 270, "green", x, y-lasForce);
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsuppot.show();
+                        
+                    } else if (node.linkRotation === "90") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 180, "green", x+lasForce, y);
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                    
+                    } else if (node.linkRotation === "180") {
+                        if (!node.konvaObjects.forceYsuppoty){
+                            const forceY = createForce(`${node.name}x`, 90, "green", x, y+lasForce);
+                            node.setKonvaForceYsupport(forceY);
+                        } else node.konvaObjects.forceYsuppoty.show();
+                    } else if (node.linkRotation === "270") {
+                        if (!node.konvaObjects.forceXsuppoty){
+                            const forceX = createForce(`${node.name}x`, 0, "green", x-lasForce, y);
+                            node.setKonvaForceXsupport(forceX);
+                        } else node.konvaObjects.forceXsuppoty.show();
+                    }
+                }
+                
+            })
+
+        } else {
+            addDraggableToAllNodes();
+            turnToRealDCLFlag = false;
+            allNodes.forEach(node => {
+                const [x, y] = node.coordinate;
+                if (node.link) {
+                    node.konvaObjects.link.show();
+                    if (node.konvaObjects.forceXsupport) node.konvaObjects.forceXsupport.hide();
+                    if (node.konvaObjects.forceYsupport) node.konvaObjects.forceYsupport.hide();
+                    if (node.konvaObjects.momentSupport) node.konvaObjects.momentSupport.hide();
+                }
+            
+            })      
+        }
+    })
+
+
+}

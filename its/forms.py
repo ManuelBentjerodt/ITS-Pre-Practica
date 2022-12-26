@@ -6,6 +6,7 @@ from .models import Task, TaskPerAccount
 class TaskForm(forms.ModelForm):
     dcl = forms.JSONField(widget=forms.HiddenInput())
     date = forms.CharField(widget=forms.HiddenInput())
+    statement = forms.CharField(widget=forms.Textarea)
     class Meta:
         model = Task
         fields = '__all__'
