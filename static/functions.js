@@ -1446,26 +1446,60 @@ function delElement() {
     deleteElement(lastElementClick);
     hideAllPanels();
 }
+function listenAngleCreated(konvaArc){
+    stage.on("click", () => {
+        if (konvaArc) {
+            konvaArc.destroy();
+        }
+      });
 
+    }
+
+function listenArrowRotation(konvaArc,arrow){
+    console.log("olassdfdsfk");
+    arrow.on("dragend", () => {
+        konvaArc.clockwise(true);
+        if (arrow.getAttr("tension")[1] > 180 && arrow.getAttr("tension")[1]) {
+            konvaArc.clockwise(false);
+          }
+        konvaArc.angle(360-arrow.getAttr("tension")[1]);
+        
+      });
+}
 function createAngleReference(){
     
     console.log("CREATE REFERENCE ANGLE!!!!");
-    console.log(lastElementClick);
+    console.log(lastElementClick.getAttr("tension")[1]);
+    const forceObject = lastElementClick
+    angle = forceObject.getAttr("tension")[1];
+
+
+
+
     var arc = new Konva.Arc({
-        x: 300,
-        y: 200,
-        innerRadius: 100,
-        outerRadius: 80,
+        x: forceObject.getAttr("x"),
+        y: forceObject.getAttr("y"),
+        innerRadius: 45,
+        outerRadius: 50,
         fill: 'red',
         stroke: 'black',
-        strokeWidth: 5,
-        angle: 80,
-        setRotation: 0
+        strokeWidth: 2,
+        angle: 360-angle,
+        rotation: 0,
+        clockwise: true
       });
+      if (angle > 180) {
+        arc.clockwise(false);
+      }
+
+
+
       layer.add(arc);
+      
     anglePanel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-
+    listenArrowRotation(arc,forceObject);
+    listenAngleCreated(arc);
 }
 
 
