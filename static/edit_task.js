@@ -1,3 +1,5 @@
+//const { listen } = require("express/lib/application");
+
 const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null;
 let lastElementClick = undefined;
@@ -28,6 +30,7 @@ const modalFixedSupport = createModalFixedSupport(250, 80);
 const modalRollerSupport = createModalRollerSupport(250, 80); 
 const modalPinnedSupport = createModalPinnedSupport(250, 80);
 const delPanel = createDelPanel(0,0);
+const anglePanel = createAngleReferencePanel(0,0); //new
 const panel = createPanel(250, 80);
 
 divKonvaContainer.appendChild(modalForce);
@@ -37,6 +40,7 @@ divKonvaContainer.appendChild(modalRollerSupport);
 divKonvaContainer.appendChild(modalPinnedSupport);
 divKonvaContainer.appendChild(panel);
 divKonvaContainer.appendChild(delPanel);
+divKonvaContainer.appendChild(anglePanel); //new
 
 listenPanelMovement(panel);
 listenPanelMovement(delPanel);
@@ -45,12 +49,12 @@ listenPanelMovement(modalForce);
 listenPanelMovement(modalFixedSupport);
 listenPanelMovement(modalRollerSupport); 
 listenPanelMovement(modalPinnedSupport);
-
+listenPanelMovement(anglePanel); //new
 
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
-
+listenAngleReference(); //new
 const dclJSON = document.querySelector("#dclJSON").textContent;
 
 const dcl = recreateDcl(dclJSON);

@@ -1,3 +1,5 @@
+const { del } = require("express/lib/application");
+
 function createShadowBeam(x0, y0, x1, y1, nameShadow = "shadow-beam") {
     const group = new Konva.Group({ name: nameShadow });
     const line = new Konva.Line({
@@ -978,8 +980,6 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
         if (idNameText == "beamBtn") {
             efunction();
         } else if (idNameText == "forceBtn") {
-            const forceString = JSON.stringify(selectType.value);
-            console.log("El name force en CREATE BUTTON ES: ",forceString);
             efunction(inputMagnitud.value, inputAngle.value,"black",0,0,layer,"aux",selectType.value);
         } else if (idNameText == "momentBtn") {
             efunction(inputMagnitud.value,"black",0,0,layer,"aux",selectType.value)
@@ -989,6 +989,9 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
             efunction(null, rotation=selectObj.value);
         } else if (idNameText == "modalBtn") {
             efunction(modal);
+        } else if (idNameText == "AngleBtn") {
+            efunction();
+        
         } else  {
             efunction();
         }
@@ -1348,7 +1351,7 @@ function deleteElement(element) {
             node.deleteLink();
 
         } else if (element.name() === "force") {
-            const tuple = element.getAttr("tension")
+            const tuple = element.getAttr("tension");
             const floatTuple = [parseFloat(tuple[0]), parseFloat(tuple[1])];
             const idx = idxForceInNode(node.forces, floatTuple)
             node.forces.splice(idx, 1)
@@ -1367,6 +1370,29 @@ function deleteElement(element) {
     updateEquations();
 }
 
+
+
+function listenAngleReference(){
+    stage.on("dblclick", (e) => {
+        if (e.target && e.target.getParent()) {
+            const element = e.target.getParent();
+            const name = element.name();
+            if (name == "force" ) {
+                
+                const mouseXY = roundXY(getXY());
+                lastElementClick = element;
+                anglePanel.style.visibility = "visible";
+                movePanelTo(anglePanel, mouseXY.x-240, mouseXY.y+15);
+
+            }
+        }
+    });
+
+}
+
+
+
+
 function listenDeleteElement() {
     stage.on("dblclick", (e) => {
         if (e.target && e.target.getParent()) {
@@ -1384,7 +1410,7 @@ function listenDeleteElement() {
                 const mouseXY = roundXY(getXY());
                 lastElementClick = element;
                 delPanel.style.visibility = "visible";
-                movePanelTo(delPanel, mouseXY.x, mouseXY.y);
+                movePanelTo(delPanel, mouseXY.x, mouseXY.y+15);
             }
         }
     });
@@ -1398,6 +1424,7 @@ function hideAllPanels() {
     modalFixedSupport.style.visibility = "hidden";
     modalRollerSupport.style.visibility = "hidden";
     modalPinnedSupport.style.visibility = "hidden";
+    anglePanel.style.visibility = "hidden";
 }
 
 function listenHiddePanels() {
@@ -1419,6 +1446,29 @@ function delElement() {
     deleteElement(lastElementClick);
     hideAllPanels();
 }
+
+function createAngleReference(){
+    
+    console.log("CREATE REFERENCE ANGLE!!!!");
+    console.log(lastElementClick);
+    var arc = new Konva.Arc({
+        x: 300,
+        y: 200,
+        innerRadius: 100,
+        outerRadius: 80,
+        fill: 'red',
+        stroke: 'black',
+        strokeWidth: 5,
+        angle: 80,
+        setRotation: 0
+      });
+      layer.add(arc);
+    anglePanel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+
+}
+
+
 
 function createDelPanel(x0 = 0, y0 = 0) {
     const widthPanel = 120;
@@ -1444,6 +1494,36 @@ function createDelPanel(x0 = 0, y0 = 0) {
 
     return panel;
 }
+
+function createAngleReferencePanel(x0 = 0, y0 = 0){
+    const widthPanel = 120;
+    const heightPanel = 30;
+    const colorPanel = "#DDDDDD";
+    const imgDelete = "url(images/referenceAngle.png)";
+
+    const panel = document.createElement("div");
+    panel.style.position = "absolute";
+    panel.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
+    panel.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    panel.style.width = widthPanel + "px";
+    panel.style.height = heightPanel + "px";
+    panel.style.backgroundColor = colorPanel;
+    panel.style.borderColor = "black";
+    panel.style.border = "40px";
+    panel.style.visibility = "hidden";
+    panel.style.zIndex = "1001";
+
+    const angleElementBtn = createButton(widthPanel, heightPanel, "AngleBtn", "AngleReference", createAngleReference, image=imgDelete);
+
+    panel.appendChild(angleElementBtn);
+
+    return panel;
+}
+
+
+
+
+
 
 function createHashElements(stage) {
     const hash = {
@@ -1819,7 +1899,7 @@ function drawForces(node){
     console.log(node);
     node.forces.forEach(force=>{
         if (force !=null){
-        createForceEditTask(force[0],force[1],"black",node.coordinate[0],node.coordinate[1],node.typeForce);
+        createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",node.typeForce);
         }
     })
  
@@ -2104,7 +2184,7 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
 
     hideAllPanels()
 
-    forceMovement(group, 2 * blockSnapSize, strokeVal)
+    forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
 
     return group;
 }
@@ -2238,13 +2318,14 @@ function calculateEquations(){
 
         node.moments.forEach(moment => {
             moments.push(moment);
+            typeOfMoments.push(node.typeMoment);
             
         })
 
         node.forces.forEach(force => {
             console.log("el tipo de fuerza es: ",node.typeForce);
             const typeForce = node.typeForce;
-            const typeMoment = node.typeMoment;
+            
 
             const [magnitud, angle] = force;
             if(0 == angle){
@@ -2555,15 +2636,17 @@ function calculateEquations(){
         textForcesY += `${force[0]}${force[1]} `;
     })
 
+    let i =0;
     moments.forEach(moment => {
         if(typeof moment === "number"){
             if (moment > 0) textMoments += "+";
-            textMoments += `${moment}${typeMoment} `;
+            textMoments += `${moment}${typeOfMoments[i]} `;
         } else {
             if (moment[0][0] > 0) textMoments += `+${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;   
             else textMoments += `${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;   
             
         }
+        i++;
     })
 
 

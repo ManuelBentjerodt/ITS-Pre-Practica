@@ -28,6 +28,7 @@ const modalFixedSupport = createModalFixedSupport(250, 80);
 const modalRollerSupport = createModalRollerSupport(250, 80); 
 const modalPinnedSupport = createModalPinnedSupport(250, 80);
 const delPanel = createDelPanel(0,0);
+const anglePanel = createAngleReferencePanel(0,0); //new
 const panel = createPanel(250, 80);
 
 divKonvaContainer.appendChild(modalForce);
@@ -37,8 +38,10 @@ divKonvaContainer.appendChild(modalRollerSupport);
 divKonvaContainer.appendChild(modalPinnedSupport);
 divKonvaContainer.appendChild(panel);
 divKonvaContainer.appendChild(delPanel);
+divKonvaContainer.appendChild(anglePanel); //new
 
 listenPanelMovement(panel);
+listenPanelMovement(anglePanel); //new
 listenPanelMovement(delPanel);
 listenPanelMovement(modalMoment); 
 listenPanelMovement(modalForce); 
@@ -82,6 +85,6 @@ listenNodeMovement(group, shadowLine, "initialBeam");
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
-
+listenAngleReference();
 
 
