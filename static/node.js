@@ -9,6 +9,7 @@ class Node {
         this.forces = [],                // array(magnitud, angle)
         this.moments = [],                // magnitud   
         this.typeForce = null,          //type = newtons, kilonewtons, etc
+        this.typeMoment = null,         //type = newton-meters, kilonewton-meters, etc
 
         this.konvaObjects = {
             beam: null,
@@ -110,6 +111,9 @@ class Node {
 
     addTypeForce(type) {    
         this.typeForce = type;
+    }
+    addTypeMoment(type) {
+        this.typeMoment = type;
     }
 
     addMoment(magnitud) {
