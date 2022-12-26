@@ -1,5 +1,3 @@
-const { del } = require("express/lib/application");
-
 function createShadowBeam(x0, y0, x1, y1, nameShadow = "shadow-beam") {
     const group = new Konva.Group({ name: nameShadow });
     const line = new Konva.Line({
@@ -79,9 +77,9 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
 
     group.add(line, circle1, circle2);
 
-    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
-    paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
-    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
+    // paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    // paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
+    // paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
 
     return group;
 }
@@ -1356,8 +1354,8 @@ function listenCreateElement() {
             lastBeamNodeClick.y = mouseXY.y;
             lastNodeClick = e.target;
             const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
-            // console.log(nodeParent)
-            // console.log(e.target.getParent())
+            console.log(nodeParent)
+            console.log(e.target.getParent())
 
             if (e.target.name() == "subElementBeamCircle1") {
                 panel.style.visibility = "visible";
@@ -1470,7 +1468,6 @@ function listenAngleReference(){
 
 function listenDeleteElement() {
     stage.on("dblclick", (e) => {
-        console.log(turnToRealDCLFlag)
         if (e.target && e.target.getParent() && !turnToRealDCLFlag) {
             const element = e.target.getParent();
             const name = element.name();
@@ -2007,7 +2004,6 @@ function drawLink(node) {
 }
 
 function drawForces(node) {
-    console.log(node);
     node.forces.forEach(force=>{
         if (force !=null){
         createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",node.typeForce);

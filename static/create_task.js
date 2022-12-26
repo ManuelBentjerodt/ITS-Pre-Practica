@@ -75,6 +75,12 @@ layer.add(y_reference.getKonvaLine());
 //------------------------------------------------------elements dcl-----------------------------------------------//
 
 const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
+
+paintIfMouseOver(group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
+paintIfMouseOver(group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
+paintIfMouseOver(group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2].getAttr("fill"), group.getChildren()[2].getAttr("stroke"));
+
+
 const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
 shadowLine.hide();
 
