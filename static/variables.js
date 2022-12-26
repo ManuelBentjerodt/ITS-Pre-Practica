@@ -18,3 +18,5 @@ const shadowStroke = "#FF7B17";
 const nodeColor = "red";
 const originColor = "green";
 const originColorMouseOver = "#00ff00";
+
+let turnToRealDCLFlag = false;
