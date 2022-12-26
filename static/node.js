@@ -7,8 +7,9 @@ class Node {
         this.childNodes = [],         // node
         this.link = null,              // type = 'deslizante', 'fixedSupport', etc
         this.forces = [],                // array(magnitud, angle)
-        this.moments = []                // magnitud   
-        
+        this.moments = [],                // magnitud   
+        this.typeForce = null,          //type = newtons, kilonewtons, etc
+
         this.konvaObjects = {
             beam: null,
             shadowBeam: null,
@@ -20,6 +21,8 @@ class Node {
             forceXsupport: null,
             forceYsupport: null,
             momentSupport: null,
+            segmentedLineX: null,
+            segmentedLineY: null
             
         }
 
@@ -38,15 +41,17 @@ class Node {
         forces,
         moments,
         isOrigin,
-        linkRotation
-        
+        linkRotation,
+        typeForce
         }, _id=this.id) {
 
+        
         this.setCoordinate(coordinate);
         this.setParent(parent);
         this.setLink(link);
         this.setIsOrigin(isOrigin);
         this.setLinkRotation(linkRotation);
+        this.addTypeForce(typeForce);
 
         forces.forEach(force => {
             this.addForce(force[0], force[1])
@@ -107,6 +112,10 @@ class Node {
         this.forces.push([magnitud, angle]);
     }
 
+    addTypeForce(type) {    
+        this.typeForce = type;
+    }
+
     addMoment(magnitud) {
         this.moments.push(magnitud);
     }
@@ -125,6 +134,14 @@ class Node {
 
     addKonvaMoment(object) {
         this.konvaObjects.forces.push(object);
+    }
+
+    addKonvaSegmentedLineX(object) {
+        this.konvaObjects.segmentedLineX = object;
+    }
+
+    addKonvaSegmentedLineY(object) {
+        this.konvaObjects.segmentedLineY = object;
     }
 
     setKonvaShadowBeam(object) {

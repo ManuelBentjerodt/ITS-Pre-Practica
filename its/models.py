@@ -12,6 +12,7 @@ class Task(models.Model):
     id = models.AutoField(primary_key=True)
     dcl = models.JSONField(null=True, blank = True)
     date = models.CharField(max_length=20, null=True)
+    statement = models.TextField(null=True)
 
 
 class Account(models.Model):

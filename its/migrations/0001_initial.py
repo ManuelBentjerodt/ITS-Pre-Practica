@@ -29,6 +29,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('dcl', models.JSONField(blank=True, null=True)),
                 ('date', models.DateTimeField()),
+
             ],
         ),
         migrations.CreateModel(

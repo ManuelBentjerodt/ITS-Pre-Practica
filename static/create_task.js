@@ -23,7 +23,8 @@ generateGrid(layer);
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
 const divKonvaContainer = document.querySelector("#container");
 
-const modalForce = createModalForce(250, 80); 
+const modalForce = createModalForce(250, 80);
+console.log("CHIDLDREN: ",modalForce.children[2].value); 
 const modalMoment = createModalMoment(250, 80); 
 const modalFixedSupport = createModalFixedSupport(250, 80);
 const modalRollerSupport = createModalRollerSupport(250, 80); 
@@ -46,6 +47,29 @@ listenPanelMovement(modalForce);
 listenPanelMovement(modalFixedSupport);
 listenPanelMovement(modalRollerSupport); 
 listenPanelMovement(modalPinnedSupport);
+
+
+//------------------------------------------------------Creacion referencia-----------------------------------------------//
+
+
+x_reference = new xReference([0,heightStage-5*blockSnapSize]);
+y_reference = new yReference([widthStage-5*blockSnapSize,0]);
+
+x_reference.createKonvaLine();
+y_reference.createKonvaLine();
+
+x_reference.buildLine();
+y_reference.buildLine();
+
+
+x_reference.updateSegmentedLines();
+y_reference.updateSegmentedLines();
+
+
+layer.add(x_reference.getKonvaLine());
+layer.add(y_reference.getKonvaLine());
+
+
 //------------------------------------------------------elements dcl-----------------------------------------------//
 
 const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
@@ -53,6 +77,7 @@ const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSn
 shadowLine.hide();
 
 dcl.setIsOrigin(true);
+
 
 //------------------------------------------------------Eventos usuario-----------------------------------------------//
 listenNodeMovement(group, shadowLine, "initialBeam");
