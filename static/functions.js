@@ -1,3 +1,5 @@
+const { del } = require("express/lib/application");
+
 function createShadowBeam(x0, y0, x1, y1, nameShadow = "shadow-beam") {
     const group = new Konva.Group({ name: nameShadow });
     const line = new Konva.Line({
@@ -816,13 +818,15 @@ function createConnectingRod(_node = null) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux", typeForce = "N") {
+function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux",typeForce) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lasPos = lastBeamNodeClick.y
 
     let magnitud = valMagnitud;
     let angle = valAngle;
-    let txt = magnitud + " " + typeForce + ", " + angle + " °";
+    
+    let txt = magnitud + " " +typeForce+ ", " + angle + " °";
+    
 
     const large = largeForce;
     const strokeVal = strokeForce
@@ -868,7 +872,8 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
-        nodeParent.addKonvaForce(group)
+        nodeParent.addTypeForce(typeForce);
+        nodeParent.addKonvaForce(group);
         group.setAttr("id", konvaElement.getAttr("id"))
     }
 
@@ -876,12 +881,12 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     delPanel.style.visibility = "hidden";
     modalForce.style.visibility = "hidden";
 
-    forceMovement(group, 2 * blockSnapSize, strokeVal)
+    forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
     updateEquations();
     return group;
 }
 
-function forceMovement(group, large, strokeVal) {
+function forceMovement(group, large, strokeVal,typeForce) {
     const arrow = group.getChildren()[0];
     const magnitud = group.getChildren()[1];
     const magnitudVal = parseFloat(group.getAttr("tension")[0]);
@@ -903,12 +908,16 @@ function forceMovement(group, large, strokeVal) {
             arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)));
             arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)));
 
-            newAngle = prettyDeg(newAngle);
+        arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
+        arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
 
-            let txt = magnitudVal + " N" + ", " + newAngle + " °";
-            magnitud.setAttr("text", txt);
-            magnitud.setAttr("x", a * x + 10);
-            magnitud.setAttr("y", a * y + 10);
+        newAngle = prettyDeg(newAngle);
+
+        let txt = magnitudVal + " " +typeForce+ ", " + newAngle  + " °";
+        magnitud.setAttr("text", txt)
+        magnitud.setAttr("x", a*x+10)
+        magnitud.setAttr("y", a*y+10)
+
         }
     })
 
@@ -929,12 +938,12 @@ function forceMovement(group, large, strokeVal) {
     })
 }
 
-function createMoment(val, color = "black", x0 = 0, y0 = 0) {
+function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, forFixedSupport = false,typeMoment) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lastPos = lastBeamNodeClick.y
 
     let magnitud = val;
-    let txt = magnitud;
+    let txt = magnitud + " " +typeMoment;
 
     if (color != "black") {
         x0lastPos = x0;
@@ -997,6 +1006,7 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0) {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
         nodeParent.addMoment(parseFloat(magnitud));
+        nodeParent.addTypeMoment(typeMoment);
         nodeParent.addKonvaMoment(group);
         group.setAttr("id", konvaElement.getAttr("id"));
     }
@@ -1022,7 +1032,7 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal, nameForce) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal,selectType) {
     const btn = document.createElement("button");
     btn.type = "button";
 
@@ -1044,17 +1054,18 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
         if (idNameText == "beamBtn") {
             efunction();
         } else if (idNameText == "forceBtn") {
-            efunction(inputMagnitud.value, inputAngle.value, typeForce = nameForce);
-            console.log("El name force es: ", nameForce);
+            efunction(inputMagnitud.value, inputAngle.value,"black",0,0,layer,"aux",selectType.value);
         } else if (idNameText == "momentBtn") {
-            efunction(inputMagnitud.value)
+            efunction(inputMagnitud.value,"black",0,0,layer,"aux",selectType.value)
         } else if (idNameText == "deleteElementBtn") {
             efunction(element);
         } else if (idNameText == "modalRotationBtn") {
             efunction(null, rotation = selectObj.value);
         } else if (idNameText == "modalBtn") {
             efunction(modal);
-        } else {
+        } else if (idNameText == "AngleBtn") {
+            efunction();
+        } else  {
             efunction();
         }
 
@@ -1062,12 +1073,63 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
     return btn;
 }
 
+function createSelectTypeForce(idParam, widthPanel, heightPanel) {
+    const select = document.createElement("select");
+    select.style.width = widthPanel/3 + "px";
+    select.style.height = heightPanel + "px";
+    select.setAttribute("id", idParam);
+
+    const optionNewtons = document.createElement("option");
+    const optionKips = document.createElement("option");
+    const optionKiloNewtons = document.createElement("option");
+    
+    optionNewtons.value = "N";
+    optionKips.value = "kip";
+    optionKiloNewtons.value = "kN";
+    
+    optionNewtons.innerText = "Newtons (N)";
+    optionKips.innerText ="KIPS (kip)" ;
+    optionKiloNewtons.innerText = "Kilo Newtons (kN)";
+    
+    select.appendChild(optionKips);
+    select.appendChild(optionKiloNewtons);
+    select.appendChild(optionNewtons);
+    return select;
+}
+
+function createSelectTypeMoment(idParam, widthPanel, heightPanel){
+
+    const select = document.createElement("select");
+    select.style.width = widthPanel/1.5 + "px";
+    select.style.height = heightPanel + "px";
+    select.setAttribute("id", idParam);
+
+    const optionNewtons = document.createElement("option");
+    const optionKips = document.createElement("option");
+    const optionKiloNewtons = document.createElement("option");
+    
+    optionNewtons.value = "N-m";
+    optionKips.value = "kip-ft";
+    optionKiloNewtons.value = "kN-m";
+    
+    optionNewtons.innerText = "Newtons-meters (N-m)";
+    optionKips.innerText ="KIPS-feet (kip-ft)" ;
+    optionKiloNewtons.innerText = "Kilo Newtons-meters (kN-m)";
+    
+    select.appendChild(optionKips);
+    select.appendChild(optionKiloNewtons);
+    select.appendChild(optionNewtons);
+    return select;
+}
+
+
+
 function createInputMagnitud(idParam, widthPanel, heightPanel) {
     const input = document.createElement("input");
     input.type = "number";
     input.setAttribute("id", idParam);
     input.value = "1"
-    input.style.width = widthPanel / 4 + "px";
+    input.style.width = widthPanel / 7 + "px";
     input.style.height = heightPanel - 6 + "px";
 
     return input;
@@ -1343,8 +1405,13 @@ function deleteElement(element) {
 
         node.getAllDecendents().forEach(decendent => {
             destroyAttachedKonvaElements(decendent);
+            x_reference.deletePoint(decendent.konvaObjects.circle);
+            y_reference.deletePoint(decendent.konvaObjects.circle);
+       
             delete decendent;
         })
+
+      
 
         destroyAttachedKonvaElements(node);
         delete node;
@@ -1357,7 +1424,7 @@ function deleteElement(element) {
             node.deleteLink();
 
         } else if (element.name() === "force") {
-            const tuple = element.getAttr("tension")
+            const tuple = element.getAttr("tension");
             const floatTuple = [parseFloat(tuple[0]), parseFloat(tuple[1])];
             const idx = idxForceInNode(node.forces, floatTuple)
             node.forces.splice(idx, 1)
@@ -1378,6 +1445,29 @@ function deleteElement(element) {
     updateEquations();
 }
 
+
+
+function listenAngleReference(){
+    stage.on("dblclick", (e) => {
+        if (e.target && e.target.getParent()) {
+            const element = e.target.getParent();
+            const name = element.name();
+            if (name == "force" ) {
+                
+                const mouseXY = roundXY(getXY());
+                lastElementClick = element;
+                anglePanel.style.visibility = "visible";
+                movePanelTo(anglePanel, mouseXY.x-240, mouseXY.y+15);
+
+            }
+        }
+    });
+
+}
+
+
+
+
 function listenDeleteElement() {
     stage.on("dblclick", (e) => {
         console.log(turnToRealDCLFlag)
@@ -1397,8 +1487,7 @@ function listenDeleteElement() {
                 const mouseXY = roundXY(getXY());
                 lastElementClick = element;
                 delPanel.style.visibility = "visible";
-                movePanelTo(delPanel, mouseXY.x, mouseXY.y);
-
+                movePanelTo(delPanel, mouseXY.x, mouseXY.y+15);
             }
         }
     });
@@ -1412,6 +1501,7 @@ function hideAllPanels() {
     modalFixedSupport.style.visibility = "hidden";
     modalRollerSupport.style.visibility = "hidden";
     modalPinnedSupport.style.visibility = "hidden";
+    anglePanel.style.visibility = "hidden";
 }
 
 function listenHiddePanels() {
@@ -1433,6 +1523,63 @@ function delElement() {
     deleteElement(lastElementClick);
     hideAllPanels();
 }
+function listenAngleCreated(konvaArc){
+    stage.on("click", () => {
+        if (konvaArc) {
+            konvaArc.destroy();
+        }
+      });
+
+    }
+
+function listenArrowRotation(konvaArc,arrow){
+    console.log("olassdfdsfk");
+    arrow.on("dragend", () => {
+        konvaArc.clockwise(true);
+        if (arrow.getAttr("tension")[1] > 180 && arrow.getAttr("tension")[1]) {
+            konvaArc.clockwise(false);
+          }
+        konvaArc.angle(360-arrow.getAttr("tension")[1]);
+        
+      });
+}
+function createAngleReference(){
+    
+    console.log("CREATE REFERENCE ANGLE!!!!");
+    console.log(lastElementClick.getAttr("tension")[1]);
+    const forceObject = lastElementClick
+    angle = forceObject.getAttr("tension")[1];
+
+
+
+
+    var arc = new Konva.Arc({
+        x: forceObject.getAttr("x"),
+        y: forceObject.getAttr("y"),
+        innerRadius: 45,
+        outerRadius: 50,
+        fill: 'red',
+        stroke: 'black',
+        strokeWidth: 2,
+        angle: 360-angle,
+        rotation: 0,
+        clockwise: true
+      });
+      if (angle > 180) {
+        arc.clockwise(false);
+      }
+
+
+
+      layer.add(arc);
+      
+    anglePanel.style.visibility = "hidden";
+    delPanel.style.visibility = "hidden";
+    listenArrowRotation(arc,forceObject);
+    listenAngleCreated(arc);
+}
+
+
 
 function createDelPanel(x0 = 0, y0 = 0) {
     const widthPanel = 120;
@@ -1458,6 +1605,36 @@ function createDelPanel(x0 = 0, y0 = 0) {
 
     return panel;
 }
+
+function createAngleReferencePanel(x0 = 0, y0 = 0){
+    const widthPanel = 120;
+    const heightPanel = 30;
+    const colorPanel = "#DDDDDD";
+    const imgDelete = "url(images/referenceAngle.png)";
+
+    const panel = document.createElement("div");
+    panel.style.position = "absolute";
+    panel.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
+    panel.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    panel.style.width = widthPanel + "px";
+    panel.style.height = heightPanel + "px";
+    panel.style.backgroundColor = colorPanel;
+    panel.style.borderColor = "black";
+    panel.style.border = "40px";
+    panel.style.visibility = "hidden";
+    panel.style.zIndex = "1001";
+
+    const angleElementBtn = createButton(widthPanel, heightPanel, "AngleBtn", "AngleReference", createAngleReference, image=imgDelete);
+
+    panel.appendChild(angleElementBtn);
+
+    return panel;
+}
+
+
+
+
+
 
 function createHashElements(stage) {
     const hash = {
@@ -1688,38 +1865,14 @@ function createModalForce(x0, y0) {
 
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
+    const selectTypeForce = createSelectTypeForce("select-type-force",widthModal, heightModalElement);
+   
 
-
-    ////////////////////////
-
-
-    const select = document.createElement("select");
-    select.style.width = widthModal / 2 + "px";
-    select.style.height = heightModal / 3 + "px";
-
-    const optionNewtons = document.createElement("option");
-    const optionKips = document.createElement("option");
-    const optionKiloNewtons = document.createElement("option");
-
-    optionNewtons.value = "N";
-    optionKips.value = "kip";
-    optionKiloNewtons.value = "kN";
-
-    optionNewtons.innerText = "KIPS (kip)";
-    optionKips.innerText = "Newtons (N)";
-    optionKiloNewtons.innerText = "Kilo Newtons (kN)";
-
-    select.appendChild(optionKips);
-    select.appendChild(optionKiloNewtons);
-    select.appendChild(optionNewtons);
-    ////////////////////////
-    console.log("valor selected:", select.value)
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce, null, inputMagnitud = inputCreateForceMagnitud, inputAngle = inputCreateForceAngle, nameForce = select.value);
-
-
-
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle,null,null,null,selectTypeForce);
+    
+    
     const newtons = document.createElement("b");
-    newtons.innerText = "N";
+    newtons.innerText = selectTypeForce.value;
     newtons.type = "number";
     newtons.style.width = widthModal / 4 + "px";
     newtons.style.height = heightModal - 6 + "px";
@@ -1729,9 +1882,9 @@ function createModalForce(x0, y0) {
     grados.type = "number";
     grados.style.width = widthModal / 4 + "px";
     grados.style.height = heightModal - 6 + "px";
-
-    const containerForce = createContainer([inputCreateForceMagnitud, newtons, inputCreateForceAngle, grados]);
-
+    
+    const containerForce = createContainer([selectTypeForce,inputCreateForceMagnitud, inputCreateForceAngle, grados]);
+    
     const topOfModal = document.createElement("div");
     topOfModal.style.width = widthModal;
     topOfModal.style.height = heightModalElement;
@@ -1744,7 +1897,7 @@ function createModalForce(x0, y0) {
     btnForce.innerText = "Crear";
     modal.appendChild(topOfModal);
     modal.appendChild(containerForce);
-    modal.appendChild(select);
+    //modal.appendChild(select);
     modal.appendChild(btnForce);
 
     return modal;
@@ -1772,8 +1925,10 @@ function createModalMoment(x0, y0) {
     modal.style.zIndex = "1000";
 
     const inputCreateMoment = createInputMagnitud("input-create-moment", widthModal * 2, heightModalElement); // width panel*2
+    const selectTypeMoment = createSelectTypeMoment("select-type-moment", widthModal, heightModalElement);
 
-    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment, null, inputMagnitude = inputCreateMoment);
+
+    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment,null, inputMagnitude=inputCreateMoment,null,null,null,null,selectTypeMoment);
 
     const newtonsMetro = document.createElement("b");
     newtonsMetro.innerText = "Nm";
@@ -1781,7 +1936,7 @@ function createModalMoment(x0, y0) {
     newtonsMetro.style.width = widthModal / 4 + "px";
     newtonsMetro.style.height = heightModal - 6 + "px";
 
-    const containerForce = createContainer([inputCreateMoment, newtonsMetro]);
+    const containerForce = createContainer([selectTypeMoment,inputCreateMoment]);
 
     const topOfModal = document.createElement("div");
     topOfModal.style.width = widthModal;
@@ -1853,9 +2008,9 @@ function drawLink(node) {
 
 function drawForces(node) {
     console.log(node);
-    node.forces.forEach(force => {
-        if (force != null) {
-            createForceEditTask(force[0], force[1], "black", node.coordinate[0], node.coordinate[1], node);
+    node.forces.forEach(force=>{
+        if (force !=null){
+        createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",node.typeForce);
         }
     })
 
@@ -2080,7 +2235,7 @@ function drawVerticalMeters(yCoordSorted) {
     }
 }
 
-function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, nodeId, layerForPaint = layer, aux = "aux", typeForce = "N") {
+function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux",typeForce) {
     let x0lastPos = nodeId.coordinate[0];
     let y0lasPos = nodeId.coordinate[1];
 
@@ -2132,13 +2287,15 @@ function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 
 
     if (color == "black") {
         const nodeParent = dcl.findNodeById(nodeId.id);
-        nodeParent.addKonvaForce(group)
+        nodeParent.addKonvaForce(group);
+        nodeParent.addTypeForce(typeForce);
+
         group.setAttr("id", nodeId.id)
     }
 
     hideAllPanels()
 
-    forceMovement(group, 2 * blockSnapSize, strokeVal)
+    forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
 
     return group;
 }
@@ -2255,6 +2412,7 @@ function calculateEquations() {
     const origin = dcl.findOriginNode()
 
     const moments = [];
+    const typeOfMoments = [];
     const forcesX = [];
     const forcesY = [];
 
@@ -2271,109 +2429,115 @@ function calculateEquations() {
 
         node.moments.forEach(moment => {
             moments.push(moment);
+            typeOfMoments.push(node.typeMoment);
+            
         })
 
         node.forces.forEach(force => {
+            console.log("el tipo de fuerza es: ",node.typeForce);
+            const typeForce = node.typeForce;
+            
+
             const [magnitud, angle] = force;
-            if (0 == angle) {
-                forcesX.push([-magnitud, `N`]);
-                if (diff.y > 0) {
-                    moments.push([[-magnitud, `N`], [distY, `m`]]);
-                } else if (diff.y < 0) {
-                    moments.push([[magnitud, `N`], [distY, `m`]]);
+            if(0 == angle){
+                forcesX.push([-magnitud, typeForce]);
+                if (diff.y > 0){
+                    moments.push([[-magnitud, typeForce], [distY, `m`]]);
+                } else if (diff.y < 0){
+                    moments.push([[magnitud, typeForce], [distY, `m`]]);
                 }
-            } else if (0 < angle && angle < 90) {
-                forcesX.push([-magnitud, `cos(${angle})N`]);
-                forcesY.push([-magnitud, `sin(${angle})N`]);
-                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
+            } else if (0 < angle && angle < 90){
+                forcesX.push([-magnitud, `cos(${angle})${typeForce}`]);
+                forcesY.push([-magnitud, `sin(${angle})${typeForce}`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
                     // Same  Slope
                 } else {
-                    if (diff.x > 0) {
-                        moments.push([[-magnitud, `sin(${angle})N`], [distX, `m`]]);
-                    } else if (diff.x < 0) {
-                        moments.push([[magnitud, `sin(${angle})N`], [distX, `m`]]);
+                    if (diff.x > 0){
+                        moments.push([[-magnitud, `sin(${angle})${typeForce}`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[magnitud, `sin(${angle})${typeForce}`], [distX, `m`]]);
                     }
-                    if (diff.y > 0) {
-                        moments.push([[-magnitud, `cos(${angle})N`], [distY, `m`]]);
-                    } else if (diff.y < 0) {
-                        moments.push([[magnitud, `cos(${angle})N`], [distY, `m`]]);
-                    }
+                    if (diff.y > 0){
+                        moments.push([[-magnitud, `cos(${angle})${typeForce}`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[magnitud, `cos(${angle})${typeForce}`], [distY, `m`]]);
+                    } 
+                }
+        
+            } else if (90 == angle){
+                forcesY.push([-magnitud, typeForce]);
+                if (diff.x > 0){
+                    moments.push([[-magnitud, typeForce], [distX, `m`]]);
+                } else if (diff.x < 0){
+                    moments.push([[magnitud, typeForce], [distX, `m`]]);
                 }
 
-            } else if (90 == angle) {
-                forcesY.push([-magnitud, `N`]);
-                if (diff.x > 0) {
-                    moments.push([[-magnitud, `N`], [distX, `m`]]);
-                } else if (diff.x < 0) {
-                    moments.push([[magnitud, `N`], [distX, `m`]]);
-                }
-
-            } else if (90 < angle && angle < 180) {
-                forcesX.push([magnitud, `cos(${180 - angle})N`]);
-                forcesY.push([-magnitud, `sin(${180 - angle})N`]);
-                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
+            } else if (90 < angle && angle < 180){
+                forcesX.push([magnitud, `cos(${180 - angle})${typeForce}`]);
+                forcesY.push([-magnitud, `sin(${180 - angle})${typeForce}`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
                     // Same  Slope
                 } else {
-                    if (diff.x > 0) {
-                        moments.push([[-magnitud, `sin(${angle - 90})N`], [distX, `m`]]);
-                    } else if (diff.x < 0) {
-                        moments.push([[magnitud, `sin(${angle - 90})N`], [distX, `m`]]);
+                    if (diff.x > 0){
+                        moments.push([[-magnitud, `sin(${angle - 90})${typeForce}`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[magnitud, `sin(${angle - 90})${typeForce}`], [distX, `m`]]);
                     }
-                    if (diff.y > 0) {
-                        moments.push([[magnitud, `cos(${angle - 90})N`], [distY, `m`]]);
-                    } else if (diff.y < 0) {
-                        moments.push([[-magnitud, `cos(${angle - 90})N`], [distY, `m`]]);
-                    }
+                    if (diff.y > 0){
+                        moments.push([[magnitud, `cos(${angle - 90})${typeForce}`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[-magnitud, `cos(${angle - 90})${typeForce}`], [distY, `m`]]);
+                    } 
                 }
-
-            } else if (180 == angle) {
-                forcesX.push([magnitud, `N`]);
-                if (diff.y > 0) {
-                    moments.push([[magnitud, `N`], [distY, `m`]]);
-                } else if (diff.y < 0) {
-                    moments.push([[-magnitud, `N`], [distY, `m`]]);
+                
+            } else if (180 == angle){
+                forcesX.push([magnitud, typeForce]);
+                if (diff.y > 0){
+                    moments.push([[magnitud, typeForce], [distY, `m`]]);
+                } else if (diff.y < 0){
+                    moments.push([[-magnitud, typeForce], [distY, `m`]]);
                 }
-            } else if (180 < angle && angle < 270) {
-                forcesX.push([magnitud, `cos(${angle - 180})N`]);
-                forcesY.push([magnitud, `sin(${angle - 180})N`]);
-                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
+            } else if (180 < angle && angle < 270){
+                forcesX.push([magnitud, `cos(${angle - 180})${typeForce}`]);
+                forcesY.push([magnitud, `sin(${angle - 180})${typeForce}`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
                     // Same  Slope
                 } else {
-                    if (diff.x > 0) {
-                        moments.push([[magnitud, `sin(${angle - 180})N`], [distX, `m`]]);
-                    } else if (diff.x < 0) {
-                        moments.push([[-magnitud, `sin(${angle - 180})N`], [distX, `m`]]);
+                    if (diff.x > 0){
+                        moments.push([[magnitud, `sin(${angle - 180})${typeForce}`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[-magnitud, `sin(${angle - 180})${typeForce}`], [distX, `m`]]);
                     }
-                    if (diff.y > 0) {
-                        moments.push([[magnitud, `cos(${angle - 180})N`], [distY, `m`]]);
-                    } else if (diff.y < 0) {
-                        moments.push([[-magnitud, `cos(${angle - 180})N`], [distY, `m`]]);
-                    }
+                    if (diff.y > 0){
+                        moments.push([[magnitud, `cos(${angle - 180})${typeForce}`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[-magnitud, `cos(${angle - 180})${typeForce}`], [distY, `m`]]);
+                    } 
                 }
-
-            } else if (270 == angle) {
-                forcesY.push([magnitud, `N`]);
-                if (diff.x > 0) {
-                    moments.push([[magnitud, `N`], [distX, `m`]]);
-                } else if (diff.x < 0) {
-                    moments.push([[-magnitud, `N`], [distX, `m`]]);
+                
+            } else if (270 == angle){
+                forcesY.push([magnitud, typeForce]);
+                if (diff.x > 0){
+                    moments.push([[magnitud, typeForce], [distX, `m`]]);
+                } else if (diff.x < 0){
+                    moments.push([[-magnitud, typeForce], [distX, `m`]]);
                 }
-            } else if (270 < angle && angle < 360) {
-                forcesX.push([-magnitud, `cos(${360 - angle})N`]);
-                forcesY.push([magnitud, `sin(${360 - angle})N`]);
-                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
+            } else if (270 < angle && angle < 360){
+                forcesX.push([-magnitud, `cos(${360 - angle})${typeForce}`]);
+                forcesY.push([magnitud, `sin(${360 - angle})${typeForce}`]);
+                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
                     // Same  Slope
                 } else {
-                    if (diff.x > 0) {
-                        moments.push([[magnitud, `sin(${360 - angle})N`], [distX, `m`]]);
-                    } else if (diff.x < 0) {
-                        moments.push([[-magnitud, `sin(${360 - angle})N`], [distX, `m`]]);
+                    if (diff.x > 0){
+                        moments.push([[magnitud, `sin(${360 - angle})${typeForce}`], [distX, `m`]]);
+                    } else if (diff.x < 0){
+                        moments.push([[-magnitud, `sin(${360 - angle})${typeForce}`], [distX, `m`]]);
                     }
-                    if (diff.y > 0) {
-                        moments.push([[-magnitud, `cos(${360 - angle})N`], [distY, `m`]]);
-                    } else if (diff.y < 0) {
-                        moments.push([[magnitud, `cos(${360 - angle})N`], [distY, `m`]]);
-                    }
+                    if (diff.y > 0){
+                        moments.push([[-magnitud, `cos(${360 - angle})${typeForce}`], [distY, `m`]]);
+                    } else if (diff.y < 0){
+                        moments.push([[magnitud, `cos(${360 - angle})${typeForce}`], [distY, `m`]]);
+                    } 
                 }
 
             }
@@ -2583,15 +2747,17 @@ function calculateEquations() {
         textForcesY += `${force[0]}${force[1]} `;
     })
 
+    let i =0;
     moments.forEach(moment => {
         if (typeof moment === "number") {
             if (moment > 0) textMoments += "+";
-            textMoments += `${moment}Nm `;
+            textMoments += `${moment}${typeOfMoments[i]} `;
         } else {
             if (moment[0][0] > 0) textMoments += `+${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;
             else textMoments += `${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;
 
         }
+        i++;
     })
 
 

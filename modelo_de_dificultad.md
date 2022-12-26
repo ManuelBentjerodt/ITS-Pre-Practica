@@ -20,6 +20,8 @@ Elementos de un ejercicio:
 - Numero de reacciones
 - Numero de rótulas (esto define numero de reacciones, es casi lo mismo)
 
+
+
 ### 1. Nivel 1
 
 En el nivel 1 se encuentran ejercicios con 3 incógnitas, fuerzas perpendiculares y momentos.

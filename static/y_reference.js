@@ -10,7 +10,7 @@ class yReference {
         this.indexes = [],
         this.segmentedLines = [],
         this.segmented = [],
-        this.yPosition = widthStage-2*blockSnapSize
+        this.yPosition = widthStage-blockSnapSize
     }
 
     myCoord(){
@@ -49,7 +49,6 @@ class yReference {
         this.buildLine();
         this.drawIndexes();
         this.updateSegmentedLines();
-        //this.drawSegmentedLines();
     });
     }
 
@@ -182,7 +181,7 @@ class yReference {
             y: point.getAttr("y"),
             points: [0,0,this.yPosition-point.getAttr("y"),0],
             stroke: 'black',
-            strokeWidth: 3,
+            strokeWidth: 2,
             dash: [10,4],
             visible: true
           });
@@ -193,25 +192,24 @@ class yReference {
 
       deletePoint(point){
         console.log("delete point",point.getAttr("id"));
-
+        console.log("points lenght 1",this.points.length);
+        console.log("segmented lenght 1",this.segmented.length);
 
 
         for (let i=0;i<this.segmented.length;i++){
             if (this.segmented[i].getAttr("id") == point.getAttr("id")){
                 console.log("id de segmentos",this.segmented[i].getAttr("id"));
                 this.segmented[i].destroy();
+                this.segmented.splice(i,1);
             }
         }
-        // for (let i=0;i<this.indexes.length;i++){
-        //     if (this.indexes[i].getAttr("id") == point.getAttr("id")){
-        //         console.log("INDEX",this.segmented[i].getAttr("id"));
-        //         this.indexes[i].destroy();
-        //     }
-        // }
+
+
         for (let i=0;i<this.points.length;i++){
             if (this.points[i].getAttr("id") == point.getAttr("id")){
-                console.log("id de puntos",this.points[i].getAttr("id"));
+                console.log("id a destruir:",this.points[i].getAttr("id"));
                 this.points[i].destroy();
+                this.points.splice(i,1);
             }
         }
         
