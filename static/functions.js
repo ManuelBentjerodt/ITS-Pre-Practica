@@ -2022,7 +2022,19 @@ function drawMoments(node) {
 
 }
 
+
+function calculateDificulty(force,moment,link) {
+    // aqui se pasa apoyo pero se deberia pasar reacciones
+    return 0.1*force + 0.05*moment + 3*link;
+}
+
 function drawDCL() {
+
+    let forcesSum = 0;
+    let momentsSum = 0;
+    let linkSum = 0;
+
+
     const allNodes = [dcl, ...dcl.getAllDecendents()]
 
     const nodesInitialBeam = allNodes.slice(0, 2)
@@ -2053,11 +2065,22 @@ function drawDCL() {
 
     var xCoord = [];
     var yCoord = [];
+
     nodesInitialBeam.forEach(node => {
         drawForces(node);
         drawMoments(node);
 
-
+        // contando fuerzas, apoyos y momentos
+        node.forces.forEach(force=>{
+            forcesSum += 1;
+        })
+         node.moments.forEach(force=>{
+           
+            momentsSum += 1;
+        })
+        if(node.konvaObjects.link){
+            linkSum++;
+        }
     })
 
 
@@ -2066,11 +2089,25 @@ function drawDCL() {
         drawLink(node);
         drawForces(node);
         drawMoments(node);
-        console.log(node);
-        console.log(node)
-    })
 
-    //console.log(dcl.findOriginNode())
+        // contando fuerzas, apoyos y momentos
+        node.forces.forEach(force=>{
+            forcesSum += 1;
+        })
+         node.moments.forEach(force=>{
+           
+            momentsSum += 1;
+        })
+        if(node.konvaObjects.link){
+            linkSum++;
+        }
+    })
+    
+    console.log("Las fuerzas contadas son: " + forcesSum);
+    console.log("Momentos contadas son: " + momentsSum);
+    console.log("Apoyos contadas son: " + linkSum);
+    console.log("Dificultad de ejercicio: " + calculateDificulty(forcesSum,momentsSum,linkSum));
+
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
     //creacion de linea grande horizontal de metros//
@@ -3097,7 +3134,6 @@ function showReferences() {
     const check = document.querySelector("#showReferences");
     check.addEventListener("change", () => {
         if (check.checked) {
-            console.log("ola");
             x_reference.showAll();
             y_reference.showAll();
         } else {

@@ -250,7 +250,6 @@ class xReference {
 
       hideAll(){
         this.visible = false;
-        console.log("ola");
         for (let i=0;i<this.segmented.length;i++){
             this.segmented[i].setAttr("visible",false);
         }
@@ -267,7 +266,6 @@ class xReference {
       }
     
         showAll(){
-            console.log("showALLLLL");
             this.visible = true;
             for (let i=0;i<this.segmented.length;i++){
                 this.segmented[i].setAttr("visible",true);

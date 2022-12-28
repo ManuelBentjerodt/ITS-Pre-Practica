@@ -58,7 +58,7 @@ listenAngleReference(); //new
 const dclJSON = document.querySelector("#dclJSON").textContent;
 
 const dcl = recreateDcl(dclJSON);
-console.log(dcl);
+console.log("Esto es el dcl: ",dcl);
 
 // const initialBeam = dcl.parent.konvaObjects.circle 
 
