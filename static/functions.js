@@ -3093,9 +3093,20 @@ function turnToRealDCL() {
 }
 
 
+function showReferences() {
+    const check = document.querySelector("#showReferences");
+    check.addEventListener("change", () => {
+        if (check.checked) {
+            console.log("ola");
+            x_reference.showAll();
+            y_reference.showAll();
+        } else {
+            x_reference.hideAll();
+            y_reference.hideAll();
+        }
+    });
 
-
-
+}
 
 
 

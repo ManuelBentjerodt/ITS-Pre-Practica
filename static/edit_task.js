@@ -82,13 +82,15 @@ y_reference.buildLine();
 x_reference.updateSegmentedLines();
 y_reference.updateSegmentedLines();
 
+x_reference.hideAll();
+y_reference.hideAll();
 
 layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 
 
-
+showReferences();
 
 drawDCL(dcl);
 updateEquations();

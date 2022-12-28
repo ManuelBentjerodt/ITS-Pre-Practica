@@ -70,8 +70,8 @@ y_reference.updateSegmentedLines();
 
 layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
-
-
+x_reference.hideAll();
+y_reference.hideAll();
 //------------------------------------------------------elements dcl-----------------------------------------------//
 
 const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
@@ -94,6 +94,7 @@ listenDeleteElement();
 listenHiddePanels();
 
 turnToRealDCL();
+showReferences();
 
 listenAngleReference();
 
