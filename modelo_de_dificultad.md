@@ -45,4 +45,19 @@ Fuerzas distribuidas. Geometría simple a avanzada pero con 3 reacciones todaví
 Rótulas. Más de 3 incógnitas.
 
 
+Los puntaje y ecuaciones solo contemplan elementos del ITS hasta el momento.
+
+
+## Puntajes
+
+reaccion: 3
+fuerza: 0.1
+fuerza con ángulo: 0.3
+fuerza en un desnivel: 0.6
+fuerza con ángulo en desnivel: 0.8
+momento: 0.05
+
+## Ecuación de cálculo
+
+∑ r+f+m
 
