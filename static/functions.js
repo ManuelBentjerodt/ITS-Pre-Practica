@@ -392,6 +392,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
             moveElementsAttached(nodeOtherCircle, otherCircle.position(), distanceToX, distanceToY);
             updateEquations();
+            calculateDifPro();
         }
 
     });
@@ -450,6 +451,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
             moveElementsAttached(nodeBeamCircle, beamCircle.position(), distanceToX, distanceToY);
             updateEquations();
+            calculateDifPro();
         }
 
 
@@ -526,6 +528,7 @@ function createFixedSupport(_node = null, rotation) {
 
     indexOfNodeNames += 1;
     updateEquations();
+    calculateDifPro();
     rotateKonvaObject(group, rotation);
     return group;
 }
@@ -601,6 +604,7 @@ function createRollerSupport(_node = null, rotation) {
 
     indexOfNodeNames += 1;
     updateEquations();
+    calculateDifPro();
 
     rotateKonvaObject(group, rotation);
     return group;
@@ -671,6 +675,8 @@ function createPinnedSupport(_node = null, rotation) {
 
     indexOfNodeNames += 1;
     updateEquations();
+    calculateDifPro();
+
     rotateKonvaObject(group, rotation);
     return group;
 }
@@ -735,6 +741,7 @@ function createBallJoint(_node = null) {
 
     indexOfNodeNames += 1;
     updateEquations();
+    calculateDifPro();
     return group;
 }
 
@@ -811,6 +818,8 @@ function createConnectingRod(_node = null) {
 
     indexOfNodeNames += 1;
     updateEquations();
+    calculateDifPro();
+
     return group;
 }
 
@@ -881,6 +890,7 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
 
     forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
     updateEquations();
+    calculateDifPro();
     return group;
 }
 
@@ -932,6 +942,7 @@ function forceMovement(group, large, strokeVal,typeForce) {
             angleVal = newAngle;
             force[1] = newAngle;
             updateEquations();
+            calculateDifPro();
         }
     })
 }
@@ -1015,6 +1026,7 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
     delPanel.style.visibility = "hidden";
     modalMoment.style.visibility = "hidden";
     updateEquations();
+    calculateDifPro();
     return group;
 }
 
@@ -1441,6 +1453,7 @@ function deleteElement(element) {
 
     recalculateNodeNames();
     updateEquations();
+    calculateDifPro();
 }
 
 
@@ -2028,6 +2041,93 @@ function calculateDificulty(force,moment,reactions) {
     return force + 0.05*moment + 3*reactions;
 }
 
+function calculateDifPro(){
+    let forcesSum = 0;
+    let momentsSum = 0;
+    let linkSum = 0;
+
+    const allNodes = [dcl, ...dcl.getAllDecendents()]
+    const nodesInitialBeam = allNodes.slice(0, 2)
+    const otherNodes = allNodes.slice(2)
+
+    originNodeY = nodesInitialBeam[0].coordinate[1];
+    nodesInitialBeam.forEach(node => {
+        
+        // contando fuerzas, apoyos y momentos
+        node.forces.forEach(force=>{
+            if ((force[1]%90) !=0){
+                forcesSum += 0.3;
+                
+                
+            }
+            else{
+                forcesSum +=0.1;
+
+            }
+            if(originNodeY-node.coordinate[1]!=0){
+                forcesSum += 0.3;
+            }
+        })
+
+         node.moments.forEach(force=>{
+           
+            momentsSum += 1;
+        })
+
+        if(node.konvaObjects.link){
+            linkSum++;
+        }
+    })
+    
+
+    otherNodes.forEach(node => {
+        // contando fuerzas, apoyos y momentos
+        node.forces.forEach(force=>{
+            
+            if ((force[1]%90) !=0){
+                forcesSum += 0.3;
+            }
+            else{
+                forcesSum +=0.1;
+
+            }
+            if(originNodeY-node.coordinate[1]!=0){
+                forcesSum += 0.3;
+            }
+        })
+
+         node.moments.forEach(moment=>{
+           
+            momentsSum += 1;
+        })
+
+        if(node.konvaObjects.link){
+            if (node.link === "pinnedSupport") {
+                linkSum+=2
+            }
+            if (node.link === "fixedSupport") {
+                linkSum+=3
+            }
+            if (node.link === "rollerSupport") {
+                linkSum+=1
+            }
+        }
+    })
+    const dificulty =  calculateDificulty(forcesSum,momentsSum,linkSum);
+    console.log("PROPROROROOR: " + dificulty);
+    const pDificulty = document.querySelector("#dificultad");
+ 
+    pDificulty.innerText = "Dificultad: " + dificulty;
+    
+   
+    
+    
+    
+
+}
+
+
+
 function drawDCL() {
 
     let forcesSum = 0;
@@ -2066,38 +2166,14 @@ function drawDCL() {
     
     var xCoord = [];
     var yCoord = [];
+
     
-    originNodeY = nodesInitialBeam[0].coordinate[1];
-    console.log("initialbeam Y:",originNodeY);
     
     nodesInitialBeam.forEach(node => {
         drawForces(node);
         drawMoments(node);
 
-        // contando fuerzas, apoyos y momentos
-        node.forces.forEach(force=>{
-            if ((force[1]/90) !=1){
-                forcesSum += 0.3;
-                
-                
-            }
-            else{
-                forcesSum +=0.1;
-
-            }
-            if(originNodeY-node.coordinate[1]!=0){
-                forcesSum += 0.3;
-            }
-        })
-
-         node.moments.forEach(force=>{
-           
-            momentsSum += 1;
-        })
-
-        if(node.konvaObjects.link){
-            linkSum++;
-        }
+        
     })
 
 
@@ -2107,45 +2183,8 @@ function drawDCL() {
         drawForces(node);
         drawMoments(node);
 
-
-
-        // contando fuerzas, apoyos y momentos
-        node.forces.forEach(force=>{
-            
-            if ((force[1]/90) !=1){
-                forcesSum += 0.3;
-            }
-            else{
-                forcesSum +=0.1;
-
-            }
-            if(originNodeY-node.coordinate[1]!=0){
-                forcesSum += 0.3;
-            }
-        })
-
-         node.moments.forEach(moment=>{
-           
-            momentsSum += 1;
-        })
-
-        if(node.konvaObjects.link){
-            if (node.link === "pinnedSupport") {
-                linkSum+=2
-            }
-            if (node.link === "fixedSupport") {
-                linkSum+=3
-            }
-            if (node.link === "rollerSupport") {
-                linkSum+=1
-            }
-        }
     })
     
-    console.log("Las fuerzas contadas son: " + forcesSum);
-    console.log("Momentos contadas son: " + momentsSum);
-    console.log("Apoyos contadas son: " + linkSum);
-    console.log("Dificultad de ejercicio: " + calculateDificulty(forcesSum,momentsSum,linkSum));
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
@@ -2458,6 +2497,7 @@ function changeOrigin() {
     hideAllPanels();
 
     updateEquations();
+    calculateDifPro();
 }
 
 function distanceXYnodes(node1, node2) {
@@ -2857,6 +2897,8 @@ function calculateEquations() {
 
     return [textForcesX, textForcesY, textMoments];
 }
+
+
 
 function updateEquations() {
     const [Fx, Fy, M] = calculateEquations();
