@@ -55,15 +55,6 @@ listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
 listenAngleReference(); //new
-const dclJSON = document.querySelector("#dclJSON").textContent;
-const dcl = recreateDcl(dclJSON);
-
-
-const inital = stage.find(element => {return element.name() == "initialViga"});
-console.log(inital);
-
-
-
 
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
 y_reference = new yReference([widthStage-5*blockSnapSize,0]);
@@ -78,15 +69,21 @@ y_reference.buildLine();
 x_reference.updateSegmentedLines();
 y_reference.updateSegmentedLines();
 
-
 layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
-
-
-
-
+const dclJSON = document.querySelector("#dclJSON").textContent;
+const dcl = recreateDcl(dclJSON);
 drawDCL(dcl);
+
+const initialBeam = dcl.childNodes[0].konvaObjects.beam.getChildren();
+
+paintIfMouseOver(initialBeam[0], nfillc, nstrokec, initialBeam[0].getAttr("fill"), initialBeam[0].getAttr("stroke"));
+paintIfMouseOver(initialBeam[1], nfillc, nstrokec, initialBeam[1].getAttr("fill"), initialBeam[1].getAttr("stroke"));
+paintIfMouseOver(initialBeam[2], nfillc, nstrokec, initialBeam[2].getAttr("fill"), initialBeam[2].getAttr("stroke"));
+
+
 updateEquations();
+
 
 

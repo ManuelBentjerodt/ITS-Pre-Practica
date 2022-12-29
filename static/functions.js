@@ -2050,13 +2050,11 @@ function drawDCL() {
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
 
-
     var xCoord = [];
     var yCoord = [];
     nodesInitialBeam.forEach(node => {
         drawForces(node);
         drawMoments(node);
-
 
     })
 
@@ -2885,7 +2883,6 @@ function createModalPinnedSupport() {
     modal.appendChild(button);
     return modal;
 }
-
 
 function removeDraggableFromAllNodes() {
     const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
