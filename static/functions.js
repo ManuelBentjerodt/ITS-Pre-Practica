@@ -967,6 +967,7 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
             x0lastPos = x0;
             y0lastPos = y0;
             listOfPoints = positiveList;
+            txt = magnitud;
         } else {
             return;
         }
@@ -2826,30 +2827,42 @@ function createGenericModalRotation(x0, y0) {
     modal.style.visibility = "hidden";
     modal.style.zIndex = "1000";
 
-    const select = document.createElement("select");
-    select.style.width = widthModal + "px";
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = 0;
+    input.max = 359;
+    input.value = 0;
+    input.style.width = widthModal / 4 + "px";
 
-    const option0 = document.createElement("option");
-    const option90 = document.createElement("option");
-    const option180 = document.createElement("option");
-    const option270 = document.createElement("option");
 
-    option0.value = 0;
-    option90.value = 90;
-    option180.value = 180;
-    option270.value = 270;
+    modal.appendChild(input);
 
-    option0.innerText = "Abajo";
-    option90.innerText = "Izquierda";
-    option180.innerText = "Arriba";
-    option270.innerText = "Derecha";
+    // const select = document.createElement("select");
+    // select.style.width = widthModal + "px";
 
-    select.appendChild(option0);
-    select.appendChild(option90);
-    select.appendChild(option180);
-    select.appendChild(option270);
+    // const option0 = document.createElement("option");
+    // const option90 = document.createElement("option");
+    // const option180 = document.createElement("option");
+    // const option270 = document.createElement("option");
 
-    modal.appendChild(select);
+    // option0.value = 0;
+    // option90.value = 90;
+    // option180.value = 180;
+    // option270.value = 270;
+
+    // option0.innerText = "Abajo";
+    // option90.innerText = "Izquierda";
+    // option180.innerText = "Arriba";
+    // option270.innerText = "Derecha";
+
+    // select.appendChild(option0);
+    // select.appendChild(option90);
+    // select.appendChild(option180);
+    // select.appendChild(option270);
+
+
+
+    // modal.appendChild(select);
 
     return modal;
 }
@@ -2938,134 +2951,114 @@ function turnToRealDCL() {
                 const [x, y] = node.coordinate;
 
                 if (node.link === "fixedSupport") {
+                    // node.konvaObjects.link.hide();
+                    // if (node.linkRotation === "0") {
+                    //     if (!node.konvaObjects.forceXsuppoty) {
+                    //         const forceX = createForce(`${node.name}x`, 180, "green", x + lasForce, y)
+                    //         node.setKonvaForceXsupport(forceX);
+                    //     } else node.konvaObjects.forceXsuppoty.show();
+                    //     if (!node.konvaObjects.forceYsupport) {
+                    //         const forceY = createForce(`${node.name}y`, 270, "green", x, y - lasForce)
+                    //         node.setKonvaForceYsupport(forceY);
+                    //     } else node.konvaObjects.forceYsupport.show();
+                    //     if (!node.konvaObjects.moment) {
+                    //         const moment = createMoment(`${node.name}m`, "green", x, y)
+                    //         node.setKonvaMomentSupport(moment);
+                    //     } else node.konvaObjects.moment.show();
+
+                    // } else if (node.linkRotation === "90") {
+                    //     if (!node.konvaObjects.forceXsuppoty) {
+                    //         const forceX = createForce(`${node.name}x`, 180, "green", x + lasForce, y)
+                    //         node.setKonvaForceXsupport(forceX);
+                    //     } else node.konvaObjects.forceXsuppoty.show();
+                    //     if (!node.konvaObjects.forceYsupport) {
+                    //         const forceY = createForce(`${node.name}y`, 90, "green", x, y + lasForce)
+                    //         node.setKonvaForceYsupport(forceY);
+                    //     } else node.konvaObjects.forceYsupport.show();
+                    //     if (!node.konvaObjects.moment) {
+                    //         const moment = createMoment(`${node.name}m`, "green", x, y)
+                    //         node.setKonvaMomentSupport(moment);
+                    //     } else node.konvaObjects.moment.show();
+
+
+                    // } else if (node.linkRotation === "180") {
+                    //     if (!node.konvaObjects.forceXsuppoty) {
+                    //         const forceX = createForce(`${node.name}x`, 0, "green", x - lasForce, y)
+                    //         node.setKonvaForceXsupport(forceX);
+                    //     } else node.konvaObjects.forceXsuppoty.show();
+                    //     if (!node.konvaObjects.forceYsupport) {
+                    //         const forceY = createForce(`${node.name}y`, 90, "green", x, y + lasForce)
+                    //         node.setKonvaForceYsupport(forceY);
+                    //     } else node.konvaObjects.forceYsupport.show();
+                    //     if (!node.konvaObjects.moment) {
+                    //         const moment = createMoment(`${node.name}m`, "green", x, y)
+                    //         node.setKonvaMomentSupport(moment);
+                    //     } else node.konvaObjects.moment.show();
+
+                    // } else if (node.linkRotation === "270") {
+                    //     if (!node.konvaObjects.forceXsuppoty) {
+                    //         const forceX = createForce(`${node.name}x`, 0, "green", x - lasForce, y)
+                    //         node.setKonvaForceXsupport(forceX);
+                    //     } else node.konvaObjects.forceXsuppoty.show();
+                    //     if (!node.konvaObjects.forceYsupport) {
+                    //         const forceY = createForce(`${node.name}y`, 270, "green", x, y - lasForce)
+                    //         node.setKonvaForceYsupport(forceY);
+                    //     } else node.konvaObjects.forceYsupport.show();
+                    //     if (!node.konvaObjects.moment) {
+                    //         const moment = createMoment(`${node.name}m`, "green", x, y)
+                    //         node.setKonvaMomentSupport(moment);
+                    //     } else node.konvaObjects.moment.show();
+                    // }
+
                     node.konvaObjects.link.hide();
-                    if (node.linkRotation === "0") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 180, "green", x + lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 270, "green", x, y - lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
-                        if (!node.konvaObjects.moment) {
-                            const moment = createMoment(`${node.name}m`, "green", x, y)
-                            node.setKonvaMomentSupport(moment);
-                        } else node.konvaObjects.moment.show();
+                    const supportAngle = parseFloat(node.linkRotation);
 
-                    } else if (node.linkRotation === "90") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 180, "green", x + lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 90, "green", x, y + lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
-                        if (!node.konvaObjects.moment) {
-                            const moment = createMoment(`${node.name}m`, "green", x, y)
-                            node.setKonvaMomentSupport(moment);
-                        } else node.konvaObjects.moment.show();
+                    const forceAngleX = (180 - supportAngle) % 360;
+                    const Xx = x - lasForce*Math.cos(degToRad(forceAngleX));
+                    const Yx = y + lasForce*Math.sin(degToRad(forceAngleX));
 
+                    const forceAngleY = (270 - supportAngle) % 360;
+                    const Xy = x - lasForce*Math.cos(degToRad(forceAngleY));
+                    const Yy = y + lasForce*Math.sin(degToRad(forceAngleY));
+                    
+                    const forceX = createForce(`${node.name}x`, forceAngleX, "green", Xx, Yx);
+                    const forceY = createForce(`${node.name}y`, forceAngleY, "green", Xy, Yy);
 
-                    } else if (node.linkRotation === "180") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 0, "green", x - lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 90, "green", x, y + lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
-                        if (!node.konvaObjects.moment) {
-                            const moment = createMoment(`${node.name}m`, "green", x, y)
-                            node.setKonvaMomentSupport(moment);
-                        } else node.konvaObjects.moment.show();
-
-                    } else if (node.linkRotation === "270") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 0, "green", x - lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 270, "green", x, y - lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
-                        if (!node.konvaObjects.moment) {
-                            const moment = createMoment(`${node.name}m`, "green", x, y)
-                            node.setKonvaMomentSupport(moment);
-                        } else node.konvaObjects.moment.show();
-                    }
+                    const moment = createMoment(`${node.name}m`, "green", x, y)
+                    
+                    node.setKonvaForceXsupport(forceX);
+                    node.setKonvaForceYsupport(forceY);   
+                    node.setKonvaMomentSupport(moment);
                 }
                 else if (node.link === "pinnedSupport") {
+
                     node.konvaObjects.link.hide();
-                    node.konvaObjects.link.hide();
-                    if (node.linkRotation === "0") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 180, "green", x + lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 270, "green", x, y - lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
+                    const supportAngle = parseFloat(node.linkRotation);
 
-                    } else if (node.linkRotation === "90") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 180, "green", x + lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 90, "green", x, y + lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
+                    const forceAngleX = (180 - supportAngle) % 360;
+                    const Xx = x - lasForce*Math.cos(degToRad(forceAngleX));
+                    const Yx = y + lasForce*Math.sin(degToRad(forceAngleX));
 
-                    } else if (node.linkRotation === "180") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 0, "green", x - lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 90, "green", x, y + lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
+                    const forceAngleY = (270 - supportAngle) % 360;
+                    const Xy = x - lasForce*Math.cos(degToRad(forceAngleY));
+                    const Yy = y + lasForce*Math.sin(degToRad(forceAngleY));
+                    
+                    const forceX = createForce(`${node.name}x`, forceAngleX, "green", Xx, Yx);
+                    const forceY = createForce(`${node.name}y`, forceAngleY, "green", Xy, Yy);
 
-                    } else if (node.linkRotation === "270") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 0, "green", x - lasForce, y)
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                        if (!node.konvaObjects.forceYsupport) {
-                            const forceY = createForce(`${node.name}y`, 270, "green", x, y - lasForce)
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsupport.show();
-                    }
+                    node.setKonvaForceXsupport(forceX);
+                    node.setKonvaForceYsupport(forceY);   
                 }
                 else if (node.link === "rollerSupport") {
                     node.konvaObjects.link.hide();
-                    if (node.linkRotation === "0") {
-                        if (!node.konvaObjects.forceYsuppot) {
-                            const forceY = createForce(`${node.name}x`, 270, "green", x, y - lasForce);
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsuppot.show();
 
-                    } else if (node.linkRotation === "90") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 180, "green", x + lasForce, y);
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
+                    const supportAngle = parseFloat(node.linkRotation);
+                    const forceAngle = (270 - supportAngle) % 360;
+                    const X = x - lasForce*Math.cos(degToRad(forceAngle));
+                    const Y = y + lasForce*Math.sin(degToRad(forceAngle));
 
-                    } else if (node.linkRotation === "180") {
-                        if (!node.konvaObjects.forceYsuppoty) {
-                            const forceY = createForce(`${node.name}x`, 90, "green", x, y + lasForce);
-                            node.setKonvaForceYsupport(forceY);
-                        } else node.konvaObjects.forceYsuppoty.show();
-                    } else if (node.linkRotation === "270") {
-                        if (!node.konvaObjects.forceXsuppoty) {
-                            const forceX = createForce(`${node.name}x`, 0, "green", x - lasForce, y);
-                            node.setKonvaForceXsupport(forceX);
-                        } else node.konvaObjects.forceXsuppoty.show();
-                    }
+                    const forceY = createForce(`${node.name}y`, forceAngle, "green", X, Y);
+                    node.setKonvaForceYsupport(forceY);    
                 }
 
             })
