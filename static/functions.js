@@ -1542,7 +1542,6 @@ function listenArrowRotation(konvaArc,arrow){
 }
 function createAngleReference(){
     
-    console.log("CREATE REFERENCE ANGLE!!!!");
     console.log(lastElementClick.getAttr("tension")[1]);
     const forceObject = lastElementClick
     angle = forceObject.getAttr("tension")[1];
@@ -2023,9 +2022,10 @@ function drawMoments(node) {
 }
 
 
-function calculateDificulty(force,moment,link) {
-    // aqui se pasa apoyo pero se deberia pasar reacciones
-    return 0.1*force + 0.05*moment + 3*link;
+function calculateDificulty(force,moment,reactions) {
+    // .getAttr("tension")[1] angulo de la fuerza
+    // se le pasa la fuerza ya calculada con su tipo de fuerza
+    return force + 0.05*moment + 3*reactions;
 }
 
 function drawDCL() {
@@ -2053,31 +2053,48 @@ function drawDCL() {
         _node = nodesInitialBeam[1]
     )[1];
 
+    
     initialBeam.getChildren()[1].setAttr("fill", nodeColor);
-
+    
     const shadowBeam = createShadowBeam(x0, y0, x1 - x0, y1 - y0);
     shadowBeam.hide();
     listenNodeMovement(initialBeam, shadowBeam, "initialBeam");
-
+    
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
-
-
+    
+    
     var xCoord = [];
     var yCoord = [];
-
+    
+    originNodeY = nodesInitialBeam[0].coordinate[1];
+    console.log("initialbeam Y:",originNodeY);
+    
     nodesInitialBeam.forEach(node => {
         drawForces(node);
         drawMoments(node);
 
         // contando fuerzas, apoyos y momentos
         node.forces.forEach(force=>{
-            forcesSum += 1;
+            if ((force[1]/90) !=1){
+                forcesSum += 0.3;
+                
+                
+            }
+            else{
+                forcesSum +=0.1;
+
+            }
+            if(originNodeY-node.coordinate[1]!=0){
+                forcesSum += 0.3;
+            }
         })
+
          node.moments.forEach(force=>{
            
             momentsSum += 1;
         })
+
         if(node.konvaObjects.link){
             linkSum++;
         }
@@ -2090,16 +2107,38 @@ function drawDCL() {
         drawForces(node);
         drawMoments(node);
 
+
+
         // contando fuerzas, apoyos y momentos
         node.forces.forEach(force=>{
-            forcesSum += 1;
+            
+            if ((force[1]/90) !=1){
+                forcesSum += 0.3;
+            }
+            else{
+                forcesSum +=0.1;
+
+            }
+            if(originNodeY-node.coordinate[1]!=0){
+                forcesSum += 0.3;
+            }
         })
-         node.moments.forEach(force=>{
+
+         node.moments.forEach(moment=>{
            
             momentsSum += 1;
         })
+
         if(node.konvaObjects.link){
-            linkSum++;
+            if (node.link === "pinnedSupport") {
+                linkSum+=2
+            }
+            if (node.link === "fixedSupport") {
+                linkSum+=3
+            }
+            if (node.link === "rollerSupport") {
+                linkSum+=1
+            }
         }
     })
     
