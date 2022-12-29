@@ -56,16 +56,12 @@ listenDeleteElement();
 listenHiddePanels();
 listenAngleReference(); //new
 const dclJSON = document.querySelector("#dclJSON").textContent;
-
 const dcl = recreateDcl(dclJSON);
-console.log(dcl);
-
-// const initialBeam = dcl.parent.konvaObjects.circle 
 
 
-// paintIfMouseOver(initialBeam.getChildren()[0], nfillc, nstrokec, initialBeam.getChildren()[0].getAttr("fill"), initialBeam.getChildren()[0].getAttr("stroke"));
-// paintIfMouseOver(initialBeam.getChildren()[1], nfillc, nstrokec, initialBeam.getChildren()[1].getAttr("fill"), initialBeam.getChildren()[1].getAttr("stroke"));
-// paintIfMouseOver(initialBeam.getChildren()[2], nfillc, nstrokec, initialBeam.getChildren()[2].getAttr("fill"), initialBeam.getChildren()[2].getAttr("stroke"));
+const inital = stage.find(element => {return element.name() == "initialViga"});
+console.log(inital);
+
 
 
 
