@@ -94,5 +94,5 @@ showReferences();
 
 drawDCL(dcl);
 updateEquations();
-calculateDifPro();
-
+updateDificulty();
+updateClassification();
