@@ -10,7 +10,8 @@ class yReference {
         this.indexes = [],
         this.segmentedLines = [],
         this.segmented = [],
-        this.yPosition = widthStage-blockSnapSize
+        this.yPosition = widthStage-blockSnapSize,
+        this.visible = false
     }
 
     myCoord(){
@@ -116,6 +117,11 @@ class yReference {
              }
             }
         }
+        if (!this.visible){
+            for (let i=0;i<this.meters.length;i++){
+                this.meters[i].setAttr("visible",false);
+            }
+        }
       }
 
       drawIndexes(){
@@ -140,6 +146,11 @@ class yReference {
             layer.add(line);
         }
 
+        if (!this.visible){
+            for (let i=0;i<this.indexes.length;i++){
+                this.indexes[i].setAttr("visible",false);
+            }
+        }
       }
 
 
@@ -169,7 +180,11 @@ class yReference {
         }
 
 
-
+        if (!this.visible){
+            for (let i=0;i<this.segmented.length;i++){
+                this.segmented[i].setAttr("visible",false);
+            }
+        }
       }
 
 
@@ -191,14 +206,10 @@ class yReference {
       }
 
       deletePoint(point){
-        console.log("delete point",point.getAttr("id"));
-        console.log("points lenght 1",this.points.length);
-        console.log("segmented lenght 1",this.segmented.length);
-
 
         for (let i=0;i<this.segmented.length;i++){
             if (this.segmented[i].getAttr("id") == point.getAttr("id")){
-                console.log("id de segmentos",this.segmented[i].getAttr("id"));
+            
                 this.segmented[i].destroy();
                 this.segmented.splice(i,1);
             }
@@ -207,7 +218,6 @@ class yReference {
 
         for (let i=0;i<this.points.length;i++){
             if (this.points[i].getAttr("id") == point.getAttr("id")){
-                console.log("id a destruir:",this.points[i].getAttr("id"));
                 this.points[i].destroy();
                 this.points.splice(i,1);
             }
@@ -217,8 +227,35 @@ class yReference {
         this.drawIndexes();
         this.buildLine();
         
-      }
-
+    }
+    
+    hideAll(){
+        this.visible = false;
+        for (let i=0;i<this.segmented.length;i++){
+            this.segmented[i].setAttr("visible",false);
+        }
+        for (let i=0;i<this.indexes.length;i++){
+            this.indexes[i].setAttr("visible",false);
+        }
+        for (let i=0;i<this.meters.length;i++){
+            this.meters[i].setAttr("visible",false);
+        }
+        this.konvaLine.setAttr("visible",false);
+    }
+    
+    showAll(){
+        this.visible = true;
+        for (let i=0;i<this.indexes.length;i++){
+            this.indexes[i].setAttr("visible",true);
+        }
+        for (let i=0;i<this.meters.length;i++){
+            this.meters[i].setAttr("visible",true);
+        }
+        this.konvaLine.setAttr("visible",true);
+        this.buildLine();
+        this.drawIndexes();
+        this.updateSegmentedLines();
+    }
     
 }
 

@@ -56,6 +56,7 @@ listenDeleteElement();
 listenHiddePanels();
 listenAngleReference(); //new
 
+
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
 y_reference = new yReference([widthStage-5*blockSnapSize,0]);
 
@@ -65,7 +66,6 @@ y_reference.createKonvaLine();
 x_reference.buildLine();
 y_reference.buildLine();
 
-
 x_reference.updateSegmentedLines();
 y_reference.updateSegmentedLines();
 
@@ -74,6 +74,13 @@ layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
 const dcl = recreateDcl(dclJSON);
+
+x_reference.hideAll();
+y_reference.hideAll();
+
+
+showReferences();
+
 drawDCL(dcl);
 
 const initialBeam = dcl.childNodes[0].konvaObjects.beam.getChildren();
@@ -84,7 +91,7 @@ paintIfMouseOver(initialBeam[2], nfillc, nstrokec, initialBeam[2].getAttr("fill"
 
 
 updateEquations();
-
+calculateDifPro();
 
 turnToRealDCL();
 

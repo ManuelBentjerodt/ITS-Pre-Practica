@@ -11,6 +11,7 @@ class xReference {
         this.segmentedLines = [],
         this.segmented = [],
         this.xPosition = heightStage-blockSnapSize
+        this.visible = false
     }
 
     myCoord(){
@@ -26,7 +27,6 @@ class xReference {
             id: this.id
         });
         this.drawIndexes();
-        //this.drawSegmentedLines();
         return this.konvaLine;
     }
 
@@ -67,8 +67,14 @@ class xReference {
     getKonvaLine(){
         return this.konvaLine;}
     
+    roundList(list){
+        for (let i=0;i<list.length;i++){
+            list[i] = Math.round(list[i]/blockSnapSize)*blockSnapSize;
+        }
+        return list;
+    }
+
     buildLine(){
-        
 
         if (this.points.length > 1){
             let xList = [];
@@ -82,7 +88,7 @@ class xReference {
 
             this.konvaLine.setAttr("points",[xRoundedMin,this.xPosition,xRoundedMax,this.xPosition]);
             const xSorted = xList.sort(function(a, b){return a-b});
-            this.drawMeters(xSorted);
+            this.drawMeters(this.roundList(xSorted));  // antes de pasarle la lista a la funcion, la redondeo
             
         }
       }
@@ -91,12 +97,13 @@ class xReference {
       drawMeters(sortedList){
         const maxValue = Math.max(...sortedList);
         const offSet = 7;
-
         for (let i=0;i<this.meters.length;i++){
             this.meters[i].destroy();
         }
 
+        if (this.hidden){
 
+        }
         for (var i=0;i<sortedList.length;i++){
 
             if(sortedList[i] != maxValue){
@@ -112,7 +119,8 @@ class xReference {
                     text: meters+"m",
                     fontSize: 15,
                     fontFamily: "Impact",
-                    fill: "black"
+                    fill: "black",
+                    visible: true
                 });
                 this.meters.push(metersText);
                 layer.add(metersText);
@@ -121,6 +129,11 @@ class xReference {
             } //first if
 
         }//sec for
+        if (!this.visible){
+            for (let i=0;i<this.meters.length;i++){
+                this.meters[i].setAttr("visible",false);
+            }
+        }
       }//function
 
       drawIndexes(){
@@ -138,14 +151,19 @@ class xReference {
                 points:[0,0,0,2*lineLenght],
                 stroke: 'black',
                 strokeWidth: 6,
-                tension: 0
+                tension: 0,
+                visible: true
               });
               
             this.indexes.push(line);
             layer.add(line);
         }
-
-      }
+        if (!this.visible){
+            for (let i=0;i<this.indexes.length;i++){
+                this.indexes[i].setAttr("visible",false);
+            }
+        }
+    }
 
 
     
@@ -164,6 +182,7 @@ class xReference {
           });
           this.segmented.push(line);
           layer.add(line);
+          
 
       }
       updateSegmentedLines(){
@@ -179,6 +198,7 @@ class xReference {
 
                     this.segmented[j].setAttr("points",[0,nodeRadius,0,this.xPosition-Math.round( this.points[i].getAttr("y")/blockSnapSize)*blockSnapSize]);
                     this.segmented[j].setAttr("visible",true);
+                    
                 }
             }
         }
@@ -192,6 +212,11 @@ class xReference {
             }
         }
 
+        if (!this.visible){
+            for (let i=0;i<this.segmented.length;i++){
+                this.segmented[i].setAttr("visible",false);
+            }
+        }
 
 
       }
@@ -224,6 +249,7 @@ class xReference {
 
 
       hideAll(){
+        this.visible = false;
         for (let i=0;i<this.segmented.length;i++){
             this.segmented[i].setAttr("visible",false);
         }
@@ -234,9 +260,13 @@ class xReference {
             this.meters[i].setAttr("visible",false);
         }
         this.konvaLine.setAttr("visible",false);
+        this.buildLine();
+        this.drawIndexes();
+        // this.updateSegmentedLines();
       }
     
         showAll(){
+            this.visible = true;
             for (let i=0;i<this.segmented.length;i++){
                 this.segmented[i].setAttr("visible",true);
             }
@@ -247,6 +277,11 @@ class xReference {
                 this.meters[i].setAttr("visible",true);
             }
             this.konvaLine.setAttr("visible",true);
+
+            this.buildLine();
+            this.drawIndexes();
+            this.updateSegmentedLines();
+            
           }
 
 

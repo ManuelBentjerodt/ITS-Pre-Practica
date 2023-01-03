@@ -20,3 +20,4 @@ const originColor = "green";
 const originColorMouseOver = "#00ff00";
 
 let turnToRealDCLFlag = false;
+let showReferencesFlag = false;
