@@ -897,6 +897,8 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
 
     forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
     updateEquations();
+    updateDificulty();
+    updateClassification();
     ficulty();
     return group;
 }
@@ -2098,9 +2100,10 @@ function updateClassification(){
     const otherNodes = allNodes.slice(2)
 
     originNodeY = nodesInitialBeam[0].coordinate[1];
+
+
     nodesInitialBeam.forEach(node => {
-        
-        // contando fuerzas, apoyos y momentos
+
         node.forces.forEach(force=>{
             if ((force[1]%90) !=0){
                 if (tags.includes("fuerza con angulo") == false){
@@ -2128,15 +2131,15 @@ function updateClassification(){
             }
         })
 
-        if(node.konvaObjects.link){
+        if(node.link){
             if (node.link === "pinnedSupport" || node.link === "rollerSuport") {
                 if (tags.includes("apoyos simples") == false){
                     tags.push("apoyos simples");
                 }
             }
-            if (node.link === "empotrado") {
-                if (tags.includes("apoyos simples") == false){
-                    tags.push("apoyos simples");
+            if (node.link === "fixedSupport") {
+                if (tags.includes("empotrado") == false){
+                    tags.push("empotrado");
                 }
             }
         }
@@ -2173,22 +2176,22 @@ function updateClassification(){
             }
         })
 
-        if(node.konvaObjects.link){
+        if(node.link){
             if (node.link === "pinnedSupport" || node.link === "rollerSuport") {
                 if (tags.includes("apoyos simples") == false){
                     tags.push("apoyos simples");
                 }
             }
-            if (node.link === "empotrado") {
-                if (tags.includes("apoyos simples") == false){
-                    tags.push("apoyos simples");
+            if (node.link === "fixedSupport") {
+                if (tags.includes("empotrado") == false){
+                    tags.push("empotrado");
                 }
             }
+          
             
         }
     })
 
-    console.log("PROPROROROOR: " + tags);
     const pClassification = document.querySelector("#classification");
  
     pClassification.innerText = "Tags: " + tags;
