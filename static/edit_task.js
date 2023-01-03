@@ -86,4 +86,7 @@ paintIfMouseOver(initialBeam[2], nfillc, nstrokec, initialBeam[2].getAttr("fill"
 updateEquations();
 
 
+turnToRealDCL();
+
+
 
