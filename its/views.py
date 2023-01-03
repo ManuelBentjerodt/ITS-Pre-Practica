@@ -80,7 +80,8 @@ def sign_out(request):
 def teacher_home(request):
     tasks = Task.objects.all()
     context = {
-        'tasks': tasks
+        'tasks': tasks,
+        'user': request.user
     }
     return render(request, 'teacher_home.html', context)
 

@@ -1823,7 +1823,7 @@ function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGrou
 function generateGrid(layer) {
     for (let i = 0; i <= widthStage / blockSnapSize; i++) {
         layer.add(new Konva.Line({
-            name: "horizontalLines",
+            name: "horizontalLine",
             points: [Math.round(i * blockSnapSize) + 0.5, 0, Math.round(i * blockSnapSize) + 0.5, heightStage],
             stroke: "#777777",
             strokeWidth: 1,
@@ -1832,7 +1832,7 @@ function generateGrid(layer) {
 
     for (let j = 0; j <= heightStage / blockSnapSize; j++) {
         layer.add(new Konva.Line({
-            name: "verticalLines",
+            name: "verticalLine",
             points: [0, Math.round(j * blockSnapSize), widthStage, Math.round(j * blockSnapSize)],
             stroke: "#7777777",
             strokeWidth: 0.5,
@@ -2065,8 +2065,6 @@ function drawDCL() {
         drawLink(node);
         drawForces(node);
         drawMoments(node);
-        console.log(node);
-        console.log(node)
     })
 
     //console.log(dcl.findOriginNode())
@@ -2446,7 +2444,6 @@ function tryPushLinkForces(linkForces, name, proyection){
 
 
 function calculateEquations() {
-    console.log("Calculando ecuaciones")
     const origin = dcl.findOriginNode()
 
     const moments = [];
@@ -2460,7 +2457,6 @@ function calculateEquations() {
 
     const allNodes = [dcl, ...dcl.getAllDecendents()];
 
-    console.log(allNodes.map(node => node.id))
 
     allNodes.forEach(node => {
         const diff = distanceXYnodes(node, origin);
@@ -2618,7 +2614,7 @@ function calculateEquations() {
                 coeffyy = `*sin(${prettyAngleFy})`;
             } 
 
-            console.log(proyectionFx, proyectionFy)
+       
             
             tryPushLinkForces(linkForcesX, `${node.name}x${coeffxx}`, proyectionFx.x);
             tryPushLinkForces(linkForcesY, `${node.name}x${coeffxy}`, proyectionFx.y);
@@ -2869,6 +2865,18 @@ function addDraggableToAllNodes() {
     })
 }
 
+function visibilityLines(lineType, viewType){
+    const lines = layer.find(node => node.name() === lineType);
+    lines.forEach(line => {
+        if(viewType === "hide"){
+            line.hide();
+        }else if(viewType === "show"){
+            line.show();
+        }
+    });
+
+}
+
 function turnToRealDCL() {
     const check = document.querySelector("#turnToRealDCL");
 
@@ -2937,6 +2945,9 @@ function turnToRealDCL() {
 
             })
 
+            visibilityLines("horizontalLine", "hide");
+            visibilityLines("verticalLine", "hide");
+
         } else {
             addDraggableToAllNodes();
             turnToRealDCLFlag = false;
@@ -2950,6 +2961,8 @@ function turnToRealDCL() {
                 }
 
             })
+            visibilityLines("horizontalLine", "show");
+            visibilityLines("verticalLine", "show");
         }
     })
 
