@@ -366,7 +366,8 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
             moveElementsAttached(nodeOtherCircle, otherCircle.position(), distanceToX, distanceToY);
             updateEquations();
-            calculateDifPro();
+            updateDificulty();
+            updateClassification();
         }
 
     });
@@ -425,7 +426,8 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
             moveElementsAttached(nodeBeamCircle, beamCircle.position(), distanceToX, distanceToY);
             updateEquations();
-            calculateDifPro();
+            updateDificulty();
+            updateClassification();
         }
 
 
@@ -502,7 +504,9 @@ function createFixedSupport(_node = null, rotation) {
 
     indexOfNodeNames += 1;
     updateEquations();
-    calculateDifPro();
+    updateDificulty();
+    updateClassification();
+
     rotateKonvaObject(group, rotation);
     return group;
 }
@@ -578,7 +582,8 @@ function createRollerSupport(_node = null, rotation) {
 
     indexOfNodeNames += 1;
     updateEquations();
-    calculateDifPro();
+    updateDificulty();
+    updateClassification();
 
     rotateKonvaObject(group, rotation);
     return group;
@@ -649,8 +654,9 @@ function createPinnedSupport(_node = null, rotation) {
 
     indexOfNodeNames += 1;
     updateEquations();
-    calculateDifPro();
-
+    updateDificulty();
+    updateClassification();
+    
     rotateKonvaObject(group, rotation);
     return group;
 }
@@ -715,7 +721,8 @@ function createBallJoint(_node = null) {
 
     indexOfNodeNames += 1;
     updateEquations();
-    calculateDifPro();
+    updateDificulty();
+    updateClassification();
     return group;
 }
 
@@ -792,8 +799,8 @@ function createConnectingRod(_node = null) {
 
     indexOfNodeNames += 1;
     updateEquations();
-    calculateDifPro();
-
+    updateDificulty();
+    updateClassification();
     return group;
 }
 
@@ -867,7 +874,9 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
 
     forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
     updateEquations();
-    calculateDifPro();
+    updateDificulty();
+    updateClassification();
+    ficulty();
     return group;
 }
 
@@ -919,7 +928,8 @@ function forceMovement(group, large, strokeVal,typeForce) {
             angleVal = newAngle;
             force[1] = newAngle;
             updateEquations();
-            calculateDifPro();
+            updateDificulty();
+            updateClassification();
         }
     })
 }
@@ -1004,7 +1014,8 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
     delPanel.style.visibility = "hidden";
     modalMoment.style.visibility = "hidden";
     updateEquations();
-    calculateDifPro();
+    updateDificulty();
+    updateClassification();
     return group;
 }
 
@@ -1431,7 +1442,8 @@ function deleteElement(element) {
 
     recalculateNodeNames();
     updateEquations();
-    calculateDifPro();
+    updateDificulty();
+    updateClassification();
 }
 
 
@@ -1521,7 +1533,6 @@ function listenAngleCreated(konvaArc){
     }
 
 function listenArrowRotation(konvaArc,arrow){
-    console.log("olassdfdsfk");
     arrow.on("dragend", () => {
         konvaArc.clockwise(true);
         if (arrow.getAttr("tension")[1] > 180 && arrow.getAttr("tension")[1]) {
@@ -2019,7 +2030,158 @@ function calculateDificulty(force,moment,reactions) {
     return force + 0.05*moment + 3*reactions;
 }
 
-function calculateDifPro(){
+
+// function activateReferences(){
+    
+//     console.log("hola");
+
+//     const allNodes = [dcl, ...dcl.getAllDecendents()]
+//     const nodesInitialBeam = allNodes.slice(0, 2)
+//     const otherNodes = allNodes.slice(2)
+
+//     originNodeY = nodesInitialBeam[0].coordinate[1];
+//     nodesInitialBeam.forEach(node => {
+        
+     
+//         node.forces.forEach(arrow=>{
+//             if (arrow.getAttr("tension")[1] > 180 && arrow.getAttr("tension")[1]) {
+//                 konvaArc.clockwise(false);
+//               }
+//             konvaArc.angle(360-arrow.getAttr("tension")[1]);
+            
+    
+//     })
+    
+
+//     otherNodes.forEach(node => {
+      
+//         node.forces.forEach(force=>{
+//         })
+
+         
+//     })
+ 
+//  })
+// }
+
+
+
+
+
+
+function updateClassification(){
+    // tags: fuerza perpendicular, fuerza angulo, vinculo simples, empotrado, momento, superficie con inclinacion
+    let tags = [];
+
+    const allNodes = [dcl, ...dcl.getAllDecendents()]
+    const nodesInitialBeam = allNodes.slice(0, 2)
+    const otherNodes = allNodes.slice(2)
+
+    originNodeY = nodesInitialBeam[0].coordinate[1];
+
+
+    nodesInitialBeam.forEach(node => {
+
+        node.forces.forEach(force=>{
+            if ((force[1]%90) !=0){
+                if (tags.includes("fuerza con angulo") == false){
+                    tags.push("fuerza con angulo");
+                }
+                
+            }
+            else{
+                if (tags.includes("fuerza perpendicular") == false){
+                    tags.push("fuerza perpendicular");
+                }
+
+            }
+            if(originNodeY-node.coordinate[1]!=0){
+                
+                if (tags.includes("desnivel") == false){
+                    tags.push("desnivel");
+                }
+            }
+        })
+
+         node.moments.forEach(force=>{
+            if (tags.includes("momento") == false){
+                tags.push("momento");
+            }
+        })
+
+        if(node.link){
+            if (node.link === "pinnedSupport" || node.link === "rollerSuport") {
+                if (tags.includes("apoyos simples") == false){
+                    tags.push("apoyos simples");
+                }
+            }
+            if (node.link === "fixedSupport") {
+                if (tags.includes("empotrado") == false){
+                    tags.push("empotrado");
+                }
+            }
+        }
+    })
+    
+
+    otherNodes.forEach(node => {
+        // contando fuerzas, apoyos y momentos
+        node.forces.forEach(force=>{
+            
+            if ((force[1]%90) !=0){
+                if (tags.includes("fuerza con angulo") == false){
+                    tags.push("fuerza con angulo");
+                }
+            }
+            else{
+                if (tags.includes("fuerza perpendicular") == false){
+                    tags.push("fuerza perpendicular");
+                }
+
+            }
+            if(originNodeY-node.coordinate[1]!=0){
+                
+                if (tags.includes("desnivel") == false){
+                    tags.push("desnivel");
+                }
+            }
+        })
+
+         node.moments.forEach(moment=>{
+           
+            if (tags.includes("momento") == false){
+                tags.push("momento");
+            }
+        })
+
+        if(node.link){
+            if (node.link === "pinnedSupport" || node.link === "rollerSuport") {
+                if (tags.includes("apoyos simples") == false){
+                    tags.push("apoyos simples");
+                }
+            }
+            if (node.link === "fixedSupport") {
+                if (tags.includes("empotrado") == false){
+                    tags.push("empotrado");
+                }
+            }
+          
+            
+        }
+    })
+
+    const pClassification = document.querySelector("#classification");
+ 
+    pClassification.innerText = "Tags: " + tags;
+    
+   
+}
+
+
+
+
+
+function updateDificulty(){
     let forcesSum = 0;
     let momentsSum = 0;
     let linkSum = 0;
@@ -2053,7 +2215,15 @@ function calculateDifPro(){
         })
 
         if(node.konvaObjects.link){
-            linkSum++;
+            if (node.link === "pinnedSupport") {
+                linkSum+=2
+            }
+            if (node.link === "fixedSupport") {
+                linkSum+=3
+            }
+            if (node.link === "rollerSupport") {
+                linkSum+=1
+            }
         }
     })
     
@@ -2464,7 +2634,8 @@ function changeOrigin() {
     hideAllPanels();
 
     updateEquations();
-    calculateDifPro();
+    updateDificulty();
+    updateClassification();
 }
 
 function distanceXYnodes(node1, node2) {
@@ -2942,6 +3113,7 @@ function visibilityLines(lineType, viewType){
 
 function showReferences() {
     const check = document.querySelector("#showReferences");
+    //activateReferences();
     check.addEventListener("change", () => {
         if (check.checked) {
             x_reference.showAll();

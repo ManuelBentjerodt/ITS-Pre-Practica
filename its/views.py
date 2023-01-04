@@ -142,3 +142,14 @@ def edit_task(request, id):
             return redirect('teacher_home')
     return render (request,'edit_task.html',context)
 
+def firstStep(request):
+    return render(request, 'firstStep.html')
+
+def thirdStep(request):
+    return render(request, 'thirdStep.html')
+    
+def fourthStep(request):
+    return render(request, 'fourthStep.html')
+
+def fifthStep(request):
+    return render(request, 'fifthStep.html')

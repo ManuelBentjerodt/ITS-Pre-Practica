@@ -97,5 +97,5 @@ showReferences();
 
 listenAngleReference();
 
-
-calculateDifPro();
+updateDificulty();
+updateClassification();
