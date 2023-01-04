@@ -6,10 +6,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
-    <title>PASO 5</title>
+    <title>Document</title>
+    <script src="https://unpkg.com/konva@8.3.12/konva.min.js"></script>
 </head>
 <body>
-    <h1>El paso 5</h1>
-    <p>Hola</p>
+
+    <h1>PASO 5</h1>
+    <div class="accordion" id="accordionExample">
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Ejercicio ayudantia 10
+              </button>
+            </h5>
+          </div>
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body">
+                Resolver valores de las incognitas.
+            </div>
+          </div>
+        </div>
+    </div>
+        
+    <p>
+        Reemplazar viculos por fuerzas
+        <input type="checkbox" id="turnToRealDCL">
+        (Vista no editable)
+        Mostrar referencias
+        <input type="checkbox" id="showReferences">
+        
+        
+    </p> 
+    <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
+    <!-- <br>
+    <div id="container2" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div> -->
+    <div>
+        <p id="forcesX">ΣFx: = 0</p>
+        <p id="forcesY">ΣFy: = 0</p>
+        <p id="moments">ΣM: = 0</p>
+        <p id="dificultad">Dificultad: = 0</p>
+        <p id="classification">Tags: = []</p>
+    </div>
+
+    {% load static %}
+    
+    <script src="{%static '/nodesName.js'%}"></script>
+    <script src="{%static '/node.js'%}"></script>
+    <script src="{%static '/variables.js'%}"></script>
+    <script src="{%static '/y_reference.js'%}"></script>
+    <script src="{%static '/x_reference.js'%}"></script>
+    <script src="{%static '/functions.js'%}"></script>
+    <script src="{%static '/create_task.js'%}"></script>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+
+        <script src="{%static '/save_task.js'%}"></script>
+        <button type="submit" onclick="saveTask()">GUARDAR</button>
+    </form>
+
+
 </body>
 </html>

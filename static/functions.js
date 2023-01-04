@@ -2263,6 +2263,13 @@ function updateDificulty(){
     })
     const dificulty =  calculateDificulty(forcesSum,momentsSum,linkSum);
     console.log("PROPROROROOR: " + dificulty);
+    
+    if (document.querySelector("#dificultad")){
+        console.log("existe la cosa");
+    }
+    else{
+        console.log("no existe la cosa");
+    }
     const pDificulty = document.querySelector("#dificultad");
  
     pDificulty.innerText = "Dificultad: " + dificulty;
