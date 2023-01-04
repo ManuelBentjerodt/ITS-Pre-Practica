@@ -227,9 +227,9 @@ class yReference {
         this.drawIndexes();
         this.buildLine();
         
-      }
-      
-      hideAll(){
+    }
+    
+    hideAll(){
         this.visible = false;
         for (let i=0;i<this.segmented.length;i++){
             this.segmented[i].setAttr("visible",false);
@@ -241,23 +241,21 @@ class yReference {
             this.meters[i].setAttr("visible",false);
         }
         this.konvaLine.setAttr("visible",false);
-      }
+    }
     
-        showAll(){
-            this.visible = true;
-            for (let i=0;i<this.indexes.length;i++){
-                this.indexes[i].setAttr("visible",true);
-            }
-            for (let i=0;i<this.meters.length;i++){
-                this.meters[i].setAttr("visible",true);
-            }
-            this.konvaLine.setAttr("visible",true);
-            this.buildLine();
-            this.drawIndexes();
-            this.updateSegmentedLines();
-          }
-         
-
+    showAll(){
+        this.visible = true;
+        for (let i=0;i<this.indexes.length;i++){
+            this.indexes[i].setAttr("visible",true);
+        }
+        for (let i=0;i<this.meters.length;i++){
+            this.meters[i].setAttr("visible",true);
+        }
+        this.konvaLine.setAttr("visible",true);
+        this.buildLine();
+        this.drawIndexes();
+        this.updateSegmentedLines();
+    }
     
 }
 

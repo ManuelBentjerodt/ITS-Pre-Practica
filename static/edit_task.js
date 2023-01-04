@@ -55,18 +55,6 @@ listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
 listenAngleReference(); //new
-const dclJSON = document.querySelector("#dclJSON").textContent;
-
-const dcl = recreateDcl(dclJSON);
-console.log("Esto es el dcl: ",dcl);
-
-// const initialBeam = dcl.parent.konvaObjects.circle 
-
-
-// paintIfMouseOver(initialBeam.getChildren()[0], nfillc, nstrokec, initialBeam.getChildren()[0].getAttr("fill"), initialBeam.getChildren()[0].getAttr("stroke"));
-// paintIfMouseOver(initialBeam.getChildren()[1], nfillc, nstrokec, initialBeam.getChildren()[1].getAttr("fill"), initialBeam.getChildren()[1].getAttr("stroke"));
-// paintIfMouseOver(initialBeam.getChildren()[2], nfillc, nstrokec, initialBeam.getChildren()[2].getAttr("fill"), initialBeam.getChildren()[2].getAttr("stroke"));
-
 
 
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
@@ -78,21 +66,34 @@ y_reference.createKonvaLine();
 x_reference.buildLine();
 y_reference.buildLine();
 
-
 x_reference.updateSegmentedLines();
 y_reference.updateSegmentedLines();
-
-x_reference.hideAll();
-y_reference.hideAll();
 
 layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
+const dclJSON = document.querySelector("#dclJSON").textContent;
+const dcl = recreateDcl(dclJSON);
+
+x_reference.hideAll();
+y_reference.hideAll();
 
 
 showReferences();
 
 drawDCL(dcl);
+
+const initialBeam = dcl.childNodes[0].konvaObjects.beam.getChildren();
+
+paintIfMouseOver(initialBeam[0], nfillc, nstrokec, initialBeam[0].getAttr("fill"), initialBeam[0].getAttr("stroke"));
+paintIfMouseOver(initialBeam[1], nfillc, nstrokec, initialBeam[1].getAttr("fill"), initialBeam[1].getAttr("stroke"));
+paintIfMouseOver(initialBeam[2], nfillc, nstrokec, initialBeam[2].getAttr("fill"), initialBeam[2].getAttr("stroke"));
+
+
 updateEquations();
 updateDificulty();
 updateClassification();
+turnToRealDCL();
+
+
+
