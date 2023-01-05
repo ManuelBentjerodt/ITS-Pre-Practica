@@ -2263,7 +2263,7 @@ function updateDificulty(){
     })
     const dificulty =  calculateDificulty(forcesSum,momentsSum,linkSum);
     console.log("PROPROROROOR: " + dificulty);
-    
+
     if (document.querySelector("#dificultad")){
         console.log("existe la cosa");
     }
@@ -2334,161 +2334,10 @@ function drawDCL() {
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
-    //creacion de linea grande horizontal de metros//
-    const HorizontalLinePlace = Math.max(...yCoord) + 100;
-    const horizontalLine = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [Math.min(...xCoord), heightStage - blockSnapSize, Math.max(...xCoord), heightStage - blockSnapSize],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-
-    const group = new Konva.Group({ name: "meters", tension: 0, x: 0, y: 0 });
-    group.add(horizontalLine);
-    layer.add(group);
-    ///////
-
-    //creacion de linea grande vertical de metros//
-    const verticalLine = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [widthStage - blockSnapSize, Math.min(...yCoord), widthStage - blockSnapSize, Math.max(...yCoord)],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-    layer.add(verticalLine);
-    ///////
-
-    const xCoordSorted = xCoord.sort(function (a, b) { return a - b });
-    const yCoordSorted = yCoord.sort(function (a, b) { return a - b });
-    drawHorizontalMeters(xCoordSorted);
-    drawVerticalMeters(yCoordSorted);
+   
 
 }
 
-function drawVerticalLinesIndexes(xCoordinate) {
-    lineLenght = 10;
-    const line = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [xCoordinate, heightStage - blockSnapSize + lineLenght, xCoordinate, heightStage - blockSnapSize - lineLenght],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-
-    const group = new Konva.Group({ name: "meters", tension: 0, x: 0, y: 0 });
-    group.add(line);
-    layer.add(group);
-
-}
-
-function drawHorizontalLinesIndexes(yCoordinate) {
-    lineLenght = 10;
-    const line = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [widthStage - blockSnapSize + lineLenght, yCoordinate, widthStage - blockSnapSize - lineLenght, yCoordinate],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-
-    const group = new Konva.Group({ name: "meters", tension: 0, x: 0, y: 0 });
-    group.add(line);
-    layer.add(group);
-
-}
-
-function drawSegmentedLinesHorizontal(node) {
-    const line = new Konva.Line({
-        id: node.id,
-        x: node.coordinate[0],
-        y: node.coordinate[1],
-        points: [0, 0, widthStage - blockSnapSize - node.coordinate[0], 0],
-        stroke: 'red',
-        strokeWidth: 2,
-        dash: [10, 4]
-    });
-
-    layer.add(line);
-    return line;
-
-}
-
-function drawSegmentedLinesVertical(node) {
-
-    const line = new Konva.Line({
-        id: node.id,
-        x: node.coordinate[0],
-        y: node.coordinate[1],
-        points: [0, 0, 0, heightStage - blockSnapSize - node.coordinate[1]],
-        stroke: 'red',
-        strokeWidth: 2,
-        dash: [10, 4]
-    });
-
-    layer.add(line);
-    return line;
-
-
-}
-
-function drawHorizontalMeters(xCoordSorted) {
-    const maxValue = Math.max(...xCoordSorted);
-    const offSet = 8;
-    for (var i = 0; i < xCoordSorted.length; i++) {
-
-
-        if (xCoordSorted[i] != maxValue) {
-            const segmentsAverage = (xCoordSorted[i] + xCoordSorted[i + 1]) / 2
-            const meters = (xCoordSorted[i + 1] - xCoordSorted[i]) / 40
-            if (meters != 0) {
-                const metersText = new Konva.Text({
-                    x: segmentsAverage - offSet,
-                    y: heightStage - blockSnapSize + 10,
-                    text: meters + "m",
-                    fontSize: 15,
-                    fontFamily: "Impact",
-                    fill: "black"
-                });
-                layer.add(metersText);
-            }
-        }
-    }
-}
-
-function drawVerticalMeters(yCoordSorted) {
-    const maxValue = Math.max(...yCoordSorted);
-    const offSet = 8;
-    for (var i = 0; i < yCoordSorted.length; i++) {
-
-
-        if (yCoordSorted[i] != maxValue) {
-            const segmentsAverage = (yCoordSorted[i] + yCoordSorted[i + 1]) / 2
-            const meters = (yCoordSorted[i + 1] - yCoordSorted[i]) / 40
-
-            if (meters != 0) { // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
-                const metersText = new Konva.Text({
-                    x: widthStage - blockSnapSize + 10,
-                    y: segmentsAverage - offSet,
-                    text: meters + "m",
-                    fontSize: 15,
-                    fontFamily: "Impact",
-                    fill: "black"
-                });
-                layer.add(metersText);
-            }
-        }
-    }
-}
 
 function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux",typeForce) {
     let x0lastPos = nodeId.coordinate[0];
