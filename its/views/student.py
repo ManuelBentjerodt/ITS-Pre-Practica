@@ -14,14 +14,37 @@ def student_home(request):
     return render(request, 'student_home.html', context)
 
 
-def firstStep(request):
-    return render(request, 'firstStep.html')
+def firstStep(request, id=None):
+    task = Task.objects.get(id = id)
+    context = {
+        'task': task
+    }
+    return render(request, 'firstStep.html', context)
 
-def thirdStep(request):
-    return render(request, 'thirdStep.html')
+def secondStep(request, id=None):
+    task = Task.objects.get(id = id)
+    context = {
+        'task': task
+    }
+    return render(request, 'secondStep.html', context)
+
+def thirdStep(request, id=None):
+    task = Task.objects.get(id = id)
+    context = {
+        'task': task
+    }
+    return render(request, 'thirdStep.html', context)
     
-def fourthStep(request):
-    return render(request, 'fourthStep.html')
+def fourthStep(request, id=None):
+    task = Task.objects.get(id = id)
+    context = {
+        'task': task
+    }
+    return render(request, 'fourthStep.html', context)
 
-def fifthStep(request):
-    return render(request, 'fifthStep.html')
+def fifthStep(request, id=None):
+    task = Task.objects.get(id = id)
+    context = {
+        'task': task
+    }
+    return render(request, 'fifthStep.html', context)
