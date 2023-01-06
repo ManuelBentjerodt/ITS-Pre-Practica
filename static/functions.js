@@ -831,7 +831,7 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
         dragg = false;
     }
 
-    const group = new Konva.Group({ tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos });
+    const group = new Konva.Group({ tension: [magnitud, angle,typeForce], name: "force", x: x0lastPos, y: y0lasPos });
     const arrow = new Konva.Arrow({
         x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
         y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
@@ -862,7 +862,8 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
+        console.log("type de typeforcees: ",typeForce);
+        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle),typeForce);
         nodeParent.addTypeForce(typeForce);
         nodeParent.addKonvaForce(group);
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -883,8 +884,10 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
 function forceMovement(group, large, strokeVal,typeForce) {
     const arrow = group.getChildren()[0];
     const magnitud = group.getChildren()[1];
+
     const magnitudVal = parseFloat(group.getAttr("tension")[0]);
     let angleVal = parseInt(group.getAttr("tension")[1]);
+
 
     let newAngle;
     arrow.on("dragmove", () => {
@@ -917,7 +920,7 @@ function forceMovement(group, large, strokeVal,typeForce) {
 
     arrow.on("dragend", () => {
         if (!turnToRealDCLFlag) {
-            group.setAttr("tension", [magnitudVal, newAngle]);
+            group.setAttr("tension", [magnitudVal, newAngle,typeForce]);
 
             const node = dcl.findNodeById(group.getAttr("id"));
 
@@ -952,11 +955,11 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
 
     if (magnitud < 0) {
         listOfPoints = negativeList;
-        txt += " Nm";
+        // txt += " Nm";
 
     } else if (magnitud > 0) {
         listOfPoints = positiveList;
-        txt += " Nm";
+        // txt += " Nm";
 
     } else {
 
@@ -2007,7 +2010,7 @@ function drawLink(node) {
 function drawForces(node) {
     node.forces.forEach(force=>{
         if (force !=null){
-        createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",node.typeForce);
+        createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",force[2]);
         }
     })
 
@@ -2029,42 +2032,6 @@ function calculateDificulty(force,moment,reactions) {
     // se le pasa la fuerza ya calculada con su tipo de fuerza
     return force + 0.05*moment + 3*reactions;
 }
-
-
-// function activateReferences(){
-    
-//     console.log("hola");
-
-//     const allNodes = [dcl, ...dcl.getAllDecendents()]
-//     const nodesInitialBeam = allNodes.slice(0, 2)
-//     const otherNodes = allNodes.slice(2)
-
-//     originNodeY = nodesInitialBeam[0].coordinate[1];
-//     nodesInitialBeam.forEach(node => {
-        
-     
-//         node.forces.forEach(arrow=>{
-//             if (arrow.getAttr("tension")[1] > 180 && arrow.getAttr("tension")[1]) {
-//                 konvaArc.clockwise(false);
-//               }
-//             konvaArc.angle(360-arrow.getAttr("tension")[1]);
-            
-    
-//     })
-    
-
-//     otherNodes.forEach(node => {
-      
-//         node.forces.forEach(force=>{
-//         })
-
-         
-//     })
- 
-//  })
-// }
-
-
 
 
 
@@ -2319,161 +2286,10 @@ function drawDCL() {
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
-    //creacion de linea grande horizontal de metros//
-    // const HorizontalLinePlace = Math.max(...yCoord) + 100;
-    const horizontalLine = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [0, heightStage - blockSnapSize, 0, heightStage - blockSnapSize],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-
-    const group = new Konva.Group({ name: "meters", tension: 0, x: 0, y: 0 });
-    group.add(horizontalLine);
-    layer.add(group);
-    ///////
-
-    //creacion de linea grande vertical de metros//
-    const verticalLine = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [widthStage - blockSnapSize, 0, widthStage - blockSnapSize, 0],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-    layer.add(verticalLine);
-    ///////
-
-    // const xCoordSorted = xCoord.sort(function (a, b) { return a - b });
-    // const yCoordSorted = yCoord.sort(function (a, b) { return a - b });
-    // drawHorizontalMeters(xCoordSorted);
-    // drawVerticalMeters(yCoordSorted);
+   
 
 }
 
-function drawVerticalLinesIndexes(xCoordinate) {
-    lineLenght = 10;
-    const line = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [xCoordinate, heightStage - blockSnapSize + lineLenght, xCoordinate, heightStage - blockSnapSize - lineLenght],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-
-    const group = new Konva.Group({ name: "meters", tension: 0, x: 0, y: 0 });
-    group.add(line);
-    layer.add(group);
-
-}
-
-function drawHorizontalLinesIndexes(yCoordinate) {
-    lineLenght = 10;
-    const line = new Konva.Line({
-        x: 0,
-        y: 0,
-        points: [widthStage - blockSnapSize + lineLenght, yCoordinate, widthStage - blockSnapSize - lineLenght, yCoordinate],
-        stroke: 'red',
-        strokeWidth: 6,
-        tension: 0
-    });
-
-
-    const group = new Konva.Group({ name: "meters", tension: 0, x: 0, y: 0 });
-    group.add(line);
-    layer.add(group);
-
-}
-
-function drawSegmentedLinesHorizontal(node) {
-    const line = new Konva.Line({
-        id: node.id,
-        x: node.coordinate[0],
-        y: node.coordinate[1],
-        points: [0, 0, widthStage - blockSnapSize - node.coordinate[0], 0],
-        stroke: 'red',
-        strokeWidth: 2,
-        dash: [10, 4]
-    });
-
-    layer.add(line);
-    return line;
-
-}
-
-function drawSegmentedLinesVertical(node) {
-
-    const line = new Konva.Line({
-        id: node.id,
-        x: node.coordinate[0],
-        y: node.coordinate[1],
-        points: [0, 0, 0, heightStage - blockSnapSize - node.coordinate[1]],
-        stroke: 'red',
-        strokeWidth: 2,
-        dash: [10, 4]
-    });
-
-    layer.add(line);
-    return line;
-
-
-}
-
-function drawHorizontalMeters(xCoordSorted) {
-    const maxValue = Math.max(...xCoordSorted);
-    const offSet = 8;
-    for (var i = 0; i < xCoordSorted.length; i++) {
-
-
-        if (xCoordSorted[i] != maxValue) {
-            const segmentsAverage = (xCoordSorted[i] + xCoordSorted[i + 1]) / 2
-            const meters = (xCoordSorted[i + 1] - xCoordSorted[i]) / 40
-            if (meters != 0) {
-                const metersText = new Konva.Text({
-                    x: segmentsAverage - offSet,
-                    y: heightStage - blockSnapSize + 10,
-                    text: meters + "m",
-                    fontSize: 15,
-                    fontFamily: "Impact",
-                    fill: "black"
-                });
-                layer.add(metersText);
-            }
-        }
-    }
-}
-
-function drawVerticalMeters(yCoordSorted) {
-    const maxValue = Math.max(...yCoordSorted);
-    const offSet = 8;
-    for (var i = 0; i < yCoordSorted.length; i++) {
-
-
-        if (yCoordSorted[i] != maxValue) {
-            const segmentsAverage = (yCoordSorted[i] + yCoordSorted[i + 1]) / 2
-            const meters = (yCoordSorted[i + 1] - yCoordSorted[i]) / 40
-
-            if (meters != 0) { // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
-                const metersText = new Konva.Text({
-                    x: widthStage - blockSnapSize + 10,
-                    y: segmentsAverage - offSet,
-                    text: meters + "m",
-                    fontSize: 15,
-                    fontFamily: "Impact",
-                    fill: "black"
-                });
-                layer.add(metersText);
-            }
-        }
-    }
-}
 
 function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux",typeForce) {
     let x0lastPos = nodeId.coordinate[0];
@@ -2545,7 +2361,7 @@ function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0, nodeId, laye
     let y0lastPos = nodeId.coordinate[1];
 
     let magnitud = val;
-    let txt = magnitud + " Nm";
+    let txt = magnitud + " " + nodeId.typeMoment;
 
     if (color != "black") {
         x0lastPos = x0;
@@ -2717,12 +2533,12 @@ function calculateEquations() {
         node.moments.forEach(moment => {
             moments.push(moment);
             typeOfMoments.push(node.typeMoment);
+            console.log("el nodo: ",node);
             
         })
 
         node.forces.forEach(force => {
-            const typeForce = node.typeForce;
-            
+            const typeForce = force[2]
 
             const [magnitud, angle] = force;
             if(0 == angle){
@@ -3300,7 +3116,26 @@ function prettyAngle(angle){
     } else if (270 <= angle && angle < 360){
         return 360 - angle;
     }
+
+
+
 }
+
+function changeDimensions(){
+    const algo = document.querySelector("#dim");
+    x_reference.newUnitSize(algo.value);
+    y_reference.newUnitSize(algo.value);
+
+    
+    x_reference.buildLine();
+    x_reference.drawIndexes();
+    x_reference.updateSegmentedLines();
+    y_reference.buildLine();
+    y_reference.drawIndexes();
+    y_reference.updateSegmentedLines();
+
+}
+    
 
 function helloWorld(){
     console.log("hello world");
