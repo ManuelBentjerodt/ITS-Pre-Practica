@@ -20,20 +20,44 @@
         Mostrar referencias
         <input type="checkbox" id="showReferences">
     </p> 
-    <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
 
-    <div>
-        <p id="forcesX">ΣFx: = 0</p>
-        <p id="forcesY">ΣFy: = 0</p>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+          No se porque no funciona este dropdown
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+          <li><button class="dropdown-item" type="button">Action</button></li>
+          <li><button class="dropdown-item" type="button">Another action</button></li>
+          <li><button class="dropdown-item" type="button">Something else here</button></li>
+        </ul>
+    </div>
+    
+    <label for="cars">Dimensiones: </label>
+    
+    <select name="dimensiones" id="dim">
+        <option value="1cm">1cm</option>
+        <option value="10cm">10cm</option>
+        <option value="1m">1m</option>
+        <option value="10m">10m</option>
+        <option value="100m">100m</option>
+    </select>
+    
+    <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
+      
+      <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
+      
+      <div>
+          <p id="forcesX">ΣFx: = 0</p>
+          <p id="forcesY">ΣFy: = 0</p>
         <p id="moments">ΣM: = 0</p>
         <p id="dificultad">Dificultad: = 0</p>
         <p id="classification">Tags: = []</p>
     </div>
-
+    
     {% load static %}
-
+    
     {{dclJSON|json_script:"dclJSON"}}
-
+    
     <script src="{%static '/nodesName.js'%}"></script>
     <script src="{%static '/node.js'%}"></script>
     <script src="{%static '/x_reference.js'%}"></script>
@@ -41,8 +65,8 @@
     <script src="{%static '/variables.js'%}"></script>
     <script src="{%static '/functions.js'%}"></script>
     <script src="{%static '/edit_task.js'%}"></script>
-
-
+    
+    
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}
@@ -52,4 +76,9 @@
     </form>
 </body>
 </html>
+
+
+
+
+
 

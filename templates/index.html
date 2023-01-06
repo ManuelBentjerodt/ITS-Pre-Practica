@@ -7,15 +7,17 @@
 
 </head>
     {%block body%}
-<body class="text-center">
+<body class="text-center" style="background-color: #3399FF" style="top: 50%;">
     <header class="masthead mb-auto">
         <div class="inner">
+           
             <h3 class="masthead-brand">ITS: Static Instructor </h3>
+             
         </div>
     </header>
     <main role="main" class="inner cover">
-        <a href="{% url 'sign_in' %}">Entrar</a> 
-        <a href="{% url 'sign_up' %}">Registrarse</a> 
+        <a href="{% url 'sign_in' %}" style="color: black;">Entrar</a> 
+        <a href="{% url 'sign_up' %}" style="color: black;">Registrarse</a> 
     </main>
     {%endblock body%}
 

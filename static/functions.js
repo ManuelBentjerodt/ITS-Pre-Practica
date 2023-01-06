@@ -3171,4 +3171,14 @@ function prettyAngle(angle){
     } else if (270 <= angle && angle < 360){
         return 360 - angle;
     }
+
+
+
+function changeDimensions(){
+    const algo = document.querySelector("#dim");
+    console.log(algo.value);
+
+}
+    
+    
 }
