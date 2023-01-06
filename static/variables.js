@@ -21,3 +21,6 @@ const originColorMouseOver = "#00ff00";
 
 let turnToRealDCLFlag = false;
 let showReferencesFlag = false;
+
+let distanceMultiplier = 1;
+let dimensionValue = "m";
