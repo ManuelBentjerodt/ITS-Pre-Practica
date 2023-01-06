@@ -11,7 +11,9 @@ class yReference {
         this.segmentedLines = [],
         this.segmented = [],
         this.yPosition = widthStage-blockSnapSize,
-        this.visible = false
+        this.visible = false,
+        this.unitMeasure = "m",
+        this.unitSize = 40
     }
 
     myCoord(){
@@ -67,7 +69,14 @@ class yReference {
 
     getKonvaLine(){
         return this.konvaLine;}
-    
+        
+    roundList(list){
+        for (let i=0;i<list.length;i++){
+            list[i] = Math.round(list[i]/blockSnapSize)*blockSnapSize;
+        }
+        return list;
+    }
+
     buildLine(){
         
 
@@ -83,7 +92,7 @@ class yReference {
 
             this.konvaLine.setAttr("points",[this.yPosition, yRoundedMin,this.yPosition,yRoundedMax]);
             const ySorted = yList.sort(function(a, b){return a-b});
-            this.drawMeters(ySorted);
+            this.drawMeters(this.roundList(ySorted));
         }
       }
 
@@ -101,13 +110,13 @@ class yReference {
 
             if(sortedList[i] != maxValue){
                 const segmentsAverage = (sortedList[i]+ sortedList[i+1])/2
-                const meters = Math.round((sortedList[i+1]-sortedList[i])/40)  
+                const meters = Math.round((sortedList[i+1]-sortedList[i])/this.unitSize)  
     
                 if (meters != 0){ // esto para que no aparezca un 0m cuando hay dos nodos en la misma linea
                 const metersText = new Konva.Text({
                     x: this.yPosition+10,
                     y: segmentsAverage-offSet,
-                    text: meters+"m",
+                    text: meters+this.unitMeasure,
                     fontSize: 15,
                     fontFamily: "Impact",
                     fill: "black"
@@ -257,6 +266,25 @@ class yReference {
         this.updateSegmentedLines();
     }
     
+
+
+    newUnitSize(unitSize){
+        //aqui se incerta en metros. Si se quiere en cm hay que mandar 0.1
+        if (unitSize < 1){
+            console.log("unit size is smaller than 1");        
+            unitSize = unitSize*100; // ahora esta en cm
+            this.unitSize = 40/unitSize;
+            this.unitMeasure = "cm";
+            console.log(this.unitSize);
+        }
+        else{
+            this.unitSize = 40/unitSize;
+            this.unitMeasure = "m";
+        }
+    }
+
+
+
 }
 
 

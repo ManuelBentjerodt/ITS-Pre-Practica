@@ -6,7 +6,7 @@ class Node {
         
         this.childNodes = [],         // node
         this.link = null,              // type = 'deslizante', 'fixedSupport', etc
-        this.forces = [],                // array(magnitud, angle)
+        this.forces = [],                // array(magnitud, angle, type)
         this.moments = [],                // magnitud   
         this.typeForce = null,          //type = newtons, kilonewtons, etc
         this.typeMoment = null,         //type = newton-meters, kilonewton-meters, etc
@@ -57,7 +57,7 @@ class Node {
         this.addTypeForce(typeForce);
 
         forces.forEach(force => {
-            this.addForce(force[0], force[1])
+            this.addForce(force[0], force[1],force[2])
         })
 
         moments.forEach(moment => {
@@ -115,8 +115,8 @@ class Node {
         this.link = null;
     }
 
-    addForce(magnitud, angle) {
-        this.forces.push([magnitud, angle]);
+    addForce(magnitud, angle,type) {
+        this.forces.push([magnitud, angle,type]);
     }
 
     addTypeForce(type) {    

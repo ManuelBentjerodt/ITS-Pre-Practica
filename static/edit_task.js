@@ -95,5 +95,3 @@ updateDificulty();
 updateClassification();
 turnToRealDCL();
 
-
-
