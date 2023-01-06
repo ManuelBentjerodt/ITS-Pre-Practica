@@ -69,7 +69,14 @@ class yReference {
 
     getKonvaLine(){
         return this.konvaLine;}
-    
+        
+    roundList(list){
+        for (let i=0;i<list.length;i++){
+            list[i] = Math.round(list[i]/blockSnapSize)*blockSnapSize;
+        }
+        return list;
+    }
+
     buildLine(){
         
 
@@ -85,7 +92,7 @@ class yReference {
 
             this.konvaLine.setAttr("points",[this.yPosition, yRoundedMin,this.yPosition,yRoundedMax]);
             const ySorted = yList.sort(function(a, b){return a-b});
-            this.drawMeters(ySorted);
+            this.drawMeters(this.roundList(ySorted));
         }
       }
 

@@ -95,5 +95,3 @@ updateDificulty();
 updateClassification();
 turnToRealDCL();
 
-x_reference.newUnitSize(0.01);
-y_reference.newUnitSize(0.01);

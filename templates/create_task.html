@@ -33,6 +33,18 @@
                 <input type="checkbox" id="turnToRealDCL">
                 Mostrar referencias
                 <input type="checkbox" id="showReferences">
+                
+                <label for="dimensiones">Dimensiones: </label>
+                <select name="dimensiones" id="dim">
+                    <option value=0.01>1cm</option>
+                    <option value=0.1>10cm</option>
+                    <option value=1>1m</option>
+                    <option value=10>10m</option>
+                    <option value=100>100m</option>
+                </select>
+
+                <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
+                    
             </p> 
         <div id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgba(128, 70, 16, 0.719);">
         </div>

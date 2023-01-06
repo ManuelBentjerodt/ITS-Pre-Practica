@@ -3152,14 +3152,23 @@ function prettyAngle(angle){
 
 
 
+}
+
 function changeDimensions(){
     const algo = document.querySelector("#dim");
-    console.log(algo.value);
+    x_reference.newUnitSize(algo.value);
+    y_reference.newUnitSize(algo.value);
+
+    
+    x_reference.buildLine();
+    x_reference.drawIndexes();
+    x_reference.updateSegmentedLines();
+    y_reference.buildLine();
+    y_reference.drawIndexes();
+    y_reference.updateSegmentedLines();
 
 }
     
-    
-}
 
 function helloWorld(){
     console.log("hello world");
