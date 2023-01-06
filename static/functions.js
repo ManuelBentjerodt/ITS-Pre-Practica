@@ -831,7 +831,7 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
         dragg = false;
     }
 
-    const group = new Konva.Group({ tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos });
+    const group = new Konva.Group({ tension: [magnitud, angle,typeForce], name: "force", x: x0lastPos, y: y0lasPos });
     const arrow = new Konva.Arrow({
         x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
         y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
@@ -862,7 +862,8 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle));
+        console.log("type de typeforcees: ",typeForce);
+        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle),typeForce);
         nodeParent.addTypeForce(typeForce);
         nodeParent.addKonvaForce(group);
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -883,8 +884,10 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
 function forceMovement(group, large, strokeVal,typeForce) {
     const arrow = group.getChildren()[0];
     const magnitud = group.getChildren()[1];
+
     const magnitudVal = parseFloat(group.getAttr("tension")[0]);
     let angleVal = parseInt(group.getAttr("tension")[1]);
+
 
     let newAngle;
     arrow.on("dragmove", () => {
@@ -917,7 +920,7 @@ function forceMovement(group, large, strokeVal,typeForce) {
 
     arrow.on("dragend", () => {
         if (!turnToRealDCLFlag) {
-            group.setAttr("tension", [magnitudVal, newAngle]);
+            group.setAttr("tension", [magnitudVal, newAngle,typeForce]);
 
             const node = dcl.findNodeById(group.getAttr("id"));
 
@@ -952,11 +955,11 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
 
     if (magnitud < 0) {
         listOfPoints = negativeList;
-        txt += " Nm";
+        // txt += " Nm";
 
     } else if (magnitud > 0) {
         listOfPoints = positiveList;
-        txt += " Nm";
+        // txt += " Nm";
 
     } else {
 
@@ -2007,7 +2010,7 @@ function drawLink(node) {
 function drawForces(node) {
     node.forces.forEach(force=>{
         if (force !=null){
-        createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",node.typeForce);
+        createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",force[2]);
         }
     })
 
@@ -2029,42 +2032,6 @@ function calculateDificulty(force,moment,reactions) {
     // se le pasa la fuerza ya calculada con su tipo de fuerza
     return force + 0.05*moment + 3*reactions;
 }
-
-
-// function activateReferences(){
-    
-//     console.log("hola");
-
-//     const allNodes = [dcl, ...dcl.getAllDecendents()]
-//     const nodesInitialBeam = allNodes.slice(0, 2)
-//     const otherNodes = allNodes.slice(2)
-
-//     originNodeY = nodesInitialBeam[0].coordinate[1];
-//     nodesInitialBeam.forEach(node => {
-        
-     
-//         node.forces.forEach(arrow=>{
-//             if (arrow.getAttr("tension")[1] > 180 && arrow.getAttr("tension")[1]) {
-//                 konvaArc.clockwise(false);
-//               }
-//             konvaArc.angle(360-arrow.getAttr("tension")[1]);
-            
-    
-//     })
-    
-
-//     otherNodes.forEach(node => {
-      
-//         node.forces.forEach(force=>{
-//         })
-
-         
-//     })
- 
-//  })
-// }
-
-
 
 
 
@@ -2394,7 +2361,7 @@ function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0, nodeId, laye
     let y0lastPos = nodeId.coordinate[1];
 
     let magnitud = val;
-    let txt = magnitud + " Nm";
+    let txt = magnitud + " " + nodeId.typeMoment;
 
     if (color != "black") {
         x0lastPos = x0;
@@ -2566,12 +2533,12 @@ function calculateEquations() {
         node.moments.forEach(moment => {
             moments.push(moment);
             typeOfMoments.push(node.typeMoment);
+            console.log("el nodo: ",node);
             
         })
 
         node.forces.forEach(force => {
-            const typeForce = node.typeForce;
-            
+            const typeForce = force[2]
 
             const [magnitud, angle] = force;
             if(0 == angle){
