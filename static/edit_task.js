@@ -49,12 +49,12 @@ listenPanelMovement(modalForce);
 listenPanelMovement(modalFixedSupport);
 listenPanelMovement(modalRollerSupport); 
 listenPanelMovement(modalPinnedSupport);
-listenPanelMovement(anglePanel); //new
+listenPanelMovement(anglePanel); 
 
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
-listenAngleReference(); //new
+listenAngleReference(); 
 
 
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
@@ -73,6 +73,10 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
+const dimensionJSON = document.querySelector("#dimensionJSON");
+
+console.log("holadimension",dimensionJSON);
+
 const dcl = recreateDcl(dclJSON);
 
 x_reference.hideAll();

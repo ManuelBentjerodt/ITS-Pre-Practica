@@ -14,6 +14,8 @@ class Task(models.Model):
     date = models.CharField(max_length=20, null=True)
     statement = models.TextField(null=True)
     image = models.ImageField(null=True,blank = True,upload_to = "images/taskImages/")
+    difficulty = models.JSONField(null=True, blank = True)
+    dimension = models.JSONField(null=True, blank = True)
 
 
 class Account(models.Model):

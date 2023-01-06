@@ -3,7 +3,7 @@
 ## Modelo de Dificultad
 
 
-Idea en desarrollo del modelo de dificultad
+Idea en desarrollo del modelo de difficulty
 
 Elementos de un ejercicio:
 
@@ -34,7 +34,7 @@ En este nivel se encuentran ejercicios con 3 incognitas pero con fuerzas con án
 
 ### 3. Nivel 3
 
-Este nivel agrega inclinación en el cuerpo. Barras que tienen cierto ángulo y no estan en el mismo eje X. Esto agrega dificultad al momento de calcular el momento.
+Este nivel agrega inclinación en el cuerpo. Barras que tienen cierto ángulo y no estan en el mismo eje X. Esto agrega difficulty al momento de calcular el momento.
 
 ### 4. Nivel 4
 

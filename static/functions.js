@@ -2229,7 +2229,7 @@ function updateDificulty(){
         }
     })
     const dificulty =  calculateDificulty(forcesSum,momentsSum,linkSum);
-    const pDificulty = document.querySelector("#dificultad");
+    const pDificulty = document.querySelector("#difficultyValue");
     pDificulty.innerText = "Dificultad: " + dificulty;
 }
 

@@ -48,7 +48,8 @@ def edit_task(request, id):
         task_form = TaskForm(instance = task)
         context = {
             'form': task_form,
-            'dclJSON': task.dcl
+            'dclJSON': task.dcl,
+            'dimensions': task.dimension
         }
     else:
         task_form = TaskForm(request.POST, request.FILES , instance = task)

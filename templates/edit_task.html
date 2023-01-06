@@ -37,9 +37,9 @@
         <input type="checkbox" id="showReferences">
         <label for="dimensiones">Dimensiones: </label>
         <select name="dimensiones" id="dim">
+            <option value=1>1m</option>
             <option value=0.01>1cm</option>
             <option value=0.1>10cm</option>
-            <option value=1>1m</option>
             <option value=10>10m</option>
             <option value=100>100m</option>
         </select>
@@ -64,14 +64,16 @@
           <p id="forcesX">ΣFx: = 0</p>
           <p id="forcesY">ΣFy: = 0</p>
           <p id="moments">ΣM: = 0</p>
-          <p id="dificultad">Dificultad: = 0</p>
+          <p id="difficultyValue">Dificultad: = 0</p>
           <p id="classification">Tags: = []</p>
         
     </div>
         {% load static %}
         
         {{dclJSON|json_script:"dclJSON"}}
-        
+        {{dimension|json_script:"dimensionJSON"}}
+        {{difficulty|json_script:"difficultyJSON"}}
+
         <script src="{%static '/nodesName.js'%}"></script>
         <script src="{%static '/node.js'%}"></script>
         <script src="{%static '/x_reference.js'%}"></script>
