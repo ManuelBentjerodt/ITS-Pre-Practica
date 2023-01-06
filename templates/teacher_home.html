@@ -65,12 +65,12 @@
         const table = document.querySelector('#my-table')
         table.addEventListener('click', function(e) {
             if (e.target.classList.contains('btn-danger')) {
-                if (!confirm('¿Estas seguro de querer editar esta tarea?')) {
+                if (!confirm('¿Estas seguro de querer eliminar esta tarea?')) {
                     e.preventDefault();
                 }
             }
             if (e.target.classList.contains('btn-warning')) {
-                if (!confirm('¿Estas seguro de querer eliminar esta tarea?')) {
+                if (!confirm('¿Estas seguro de querer editar esta tarea?')) {
                     e.preventDefault();
                 }
             }

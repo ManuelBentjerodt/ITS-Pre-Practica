@@ -10,37 +10,44 @@
     <title>ITS ESTATICA</title>
 </head>
 <body>
-    <h1>Editar</h1>
 
+    <header style="width: 100%; height: 68px; border-bottom: 1px solid black;">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%; height: 100%;">
+            <h1 class="navbar-brand" style="position: absolute; left: 50%; transform: translate(-50%, 0%); padding: 5%x; font-family: andale mono; font-size: 30px;">
+                <a href="{% url 'index' %}" style="text-decoration: none; color: black;">ITS ESTATICA(editar)</a>
+            </h1>
+            <a href="{{ request.META.HTTP_REFERER }}" style="text-decoration: none; color: black; margin-left: 10%;">Atras</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto" style="margin-left: 85%;">
+                    <li>
+                        <a href="{% url 'sign_in' %}" class="btn btn-light my-2 my-lg-0">Salir</a>
+                    </li>     
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container" style="margin-top: 10px;">
     <p>
         Reemplazar viculos por fuerzas
         <input type="checkbox" id="turnToRealDCL">
         (Vista no editable)
-    </p> 
+     
         Mostrar referencias
         <input type="checkbox" id="showReferences">
+        <label for="dimensiones">Dimensiones: </label>
+        <select name="dimensiones" id="dim">
+            <option value=0.01>1cm</option>
+            <option value=0.1>10cm</option>
+            <option value=1>1m</option>
+            <option value=10>10m</option>
+            <option value=100>100m</option>
+        </select>
+        <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
     </p> 
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-      No se porque no funciona este dropdown
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-        <li><button class="dropdown-item" type="button">Action</button></li>
-        <li><button class="dropdown-item" type="button">Another action</button></li>
-      <li><button class="dropdown-item" type="button">Something else here</button></li>
-    </ul>
-</div>
 
-<label for="dimensiones">Dimensiones: </label>
-<select name="dimensiones" id="dim">
-    <option value=0.01>1cm</option>
-    <option value=0.1>10cm</option>
-    <option value=1>1m</option>
-    <option value=10>10m</option>
-    <option value=100>100m</option>
-</select>
 
-<button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
+
     
     {% if img_obj %}
 
@@ -48,19 +55,19 @@
         <img src="{{ img_obj.image.url}}" alt="{{ img_obj.name }}" style="max-height:300px">
         {% endif %}
         
-        <div id="containerKonva" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
-        
+        <div id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgba(128, 70, 16, 0.719);">
+        </div>
     
-    <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
+     <div id="equations" style="width: 1444px; height: 340px; background-color: rgb(0, 83, 56); color: whitesmoke; border: 10px outset rgba(128, 70, 16, 0.719); margin-top: 15px; padding: 5px;">
       
-      <div>
+      
           <p id="forcesX">ΣFx: = 0</p>
           <p id="forcesY">ΣFy: = 0</p>
           <p id="moments">ΣM: = 0</p>
           <p id="dificultad">Dificultad: = 0</p>
           <p id="classification">Tags: = []</p>
-        </div>
-    
+        
+    </div>
         {% load static %}
         
         {{dclJSON|json_script:"dclJSON"}}
@@ -80,7 +87,7 @@
         
         
         <script src="{%static '/save_task.js'%}"></script>
-        <button type="submit" onclick="saveTask()">GUARDAR</button>
+        <button type="submit" onclick="saveTask()" class="btn btn-primary">GUARDAR</button>
 
 
         
