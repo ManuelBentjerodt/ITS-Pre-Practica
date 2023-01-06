@@ -2510,7 +2510,7 @@ function tryPushLinkForces(linkForces, name, proyection){
 }
 
 
-function calculateEquations() {
+function calculateEquations(distanceMultiplier,dimensionValue) {
     const origin = dcl.findOriginNode()
 
     const moments = [];
@@ -2527,8 +2527,12 @@ function calculateEquations() {
 
     allNodes.forEach(node => {
         const diff = distanceXYnodes(node, origin);
-        const distX = Math.abs(diff.x / blockSnapSize);
-        const distY = Math.abs(diff.y / blockSnapSize);
+        const distX = Math.abs(diff.x / blockSnapSize)*distanceMultiplier;
+        const distY = Math.abs(diff.y / blockSnapSize)*distanceMultiplier;
+
+        console.log("distX: ",distX);
+        console.log("distY: ",distY);
+        console.log("diff: ",diff);
 
         node.moments.forEach(moment => {
             moments.push(moment);
@@ -2544,9 +2548,9 @@ function calculateEquations() {
             if(0 == angle){
                 forcesX.push([-magnitud, typeForce]);
                 if (diff.y > 0){
-                    moments.push([[-magnitud, typeForce], [distY, `m`]]);
+                    moments.push([[-magnitud, typeForce], [distY, `${dimensionValue}`]]);
                 } else if (diff.y < 0){
-                    moments.push([[magnitud, typeForce], [distY, `m`]]);
+                    moments.push([[magnitud, typeForce], [distY,  `${dimensionValue}`]]);
                 }
             } else if (0 < angle && angle < 90){
                 forcesX.push([-magnitud, `cos(${angle})${typeForce}`]);
@@ -2555,23 +2559,23 @@ function calculateEquations() {
                     // Same  Slope
                 } else {
                     if (diff.x > 0){
-                        moments.push([[-magnitud, `sin(${angle})${typeForce}`], [distX, `m`]]);
+                        moments.push([[-magnitud, `sin(${angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     } else if (diff.x < 0){
-                        moments.push([[magnitud, `sin(${angle})${typeForce}`], [distX, `m`]]);
+                        moments.push([[magnitud, `sin(${angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     }
                     if (diff.y > 0){
-                        moments.push([[-magnitud, `cos(${angle})${typeForce}`], [distY, `m`]]);
+                        moments.push([[-magnitud, `cos(${angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } else if (diff.y < 0){
-                        moments.push([[magnitud, `cos(${angle})${typeForce}`], [distY, `m`]]);
+                        moments.push([[magnitud, `cos(${angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } 
                 }
         
             } else if (90 == angle){
                 forcesY.push([-magnitud, typeForce]);
                 if (diff.x > 0){
-                    moments.push([[-magnitud, typeForce], [distX, `m`]]);
+                    moments.push([[-magnitud, typeForce], [distX,  `${dimensionValue}`]]);
                 } else if (diff.x < 0){
-                    moments.push([[magnitud, typeForce], [distX, `m`]]);
+                    moments.push([[magnitud, typeForce], [distX,  `${dimensionValue}`]]);
                 }
 
             } else if (90 < angle && angle < 180){
@@ -2581,23 +2585,23 @@ function calculateEquations() {
                     // Same  Slope
                 } else {
                     if (diff.x > 0){
-                        moments.push([[-magnitud, `sin(${angle - 90})${typeForce}`], [distX, `m`]]);
+                        moments.push([[-magnitud, `sin(${angle - 90})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     } else if (diff.x < 0){
-                        moments.push([[magnitud, `sin(${angle - 90})${typeForce}`], [distX, `m`]]);
+                        moments.push([[magnitud, `sin(${angle - 90})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     }
                     if (diff.y > 0){
-                        moments.push([[magnitud, `cos(${angle - 90})${typeForce}`], [distY, `m`]]);
+                        moments.push([[magnitud, `cos(${angle - 90})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } else if (diff.y < 0){
-                        moments.push([[-magnitud, `cos(${angle - 90})${typeForce}`], [distY, `m`]]);
+                        moments.push([[-magnitud, `cos(${angle - 90})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } 
                 }
                 
             } else if (180 == angle){
                 forcesX.push([magnitud, typeForce]);
                 if (diff.y > 0){
-                    moments.push([[magnitud, typeForce], [distY, `m`]]);
+                    moments.push([[magnitud, typeForce], [distY,  `${dimensionValue}`]]);
                 } else if (diff.y < 0){
-                    moments.push([[-magnitud, typeForce], [distY, `m`]]);
+                    moments.push([[-magnitud, typeForce], [distY,  `${dimensionValue}`]]);
                 }
             } else if (180 < angle && angle < 270){
                 forcesX.push([magnitud, `cos(${angle - 180})${typeForce}`]);
@@ -2606,23 +2610,23 @@ function calculateEquations() {
                     // Same  Slope
                 } else {
                     if (diff.x > 0){
-                        moments.push([[magnitud, `sin(${angle - 180})${typeForce}`], [distX, `m`]]);
+                        moments.push([[magnitud, `sin(${angle - 180})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     } else if (diff.x < 0){
-                        moments.push([[-magnitud, `sin(${angle - 180})${typeForce}`], [distX, `m`]]);
+                        moments.push([[-magnitud, `sin(${angle - 180})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     }
                     if (diff.y > 0){
-                        moments.push([[magnitud, `cos(${angle - 180})${typeForce}`], [distY, `m`]]);
+                        moments.push([[magnitud, `cos(${angle - 180})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } else if (diff.y < 0){
-                        moments.push([[-magnitud, `cos(${angle - 180})${typeForce}`], [distY, `m`]]);
+                        moments.push([[-magnitud, `cos(${angle - 180})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } 
                 }
                 
             } else if (270 == angle){
                 forcesY.push([magnitud, typeForce]);
                 if (diff.x > 0){
-                    moments.push([[magnitud, typeForce], [distX, `m`]]);
+                    moments.push([[magnitud, typeForce], [distX,  `${dimensionValue}`]]);
                 } else if (diff.x < 0){
-                    moments.push([[-magnitud, typeForce], [distX, `m`]]);
+                    moments.push([[-magnitud, typeForce], [distX,  `${dimensionValue}`]]);
                 }
             } else if (270 < angle && angle < 360){
                 forcesX.push([-magnitud, `cos(${360 - angle})${typeForce}`]);
@@ -2631,14 +2635,14 @@ function calculateEquations() {
                     // Same  Slope
                 } else {
                     if (diff.x > 0){
-                        moments.push([[magnitud, `sin(${360 - angle})${typeForce}`], [distX, `m`]]);
+                        moments.push([[magnitud, `sin(${360 - angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     } else if (diff.x < 0){
-                        moments.push([[-magnitud, `sin(${360 - angle})${typeForce}`], [distX, `m`]]);
+                        moments.push([[-magnitud, `sin(${360 - angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
                     }
                     if (diff.y > 0){
-                        moments.push([[-magnitud, `cos(${360 - angle})${typeForce}`], [distY, `m`]]);
+                        moments.push([[-magnitud, `cos(${360 - angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } else if (diff.y < 0){
-                        moments.push([[magnitud, `cos(${360 - angle})${typeForce}`], [distY, `m`]]);
+                        moments.push([[magnitud, `cos(${360 - angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
                     } 
                 }
 
@@ -2739,6 +2743,7 @@ function calculateEquations() {
 
     let i =0;
     moments.forEach(moment => {
+        console.log("el momento es: ",moment);
         if (typeof moment === "number") {
             if (moment > 0) textMoments += "+";
             textMoments += `${moment}${typeOfMoments[i]} `;
@@ -2779,7 +2784,7 @@ function calculateEquations() {
 
 
 function updateEquations() {
-    const [Fx, Fy, M] = calculateEquations();
+    const [Fx, Fy, M] = calculateEquations(distanceMultiplier,dimensionValue);
 
     const pFx = document.querySelector("#forcesX");
     const pFy = document.querySelector("#forcesY");
@@ -3133,6 +3138,18 @@ function changeDimensions(){
     y_reference.buildLine();
     y_reference.drawIndexes();
     y_reference.updateSegmentedLines();
+
+    if (algo.value < 1){       
+        unitSize = algo.value*100; // ahora esta en cm
+        dimensionValue = "cm";
+        distanceMultiplier = unitSize;
+        
+    }
+    else{
+        dimensionValue = "m";
+        distanceMultiplier = algo.value;
+    }
+    updateEquations();
 
 }
     
