@@ -13,6 +13,7 @@ class Task(models.Model):
     dcl = models.JSONField(null=True, blank = True)
     date = models.CharField(max_length=20, null=True)
     statement = models.TextField(null=True)
+    image = models.ImageField(null=True,blank = True,upload_to = "images/taskImages/")
 
 
 class Account(models.Model):

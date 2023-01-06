@@ -6,7 +6,7 @@ let lastElementClick = undefined;
 //------------------------------------------------------Creacion canvas-----------------------------------------------//
 const stage = new Konva.Stage({
     name: "stage",
-    container: "container",
+    container: "containerKonva",
     width: widthStage,
     height: heightStage
 });
@@ -20,7 +20,7 @@ stage.add(layer);
 generateGrid(layer);
 
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
-const divKonvaContainer = document.querySelector("#container");
+const divKonvaContainer = document.querySelector("#containerKonva");
 
 const modalForce = createModalForce(250, 80);
 const modalMoment = createModalMoment(250, 80); 

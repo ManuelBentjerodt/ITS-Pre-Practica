@@ -876,7 +876,7 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     updateEquations();
     updateDificulty();
     updateClassification();
-    ficulty();
+    
     return group;
 }
 
@@ -2262,23 +2262,8 @@ function updateDificulty(){
         }
     })
     const dificulty =  calculateDificulty(forcesSum,momentsSum,linkSum);
-    console.log("PROPROROROOR: " + dificulty);
-
-    if (document.querySelector("#dificultad")){
-        console.log("existe la cosa");
-    }
-    else{
-        console.log("no existe la cosa");
-    }
     const pDificulty = document.querySelector("#dificultad");
- 
     pDificulty.innerText = "Dificultad: " + dificulty;
-    
-   
-    
-    
-    
-
 }
 
 
@@ -3036,60 +3021,53 @@ function turnToRealDCL() {
 
             allNodes.forEach(node => {
                 const [x, y] = node.coordinate;
+                    if (node.konvaObjects.link) {
+                        node.konvaObjects.link.hide();
+                        
+                        const supportAngle = parseFloat(node.linkRotation);
 
-                if (node.link === "fixedSupport") {
+                        const forceAngleX = angleFx(supportAngle);
+                        const Xx = x - lasForce*Math.cos(degToRad(forceAngleX));
+                        const Yx = y + lasForce*Math.sin(degToRad(forceAngleX));
 
-                    node.konvaObjects.link.hide();
-                    const supportAngle = parseFloat(node.linkRotation);
+                        const forceAngleY = angleFy(supportAngle);
+                        const Xy = x - lasForce*Math.cos(degToRad(forceAngleY));
+                        const Yy = y + lasForce*Math.sin(degToRad(forceAngleY));
 
-                    const forceAngleX = angleFx(supportAngle);
-                    const Xx = x - lasForce*Math.cos(degToRad(forceAngleX));
-                    const Yx = y + lasForce*Math.sin(degToRad(forceAngleX));
+                        if (!node.turnedToRealDCL){
 
-                    const forceAngleY = angleFy(supportAngle);
-                    const Xy = x - lasForce*Math.cos(degToRad(forceAngleY));
-                    const Yy = y + lasForce*Math.sin(degToRad(forceAngleY));
+                            if (!node.konvaObjects.forceXsupport && (node.link === "fixedSupport" || node.link === "pinnedSupport")){
+                                const forceX = createForce(`${node.name}x`, forceAngleX, "green", Xx, Yx);
+                                node.setKonvaForceXsupport(forceX);
+                            }
+                            if (!node.konvaObjects.forceYsupport  && (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport")){
+                                const forceY = createForce(`${node.name}y`, forceAngleY, "green", Xy, Yy);
+                                node.setKonvaForceYsupport(forceY);   
+                            }
+                            if (!node.konvaObjects.momentSupport && node.link === "fixedSupport"){
+                                const moment = createMoment(`${node.name}m`, "green", x, y)
+                                node.setKonvaMomentSupport(moment);
+                            }
+                            node.setTurnedToRealDCL(true);
+
+                        } else {
+                            if (node.konvaObjects.forceXsupport){
+                                node.konvaObjects.forceXsupport.show();  
+                                changePosWithSetAttr(node.konvaObjects.forceXsupport, Xx, Yx);
+
+                            } 
+                            if (node.konvaObjects.forceYsupport){
+                                node.konvaObjects.forceYsupport.show();
+                                changePosWithSetAttr(node.konvaObjects.forceYsupport, Xy, Yy);
+                            }
+                            if (node.konvaObjects.momentSupport){
+                                node.konvaObjects.momentSupport.show(); 
+                                changePosWithSetAttr(node.konvaObjects.momentSupport, x, y);
+                            } 
+                        }
+                        
+                    }
                     
-                    const forceX = createForce(`${node.name}x`, forceAngleX, "green", Xx, Yx);
-                    const forceY = createForce(`${node.name}y`, forceAngleY, "green", Xy, Yy);
-
-                    const moment = createMoment(`${node.name}m`, "green", x, y)
-                    
-                    node.setKonvaForceXsupport(forceX);
-                    node.setKonvaForceYsupport(forceY);   
-                    node.setKonvaMomentSupport(moment);
-                }
-                else if (node.link === "pinnedSupport") {
-
-                    node.konvaObjects.link.hide();
-                    const supportAngle = parseFloat(node.linkRotation);
-
-                    const forceAngleX = angleFx(supportAngle);
-                    const Xx = x - lasForce*Math.cos(degToRad(forceAngleX));
-                    const Yx = y + lasForce*Math.sin(degToRad(forceAngleX));
-
-                    const forceAngleY = angleFy(supportAngle);
-                    const Xy = x - lasForce*Math.cos(degToRad(forceAngleY));
-                    const Yy = y + lasForce*Math.sin(degToRad(forceAngleY));
-                    
-                    const forceX = createForce(`${node.name}x`, forceAngleX, "green", Xx, Yx);
-                    const forceY = createForce(`${node.name}y`, forceAngleY, "green", Xy, Yy);
-
-                    node.setKonvaForceXsupport(forceX);
-                    node.setKonvaForceYsupport(forceY);   
-                }
-                else if (node.link === "rollerSupport") {
-                    node.konvaObjects.link.hide();
-
-                    const supportAngle = parseFloat(node.linkRotation);
-                    const forceAngle = angleFy(supportAngle);
-                    const X = x - lasForce*Math.cos(degToRad(forceAngle));
-                    const Y = y + lasForce*Math.sin(degToRad(forceAngle));
-
-                    const forceY = createForce(`${node.name}y`, forceAngle, "green", X, Y);
-                    node.setKonvaForceYsupport(forceY);    
-                }
-
             })
 
             visibilityLines("horizontalLine", "hide");
@@ -3181,4 +3159,8 @@ function changeDimensions(){
 }
     
     
+}
+
+function helloWorld(){
+    console.log("hello world");
 }

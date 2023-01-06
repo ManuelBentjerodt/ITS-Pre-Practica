@@ -31,6 +31,8 @@ class Node {
 
         this.isOrigin = false;
         this.name = null;
+
+        this.turnedToRealDCL = false;
     }
 
     setNodeWithObject({
@@ -68,6 +70,10 @@ class Node {
             joinNodes(this, node)
         })
         
+    }
+
+    setTurnedToRealDCL(boolean) {
+        this.turnedToRealDCL = boolean;
     }
 
     setLinkRotation(rotation) {
