@@ -1,26 +1,40 @@
-function saveTask() {
-    const dclForm = document.querySelector("#id_dcl");
-    const dateForm = document.querySelector("#id_date");
-    const difficultyForm = document.querySelector("#id_difficulty");
-    const dimensionForm = document.querySelector("#id_dimension");
 
+document.querySelector("#saveButton").addEventListener("click", saveTask);
 
-    dclForm.value = dcl.generateJSON()
-    dateForm.value = getDate()
+function saveTask(e) {
+   
+    const taskId = this.dataset.taskid;
+    const dclJSON = dcl.generateCopy();
+    const sizeFactor = document.querySelector("#dim").value;
+    const difficulty = document.querySelector("#difficultyValue").innerText;
+    const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-    //dimensionForm.value = document.querySelector("#dim").value;
-    // console.log("dimensionForm.value",dimensionForm.value);
+    console.log("taskId", taskId);
+    console.log("difficulty", difficulty);
+    console.log("sizeFactor", sizeFactor);
+    console.log("dclJSON", dclJSON);
 
-    let temp = document.querySelector("#difficultyValue").innerText;
-    console.log("temp",temp);
-    temp  = temp.split(": ");
-    temp = temp[1];
-
-    console.log("temp",temp);
-
-    difficultyForm.value = JSON.stringify({difficulty: temp })
-    dimensionForm.value= `{dimension: ${document.querySelector("#dim").value}}`;
-    console.log("difficultyForm.value",difficultyForm);
-    console.log("datedimension",dimensionForm);
     
+
+    fetch(`http://localhost:8000/edit_task/${taskId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csfrToken,
+        },
+        body: JSON.stringify({
+            "difficulty": difficulty,
+            "sizeFactor": sizeFactor,
+            "dclJSON": dclJSON,
+            "csrfmiddlewaretoken": csfrToken,
+        }),
+        
+    
+        
+    }).then((response) => {
+        console.log("response", response.json());
+    });
+
+
+
 }   

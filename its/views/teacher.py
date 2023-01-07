@@ -4,6 +4,9 @@ from ..models import Task, Account, TaskPerAccount
 from ..forms import TaskForm, TaskFormDraw
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
+from django.views import View
+import json
+from django.http import JsonResponse
 
 
 @login_required(login_url="sign_in")
@@ -41,22 +44,25 @@ def delete_task(request, id=None):
     return redirect('teacher_home')
 
 
-@login_required(login_url="sign_in")
-def edit_task(request, id):
-    task = Task.objects.get(id = id)
-    if request.method == 'GET':
-        task_form = TaskForm(instance = task)
+class EditTaskView(View):
+    def get(self, request, id):
+        task = Task.objects.get(id = id)
         context = {
-            'form': task_form,
             'dclJSON': task.dcl,
-            'dimensions': task.dimension
+            'sizeFactor': task.sizeFactor,
+            'taskid': task.id
         }
-    else:
-        task_form = TaskForm(request.POST, request.FILES , instance = task)
-        context = {
-            'form':task_form
-        }
-        if task_form.is_valid():
-            task_form.save()
-            return redirect('teacher_home')
-    return render (request,'edit_task.html',context)
+        return render (request,'edit_task.html',context)
+
+
+    def post(self, request, id):
+        jsondata = json.loads(request.body)
+        print("Request: ", jsondata)
+        task = Task.objects.get(id = id)
+        task.dcl = jsondata['dclJSON']
+        task.sizeFactor = float(jsondata['sizeFactor'])
+        task.difficulty = float(jsondata['difficulty'])
+        task.save()
+        return JsonResponse({'success': True})
+
+
