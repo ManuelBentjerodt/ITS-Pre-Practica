@@ -26,11 +26,11 @@
         </nav>
     </header>
     <main>
-        <div class="container" style="margin-top: 10px;">
+        <div class="container" style="margin-top: 10px;" id="containerView">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form.as_p}}
-                <button type="submit" onclick="saveTask()" class="btn btn-primary">GUARDAR</button>
+                <button type="submit" onclick="saveTask()" class="btn btn-primary" id="buttonSave" style="display: none;">GUARDAR</button>
             </form>
             <p>
                 Reemplazar viculos por fuerzas
@@ -38,7 +38,6 @@
                 <input type="checkbox" id="turnToRealDCL">
                 Mostrar referencias
                 <input type="checkbox" id="showReferences">
-                
                 <label for="dimensiones">Dimensiones: </label>
                 <select name="dimensiones" id="dim">
                     <option value=0.01>1cm</option>
@@ -47,13 +46,10 @@
                     <option value=10>10m</option>
                     <option value=100>100m</option>
                 </select>
-
-                <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
-                    
+                <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>         
             </p> 
             <div id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgba(128, 70, 16, 0.719);">
             </div>
-
             <div id="equations" style="width: 1444px; height: 340px; background-color: rgb(0, 83, 56); color: whitesmoke; border: 10px outset rgba(128, 70, 16, 0.719); margin-top: 15px; padding: 5px;">
                 <p id="forcesX">ΣFx: = 0</p>
                 <p id="forcesY">ΣFy: = 0</p>
@@ -63,9 +59,6 @@
             </div>
         </div>
     </main>
-
-    
-
     <script src="{%static '/nodesName.js'%}"></script>
     <script src="{%static '/node.js'%}"></script>
     <script src="{%static '/variables.js'%}"></script>
@@ -74,5 +67,6 @@
     <script src="{%static '/functions.js'%}"></script>
     <script src="{%static '/create_task.js'%}"></script>
     <script src="{%static '/save_task.js'%}"></script>
+    <script src="{%static '/pretty_task_form.js'%}"></script>
 </body>
 </html>
