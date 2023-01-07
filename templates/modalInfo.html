@@ -1,0 +1,28 @@
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Info</button>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            {% comment %} <button type="button" class="close" data-dismiss="modal">&times;</button> {% endcomment %}
+            <h4 class="modal-title">Como diagramar</h4>
+        </div>
+        <div class="modal-body">
+            <p>1) Para crear un nuevo elemento haga doble click sobre los nodos de una viga, luego seleccione la opcion que desee.</p>
+            <p>2) Para eliminar un elemento haga doble click sobre un elemento, luuego click en el boton. PD: La viga inicial no es eliminable.</p>
+            <p>3) Para mover una viga haga click sobre un nodo y arrastrelo PD: Los elementos unidos a una viga no se pueden mover independientemente.</p>
+            <p>4) El origen del sistema es el nodo de color verde, el cual puede ser cambiado.</p>
+            <p>Pd: Recuerde escribir un enunciado antes de guardar.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+

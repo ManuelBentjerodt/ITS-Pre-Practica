@@ -10,7 +10,6 @@
     <title>ITS ESTATICA</title>
 </head>
 <body>
-
     <header style="width: 100%; height: 68px; border-bottom: 1px solid black;">
         <nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%; height: 100%;">
             <h1 class="navbar-brand" style="position: absolute; left: 50%; transform: translate(-50%, 0%); padding: 5%x; font-family: andale mono; font-size: 30px;">
@@ -37,9 +36,9 @@
         <input type="checkbox" id="showReferences">
         <label for="dimensiones">Dimensiones: </label>
         <select name="dimensiones" id="dim">
-            <option value=1>1m</option>
             <option value=0.01>1cm</option>
             <option value=0.1>10cm</option>
+            <option value=1>1m</option>
             <option value=10>10m</option>
             <option value=100>100m</option>
         </select>
@@ -64,32 +63,34 @@
           <p id="forcesX">ΣFx: = 0</p>
           <p id="forcesY">ΣFy: = 0</p>
           <p id="moments">ΣM: = 0</p>
-          <p >Dificultad: = <span id="difficultyValue" >0</span>
-          </p>
+          <p id="dificultad">Dificultad: = 0</p>
           <p id="classification">Tags: = []</p>
         
     </div>
         {% load static %}
         
         {{dclJSON|json_script:"dclJSON"}}
-        {{dimension|json_script:"dimensionJSON"}}
-        {{difficulty|json_script:"difficultyJSON"}}
-
-        <script src="{%static '/nodesName.js'%}"  defer ></script>
-        <script src="{%static '/node.js'%}" defer></script>
-        <script src="{%static '/x_reference.js'%}" defer></script>
-        <script src="{%static '/y_reference.js'%}" defer></script>
-        <script src="{%static '/variables.js'%}" defer></script>
-        <script src="{%static '/functions.js'%}" defer></script>
-        <script src="{%static '/edit_task.js'%}" defer></script>
-        <script src="{%static '/save_task.js'%}" defer></script>
         
-            
-            
-    <button id="saveButton" class="btn btn-primary" data-taskid="{{taskid}}">GUARDAR</button>
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>
+        <script src="{%static '/nodesName.js'%}"></script>
+        <script src="{%static '/node.js'%}"></script>
+        <script src="{%static '/x_reference.js'%}"></script>
+        <script src="{%static '/y_reference.js'%}"></script>
+        <script src="{%static '/variables.js'%}"></script>
+        <script src="{%static '/functions.js'%}"></script>
+        <script src="{%static '/edit_task.js'%}"></script>
+        
+    
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+        {{form.as_p}}
+        
+        
+        <script src="{%static '/save_task.js'%}"></script>
+        <button type="submit" onclick="saveTask()" class="btn btn-primary">GUARDAR</button>
 
-       
+
+        
+    </form>
 </body>
 </html>
 
