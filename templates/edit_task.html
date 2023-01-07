@@ -47,6 +47,7 @@
                     <option value=100>100m</option>
                 </select>
                 <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
+                {% include 'modalInfo.html'%} 
             </p> 
             <div id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgba(128, 70, 16, 0.719);">
             </div>
@@ -59,7 +60,6 @@
             </div>
         </div>
     </main>
-    
     {% load static %}
     {{dclJSON|json_script:"dclJSON"}}
     <script src="{%static '/nodesName.js'%}"></script>
