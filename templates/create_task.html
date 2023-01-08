@@ -28,11 +28,7 @@
     </header>
     <main>
         <div class="container" style="margin-top: 10px;" id="containerView">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{form.as_p}}
-                <button type="submit" onclick="saveTask()" class="btn btn-primary" id="buttonSave" style="display: none;">GUARDAR</button>
-            </form>
+            <textarea id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgba(128, 70, 16, 0.719); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></textarea>
             <p>
                 Reemplazar viculos por fuerzas
                 (Vista no editable)
@@ -57,16 +53,12 @@
             <p id="forcesX">ΣFx: = 0</p>
             <p id="forcesY">ΣFy: = 0</p>
             <p id="moments">ΣM: = 0</p>
-            <p id="difficultyValue">Dificultad: = 0</p>
+            <p id="dificultad">Dificultad: = <span id="difficultyValue">0</span></p>
             <p id="classification">Tags: = []</p>
         </div>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{form.as_p}}
-            <button type="submit" onclick="saveTask()" class="btn btn-primary">GUARDAR</button>
-            <button type="button" onclick="saveTask()" class="btn btn-primary">GUARDAR222</button>
-
-        </form>
+        
+        <button id="saveButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">Guardar</button>
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>
         </div>
     </main>
     {% load static %}
@@ -78,6 +70,5 @@
     <script src="{%static '/functions.js'%}"></script>
     <script src="{%static '/create_task.js'%}"></script>
     <script src="{%static '/save_task.js'%}"></script>
-    <script src="{%static '/pretty_task_form.js'%}"></script>
 </body>
 </html>
