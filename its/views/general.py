@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from ..models import Task, Account, TaskPerAccount
-from ..forms import TaskForm, TaskFormDraw
+from ..models import Task, Account
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 
@@ -45,10 +44,10 @@ def sign_up(request):
 
         else:
             messages.info(request, 'Las contraseñas no coinciden')
-            return redirect('sign_up')
+            return redirect('general/sign_up')
 
     else:
-        return render(request, 'sign_up.html')
+        return render(request, 'general/sign_up.html')
 
 def sign_in(request):
     if request.method == 'POST':
@@ -68,7 +67,7 @@ def sign_in(request):
             return redirect('sign_in')
 
     else:
-        return render(request, 'sign_in.html')
+        return render(request, 'general/sign_in.html')
 
 @login_required(login_url="sign_in")
 def sign_out(request):
@@ -81,4 +80,4 @@ def index(request):
     context = {
         'tasks': tasks
     }
-    return render (request, 'index.html', context)
+    return render (request, 'general/index.html', context)
