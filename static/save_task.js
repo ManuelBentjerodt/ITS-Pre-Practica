@@ -2,35 +2,32 @@ const button = document.querySelector("#saveButton")
 button.addEventListener("click", saveTask);
 
 function saveTask(e) {
-    const taskId = this.dataset.taskId;
-    console.log(this)
+    const taskId = this.dataset.taskid;
     const dclJSON = dcl.generateCopy();
     const sizeFactor = document.querySelector("#dim").value;
     const difficulty = document.querySelector("#difficultyValue").innerText;
+    const statement = document.querySelector("#statement").value;
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    const href = window.location.href;
 
-    const view = button.className.includes("createTask") ? "create_task" : "edit_task"
-    ;
     const data = JSON.stringify({
         "difficulty": difficulty,
         "sizeFactor": sizeFactor,
+        "statement": statement,
         "dclJSON": dclJSON,
-        "csrfmiddlewaretoken": csfrToken,
     })
 
-
-    fetch(`http://127.0.0.1:8000/${view}/${taskId}`, {
+    fetch(`${href}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csfrToken,
         },
         body: data
+    })
+    .then((response) => response.json())
+    .then((data) => window.location.href = data.redirect)
 
-    }).then((response) => {
-        console.log("response", response.json());
-    });
-
-
+        
 
 }   

@@ -93,9 +93,19 @@ paintIfMouseOver(initialBeam[0], nfillc, nstrokec, initialBeam[0].getAttr("fill"
 paintIfMouseOver(initialBeam[1], nfillc, nstrokec, initialBeam[1].getAttr("fill"), initialBeam[1].getAttr("stroke"));
 paintIfMouseOver(initialBeam[2], nfillc, nstrokec, initialBeam[2].getAttr("fill"), initialBeam[2].getAttr("stroke"));
 
-
 updateEquations();
 updateDificulty();
 updateClassification();
 turnToRealDCL();
+
+const taskInfo = document.querySelector("#taskInfo");
+const statement = taskInfo.dataset.statement;
+document.querySelector("#statement").value = statement;
+
+const sizeFactor = taskInfo.dataset.sizefactor;
+document.querySelector("#dim").value = sizeFactor;
+
+const applySizeFactor = document.querySelector("#dimSubmit");
+applySizeFactor.click();
+
 

@@ -2176,8 +2176,7 @@ function updateDificulty(){
             }
         })
 
-         node.moments.forEach(force=>{
-           
+        node.moments.forEach(force=>{ 
             momentsSum += 1;
         })
 
@@ -2203,16 +2202,14 @@ function updateDificulty(){
                 forcesSum += 0.3;
             }
             else{
-                forcesSum +=0.1;
-
+                forcesSum +=0.1
             }
             if(originNodeY-node.coordinate[1]!=0){
                 forcesSum += 0.3;
             }
         })
 
-         node.moments.forEach(moment=>{
-           
+        node.moments.forEach(moment=>{
             momentsSum += 1;
         })
 
@@ -2233,11 +2230,7 @@ function updateDificulty(){
     pDificulty.innerText =  dificulty;
 }
 
-
-
 function drawDCL() {
-
-
     const allNodes = [dcl, ...dcl.getAllDecendents()]
 
     const nodesInitialBeam = allNodes.slice(0, 2)
@@ -2530,10 +2523,6 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
         const distX = Math.abs(diff.x / blockSnapSize)*distanceMultiplier;
         const distY = Math.abs(diff.y / blockSnapSize)*distanceMultiplier;
 
-        console.log("distX: ",distX);
-        console.log("distY: ",distY);
-        console.log("diff: ",diff);
-
         node.moments.forEach(moment => {
             moments.push(moment);
             typeOfMoments.push(node.typeMoment);
@@ -2743,7 +2732,6 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
 
     let i =0;
     moments.forEach(moment => {
-        console.log("el momento es: ",moment);
         if (typeof moment === "number") {
             if (moment > 0) textMoments += "+";
             textMoments += `${moment}${typeOfMoments[i]} `;
