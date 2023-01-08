@@ -178,7 +178,7 @@ class Node {
         this.forces[index][1] = newAngle
     }
 
-    generateJSON() {
+    generateCopy() {
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
         //const copy = this.clone()
         copy.getAllDecendents().forEach(descendent => {
@@ -186,6 +186,12 @@ class Node {
         });
         removeAttributesForJSON(copy);
     
+        return copy;
+    }
+
+
+    generateJSON() {
+        const copy = this.generateCopy();
         return JSON.stringify(copy);
     }
 
