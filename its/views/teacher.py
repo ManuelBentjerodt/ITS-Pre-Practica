@@ -8,31 +8,12 @@ import json
 
 
 def teacher_home(request):
-    print("llamando a teacher_home")
     tasks = Task.objects.all()
     context = {
         'tasks': tasks,
         'user': request.user
     }
-    return render(request, 'teacher_home.html', context)
-
-# @login_required(login_url="sign_in")
-# def create_task(request):
-#     if request.method == 'GET':
-#         task_form = TaskForm()
-#         context = {
-#             'form': task_form
-#         }
-#     else:
-#         task_form = TaskForm(request.POST, request.FILES)
-#         context = {
-#             'form': task_form
-#         }
-#         if task_form.is_valid():
-#             task_form.save()
-#             return redirect('teacher_home')
-            
-#     return render (request, 'create_task.html', context)
+    return render(request, 'teacher/teacher_home.html', context)
 
 
 @login_required(login_url="sign_in")
@@ -43,7 +24,7 @@ def delete_task(request, id=None):
 
 class CreateTaskView(View):
     def get(self, request):
-        return render (request,'create_task.html')
+        return render (request,'teacher/task/create_task.html')
 
     def post(self, request):
         jsondata = json.loads(request.body)
@@ -53,8 +34,7 @@ class CreateTaskView(View):
         task.sizeFactor = float(jsondata['sizeFactor'])
         task.statement = jsondata['statement']
         task.save()
-        return JsonResponse({'success': True, 'redirect': '/teacher_home'})
-      
+        return JsonResponse({'success': True, 'redirect': '/teacher_home'})  
     
         
 
@@ -68,7 +48,7 @@ class EditTaskView(View):
             'difficulty': task.difficulty,
             'statement': task.statement
         }
-        return render (request,'edit_task.html',context)
+        return render (request,'teacher/task/edit_task.html',context)
 
 
     def post(self, request, id):
