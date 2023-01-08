@@ -44,8 +44,7 @@
                     {% for task in tasks %}
                     <tr>
                     <td>{{task.id}}</td>
-                    <td>{{task.date}}</td>
-                    <td>{{task.statement}}</td>
+                    <td>{{task.created}}</td>
                     <td>{{task.difficulty}}</td>
                     <td>
                         <a href="{% url 'edit_task' task.id %}" class="btn btn-warning">Editar</a>
@@ -75,7 +74,7 @@
                 {% for task in tasks %}
                 <tr>
                 <td>{{task.id}}</td>
-                <td>{{task.date}}</td>
+                <td>{{task.created}}</td>
                 <td>{{task.statement}}</td>
                 <td><a href="{% url 'first_step' task.id %}" class="btn btn-primary">Ir</a></td>
                 <td><a href="{% url 'second_step' task.id %}" class="btn btn-primary">Ir</a></td>
