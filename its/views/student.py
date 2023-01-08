@@ -19,32 +19,32 @@ def firstStep(request, id=None):
     context = {
         'task': task
     }
-    return render(request, 'student/setps/firstStep.html', context)
+    return render(request, 'student/steps/firstStep.html', context)
 
 def secondStep(request, id=None):
     task = Task.objects.get(id = id)
     context = {
         'task': task
     }
-    return render(request, 'student/setps/secondStep.html', context)
+    return render(request, 'student/steps/secondStep.html', context)
 
 def thirdStep(request, id=None):
     task = Task.objects.get(id = id)
     context = {
         'task': task
     }
-    return render(request, 'student/setps/thirdStep.html', context)
+    return render(request, 'student/steps/thirdStep.html', context)
     
 def fourthStep(request, id=None):
     task = Task.objects.get(id = id)
     context = {
         'task': task
     }
-    return render(request, 'student/setps/fourthStep.html', context)
+    return render(request, 'student/steps/fourthStep.html', context)
 
 def fifthStep(request, id=None):
     task = Task.objects.get(id = id)
     context = {
         'task': task
     }
-    return render(request, 'student/setps/fifthStep.html', context)
+    return render(request, 'student/steps/fifthStep.html', context)
