@@ -73,9 +73,9 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
-const dimensionJSON = document.querySelector("#dimensionJSON");
+const dimensionJSON = document.querySelector("#sizeFactor");
 
-console.log("holadimension",dimensionJSON);
+console.log("holadimension: ",dimensionJSON);
 
 const dcl = recreateDcl(dclJSON);
 
@@ -93,7 +93,7 @@ paintIfMouseOver(initialBeam[0], nfillc, nstrokec, initialBeam[0].getAttr("fill"
 paintIfMouseOver(initialBeam[1], nfillc, nstrokec, initialBeam[1].getAttr("fill"), initialBeam[1].getAttr("stroke"));
 paintIfMouseOver(initialBeam[2], nfillc, nstrokec, initialBeam[2].getAttr("fill"), initialBeam[2].getAttr("stroke"));
 
-updateEquations();
+
 updateDificulty();
 updateClassification();
 turnToRealDCL();
@@ -106,6 +106,25 @@ const sizeFactor = taskInfo.dataset.sizefactor;
 document.querySelector("#dim").value = sizeFactor;
 
 const applySizeFactor = document.querySelector("#dimSubmit");
-applySizeFactor.click();
+console.log("dimension de antes: ",sizeFactor);
+// applySizeFactor.click();
 
+x_reference.newUnitSize(sizeFactor);
+y_reference.newUnitSize(sizeFactor);
 
+x_reference.drawIndexes();
+x_reference.updateSegmentedLines();
+y_reference.drawIndexes();
+y_reference.updateSegmentedLines();
+
+if (sizeFactor < 1){       
+    unitSize = sizeFactor*100; // ahora esta en cm
+    dimensionValue = "cm";
+    distanceMultiplier = unitSize;
+    
+}
+else{
+    dimensionValue = "m";
+    distanceMultiplier = sizeFactor;
+}
+updateEquations();

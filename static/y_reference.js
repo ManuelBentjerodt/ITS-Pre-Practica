@@ -270,12 +270,11 @@ class yReference {
 
     newUnitSize(unitSize){
         //aqui se incerta en metros. Si se quiere en cm hay que mandar 0.1
-        if (unitSize < 1){
-            console.log("unit size is smaller than 1");        
+        if (unitSize < 1){        
             unitSize = unitSize*100; // ahora esta en cm
             this.unitSize = 40/unitSize;
             this.unitMeasure = "cm";
-            console.log(this.unitSize);
+            
         }
         else{
             this.unitSize = 40/unitSize;
