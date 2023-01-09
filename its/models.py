@@ -10,10 +10,10 @@ User = get_user_model()
 
 class Task(models.Model):
     id = models.AutoField(primary_key=True)
-    dcl = models.JSONField(null=True, blank = True)
+    dcl = models.JSONField(null=True, blank=True)
     created = models.DateTimeField( auto_now_add=True, blank=True, null=True)
     statement = models.TextField(null=True)
-    image = models.ImageField(null=True,blank = True,upload_to = "images/taskImages/")
+    image = models.ImageField(null=True,blank = True, upload_to = "images/taskImages/")
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
     

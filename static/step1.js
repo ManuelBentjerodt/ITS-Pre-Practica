@@ -81,7 +81,7 @@ const taskInfo = document.querySelector("#taskInfo").dataset;
 const statement = taskInfo.statement;
 document.querySelector("#statement").innerHTML = statement;
 
-const correctDclJson = taskInfo.correctdcl.replace(/'/g, '"');
-console.log(correctDclJson);
-const correctDcl = recreateDcl(correctDclJson);
-console.log(correctDcl)
+
+const correctJson = document.getElementById('correctDcl').textContent;
+const correctDcl = recreateDcl(correctJson);
+console.log(correctDcl);

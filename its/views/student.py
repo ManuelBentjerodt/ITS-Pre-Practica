@@ -17,7 +17,7 @@ def student_home(request):
 
 def firstStep(request, id=None):
     task = Task.objects.get(id = id)
-    print("peneeee")
+
     print(task.__dict__)
     context = {
         'statement': task.statement,
