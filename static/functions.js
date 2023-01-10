@@ -1,3 +1,13 @@
+function createStage(containerId, stageWidth=widthStage, stageHeight=heightStage) {
+    const stage = new Konva.Stage({
+        container: containerId,
+        width: stageWidth,
+        height: stageHeight
+    });
+
+    return stage;
+}
+
 function createShadowBeam(x0, y0, x1, y1, nameShadow = "shadow-beam") {
     const group = new Konva.Group({ name: nameShadow });
     const line = new Konva.Line({
@@ -130,7 +140,7 @@ function createBeam(nameBeam = "beam", _id = null, coordinates = null, _node = n
     return [originNode, line];
 }
 
-function createBeam2(_node = null, _parent = null) {
+function createBeam2(_node = null, _parent = null, listenUpdate=true) {
     const konvaElement = lastNodeClick;
     let [x0, y0] = [];
     let idByDate;
@@ -224,7 +234,7 @@ function createBeam2(_node = null, _parent = null) {
 
     hideAllPanels();
 
-    listenNodeMovement(group, shadowLine, "beam2");
+    listenNodeMovement(group, shadowLine, "beam2", listenUpdate);
     calculateEquations();
 
     return group;
@@ -262,7 +272,7 @@ function moveElementsAttached(element, newPosition, distanceToY, distanceToX) {
     }
 }
 
-function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
+function listenNodeMovement(konvaBeam, shadow, typeOfBeam, listenUpdate=true) {
     let shadowList;
     let beamLine;
     let beamCircle;
@@ -365,9 +375,11 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
             const distanceToY = heightStage - blockSnapSize - otherCircle.getAttr("y");
 
             moveElementsAttached(nodeOtherCircle, otherCircle.position(), distanceToX, distanceToY);
-            updateEquations();
-            updateDificulty();
-            updateClassification();
+            if (listenUpdate) {
+                updateEquations();
+                updateDificulty();
+                updateClassification();
+            }
         }
 
     });
@@ -425,9 +437,11 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
             const distanceToY = heightStage - blockSnapSize - circle2Pos.y;
 
             moveElementsAttached(nodeBeamCircle, beamCircle.position(), distanceToX, distanceToY);
-            updateEquations();
-            updateDificulty();
-            updateClassification();
+            if (listenUpdate){
+                updateEquations();
+                updateDificulty();
+                updateClassification();
+            }
         }
 
 
@@ -436,7 +450,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam) {
 
 //------------------------------------------------------Links externos-----------------------------------------------//
 
-function createFixedSupport(_node = null, rotation) {
+function createFixedSupport(_node = null, rotation, listenUpdate=true) {
     const colorStroke = "black"
 
     let x0;
@@ -501,17 +515,18 @@ function createFixedSupport(_node = null, rotation) {
 
     layer.add(group);
 
-
     indexOfNodeNames += 1;
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
 
     rotateKonvaObject(group, rotation);
     return group;
 }
 
-function createRollerSupport(_node = null, rotation) {
+function createRollerSupport(_node = null, rotation, listenUpdate) {
     let ID;
     let nodeParent;
     let x0;
@@ -581,15 +596,17 @@ function createRollerSupport(_node = null, rotation) {
     layer.add(group);
 
     indexOfNodeNames += 1;
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
 
     rotateKonvaObject(group, rotation);
     return group;
 }
 
-function createPinnedSupport(_node = null, rotation) {
+function createPinnedSupport(_node = null, rotation, listenUpdate=true) {
     let ID;
     let nodeParent;
     let x0;
@@ -653,17 +670,19 @@ function createPinnedSupport(_node = null, rotation) {
     delPanel.style.visibility = "hidden";
 
     indexOfNodeNames += 1;
-    updateEquations();
-    updateDificulty();
-    updateClassification();
-    
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
+   
     rotateKonvaObject(group, rotation);
     return group;
 }
 
 //------------------------------------------------------Links internos-----------------------------------------------//
 
-function createBallJoint(_node = null) {
+function createBallJoint(_node = null, listenUpdate=true) {
     let ID;
     let nodeParent;
     let x0;
@@ -720,13 +739,16 @@ function createBallJoint(_node = null) {
     delPanel.style.visibility = "hidden";
 
     indexOfNodeNames += 1;
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
+
     return group;
 }
 
-function createConnectingRod(_node = null) {
+function createConnectingRod(_node = null, listenUpdate=true) {
     let ID;
     let nodeParent;
     let x0;
@@ -798,15 +820,18 @@ function createConnectingRod(_node = null) {
     delPanel.style.visibility = "hidden";
 
     indexOfNodeNames += 1;
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
+
     return group;
 }
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, aux = "aux",typeForce) {
+function createForce(valMagnitud, valAngle, color="black", typeForce, listenUpdate=true) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lasPos = lastBeamNodeClick.y
 
@@ -854,7 +879,7 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     });
 
     group.add(arrow, magnitudValue);
-    layerForPaint.add(group);
+    layer.add(group);
 
     paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
@@ -862,7 +887,6 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     if (color == "black") {
         const konvaElement = lastNodeClick;
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        console.log("type de typeforcees: ",typeForce);
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle),typeForce);
         nodeParent.addKonvaForce(group);
         group.setAttr("id", konvaElement.getAttr("id"))
@@ -872,15 +896,17 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
     delPanel.style.visibility = "hidden";
     modalForce.style.visibility = "hidden";
 
-    forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    forceMovement(group, 2 * blockSnapSize, strokeVal, typeForce, listenUpdate)
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
     
     return group;
 }
 
-function forceMovement(group, large, strokeVal,typeForce) {
+function forceMovement(group, large, strokeVal, typeForce, listenUpdate=true) {
     const arrow = group.getChildren()[0];
     const magnitud = group.getChildren()[1];
 
@@ -929,14 +955,17 @@ function forceMovement(group, large, strokeVal,typeForce) {
 
             angleVal = newAngle;
             force[1] = newAngle;
-            updateEquations();
-            updateDificulty();
-            updateClassification();
+            if (listenUpdate){
+                updateEquations();
+                updateDificulty();
+                updateClassification();
+            }
         }
     })
 }
 
-function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = layer, forFixedSupport = false,typeMoment) {
+function createMoment(val, color = "black", typeMoment, listenUpdate=true) {
+    let [x0, y0] = [0, 0];
     let x0lastPos = lastBeamNodeClick.x
     let y0lastPos = lastBeamNodeClick.y
 
@@ -1015,9 +1044,11 @@ function createMoment(val, color = "black", x0 = 0, y0 = 0, layerForPaint = laye
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     modalMoment.style.visibility = "hidden";
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
     return group;
 }
 
@@ -1033,7 +1064,7 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal,selectType) {
+function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal, selectType, listenUpdate) {
     const btn = document.createElement("button");
     btn.type = "button";
 
@@ -1044,10 +1075,16 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel + "px";
     btn.style.backgroundSize = "cover"; // todo en button
+    btn.style.backgroundColor = "rgb(128, 70, 16)"
+    btn.style.border = "2px outset rgb(128, 70, 16)";
+    btn.style.borderRadius = "5px";
+    btn.style.color = "white";
+    btn.style.textAlign = "center";
+    btn.style.justifyContent = "center";
     btn.id = idNameText;
 
     if (idNameText == "changeOriginBtn" || idNameText == "modalRotationBtn") {
-        btn.style.backgroundColor = "#99D9EA";
+        btn.style.color = "black";
         btn.innerText = btnText;
     }
     btn.addEventListener("dblclick", () => {
@@ -1055,18 +1092,18 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
         if (idNameText == "beamBtn") {
             efunction();
         } else if (idNameText == "forceBtn") {
-            efunction(inputMagnitud.value, inputAngle.value,"black",0,0,layer,"aux",selectType.value);
+            efunction(inputMagnitud.value, inputAngle.value,"black", selectType.value, listenUpdate);
         } else if (idNameText == "momentBtn") {
-            efunction(inputMagnitud.value,"black",0,0,layer,"aux",selectType.value)
+            efunction(inputMagnitud.value,"black", selectType.value, listenUpdate)
         } else if (idNameText == "deleteElementBtn") {
-            efunction(element);
+            efunction(element, listenUpdate);
         } else if (idNameText == "modalRotationBtn") {
-            efunction(null, rotation = selectObj.value);
+            efunction(null, rotation=selectObj.value, listenUpdate);
         } else if (idNameText == "modalBtn") {
-            efunction(modal);
+            efunction(modal, listenUpdate);
         } else if (idNameText == "AngleBtn") {
-            efunction();
-        } else  {
+            efunction(listenUpdate);
+        } else {
             efunction();
         }
 
@@ -1076,6 +1113,8 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
 
 function createSelectTypeForce(idParam, widthPanel, heightPanel) {
     const select = document.createElement("select");
+    select.className = "form-select"
+    select.style.fontSize = "14px";
     select.style.width = widthPanel/3 + "px";
     select.style.height = heightPanel + "px";
     select.setAttribute("id", idParam);
@@ -1103,6 +1142,8 @@ function createSelectTypeMoment(idParam, widthPanel, heightPanel){
     const select = document.createElement("select");
     select.style.width = widthPanel/1.5 + "px";
     select.style.height = heightPanel + "px";
+    select.className = "form-select"
+    select.style.fontSize = "14px";
     select.setAttribute("id", idParam);
 
     const optionNewtons = document.createElement("option");
@@ -1132,6 +1173,7 @@ function createInputMagnitud(idParam, widthPanel, heightPanel) {
     input.value = "1"
     input.style.width = widthPanel / 7 + "px";
     input.style.height = heightPanel - 6 + "px";
+    input.className = "form-control";
 
     return input;
 }
@@ -1145,6 +1187,7 @@ function createInputAngle(idParam, widthPanel, heightPanel) {
     input.value = "90"
     input.style.width = widthPanel / 4 + "px";
     input.style.height = heightPanel - 6 + "px";
+    input.className = "form-control";
 
     return input;
 }
@@ -1159,11 +1202,10 @@ function createContainer(list) {
     return container;
 }
 
-function createPanel(x0, y0) {
-    const widthPanel = 240;
-    const heightPanel = 120;
-    const colorPanel = "#DDDDDD";
-
+function createPanel(x0, y0, listenUpdate=true) {
+    const widthPanel = WIDTHPANEL;
+    const heightPanel = HEIGHTPANEL;
+    
     const heightPanelElement = heightPanel / 4;
 
     const panel = document.createElement("div");
@@ -1172,11 +1214,31 @@ function createPanel(x0, y0) {
     panel.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
     panel.style.width = widthPanel + "px";
     panel.style.height = heightPanel + "px";
-    panel.style.backgroundColor = colorPanel;
-    panel.style.borderColor = "black";
-    panel.style.border = "40px";
-    panel.style.visibility = "hidden";
-    panel.style.zIndex = "1000";
+    panel.style.backgroundColor = "rgb(0, 83, 56)";
+    panel.style.border = "10px outset rgb(128, 70, 16)";
+    panel.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    panel.style.borderRadius = "10px";
+    
+    const headerPanel = document.createElement("div");
+    headerPanel.style.width = "100%";
+    headerPanel.style.height = "15%";
+    headerPanel.style.backgroundColor = "rgb(128, 70, 16)";
+    headerPanel.style.display = "flex";
+    headerPanel.style.justifyContent = "center";
+    headerPanel.style.alignItems = "center";
+    headerPanel.innerText = "Elementos";
+    headerPanel.style.fontSize = "20px";
+    headerPanel.style.color = "white";
+
+    const bodyPanel = document.createElement("div");
+    
+    bodyPanel.style.width = "100%";
+    bodyPanel.style.height = "75%";
+    bodyPanel.style.padding = "7px";
+    bodyPanel.style.backgroundColor = "rgb(0, 83, 56)";
+    bodyPanel.style.display = "grid";
+    bodyPanel.style.gridTemplateColumns = "1fr 1fr";
+    bodyPanel.style.gridTemplateRows = "1fr 1fr 1fr 1fr";
 
     const imgRollerSupport = "url(images/rollerSupport.png)";
     const imgPinnedSupport = "url(images/pinnedSupport.png)";
@@ -1187,35 +1249,39 @@ function createPanel(x0, y0) {
     const imgFixedSupport = "url(images/fixedSupport.png)";
     const imgBeam = "url(images/beam.png)";
 
-    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport);
-    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport);
-    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport);
-    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image = imgBallJoint);
-    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image = imgConnectingRod);
-    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, modalForce);
-    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, modalMoment);
-    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam);
-    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin);
+    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam, listenUpdate=listenUpdate);
+    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport, listenUpdate=listenUpdate);
+    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport, listenUpdate=listenUpdate);
+    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport, listenUpdate=listenUpdate);
+    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image = imgBallJoint, null, null, null, null, null, null,  listenUpdate=listenUpdate);
+    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image = imgConnectingRod, null, null, null, null, null, null, listenUpdate=listenUpdate);
+    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, modalForce, null, listenUpdate=listenUpdate);
+    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, modalMoment, null, listenUpdate=listenUpdate);
+    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate=listenUpdate);
+    btnChangeOrigin.style.color = "white";
 
-    const topOfPanel = document.createElement("div");
-    topOfPanel.style.width = widthPanel;
-    topOfPanel.style.height = heightPanelElement;
-    topOfPanel.style.backgroundColor = colorPanel;
-    topOfPanel.style.border = "2px";
-    topOfPanel.style.borderBlockColor = "black";
-    topOfPanel.innerText = "Elementos ";
-    topOfPanel.align = "center";
+    styleForElementGridPanel(btnBeam2, "1", "1");
+    styleForElementGridPanel(btnRollerSupport, "1", "2");
+    styleForElementGridPanel(btnPinnedSupport, "2", "1");
+    styleForElementGridPanel(btnFixedSupport, "2", "2");
+    styleForElementGridPanel(btnBallJoint, "3", "1");
+    styleForElementGridPanel(btnConnectingRod, "3", "2");
+    styleForElementGridPanel(btnForce, "4", "1");
+    styleForElementGridPanel(btnMoment, "4", "2");
+    styleForElementGridPanel(btnChangeOrigin, "5", "1");
 
-    panel.appendChild(topOfPanel);
-    panel.appendChild(btnBeam2)
-    panel.appendChild(btnRollerSupport);
-    panel.appendChild(btnPinnedSupport)
-    panel.appendChild(btnFixedSupport);
-    panel.appendChild(btnBallJoint);
-    panel.appendChild(btnConnectingRod);
-    panel.appendChild(btnForce);
-    panel.appendChild(btnMoment);
-    panel.appendChild(btnChangeOrigin)
+    bodyPanel.appendChild(btnBeam2)
+    bodyPanel.appendChild(btnRollerSupport);
+    bodyPanel.appendChild(btnPinnedSupport)
+    bodyPanel.appendChild(btnFixedSupport);
+    bodyPanel.appendChild(btnBallJoint);
+    bodyPanel.appendChild(btnConnectingRod);
+    bodyPanel.appendChild(btnForce);
+    bodyPanel.appendChild(btnMoment);
+    bodyPanel.appendChild(btnChangeOrigin)
+    
+    panel.appendChild(headerPanel);
+    panel.appendChild(bodyPanel);
 
     return panel;
 }
@@ -1392,7 +1458,7 @@ function destroyAttachedKonvaElements(node) {
     })
 }
 
-function deleteElement(element) {
+function deleteElement(element, listenUpdate=true) {
     if (element.name() === "beam2") {
         const node = dcl.findNodeById(element.getAttr("id") + 2) //element es el group del objeto, 
         const parentNode = node.parent
@@ -1408,11 +1474,8 @@ function deleteElement(element) {
             destroyAttachedKonvaElements(decendent);
             x_reference.deletePoint(decendent.konvaObjects.circle);
             y_reference.deletePoint(decendent.konvaObjects.circle);
-       
             delete decendent;
         })
-
-      
 
         destroyAttachedKonvaElements(node);
         delete node;
@@ -1435,17 +1498,17 @@ function deleteElement(element) {
             const idx = node.moments.indexOf(val)
             node.moments.splice(idx, 1)
         }
-
-
     }
 
     element.destroy();
     delete element;
 
     recalculateNodeNames();
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
 }
 
 
@@ -1842,122 +1905,189 @@ function generateGrid(layer) {
     }
 }
 
-function createModalForce(x0, y0) {
+function createBelementForGrid(text, row, col){
+    const element = document.createElement("b");
+    element.innerText = text;
+    element.style.gridRow = row;
+    element.style.gridColumn = col;
+    element.style.textAlign = "center";
+    element.style.justifyContent = "center";
+    element.style.color = "white";
 
-    const widthModal = 150;
-    const heightModal = 100;
+    return element;
+}
 
-    const colorModal = "#DDDDDD";
+function createContainerForElementGrid(){
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container.style.justifyContent = "center";
+    
+    return container;
+}
 
+function styleForElementGrid(element, row, col){
+    element.style.position = "relative";
+    element.style.gridRow = row;
+    element.style.gridColumn = col;
+    element.style.alignItems = "center";
+    element.style.justifyContent = "center";
+    element.style.borderRadius = "5px";
+
+}
+
+function styleForElementGridPanel(element, row, col){
+    element.style.position = "relative";
+    element.style.gridRow = row;
+    element.style.gridColumn = col;
+    element.style.borderRadius = "5px";
+    element.style.width = WIDTHPANEL/2 - 20 + "px";
+    element.style.height = 50 + "px";
+    element.style.margin = "2px";
+}
+
+function createModalForce(listenUpdate=true) {
+    const widthModal = 400;
+    const heightModal = 180;
+    
     const heightModalElement = heightModal / 3;
 
     const modal = document.createElement("div");
+    modal.id = "modalForce";
+    modal.className = "modal";
     modal.style.position = "absolute";
-    modal.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
-    modal.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left  + "px";
+    modal.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.width = widthModal + "px";
     modal.style.height = heightModal + "px";
-    modal.style.backgroundColor = colorModal;
-    modal.style.borderColor = "black";
-    modal.style.border = "40px";
-    modal.style.visibility = "hidden";
-    modal.style.zIndex = "1000";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.borderRadius = "10px";
+    modal.style.padding = "10px";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr 1fr 1fr";
+
+    const textMagnitude = createBelementForGrid("Magnitud", "1", "1");
+    const textMagnitudeUnit = createBelementForGrid("Unidad", "1", "2");
+    const textAngle = createBelementForGrid("Angulo", "1", "3");
 
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
-    const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
+    styleForElementGrid(inputCreateForceMagnitud, "2", "1");
+
     const selectTypeForce = createSelectTypeForce("select-type-force",widthModal, heightModalElement);
-   
-
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce,null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle,null,null,null,selectTypeForce);
+    styleForElementGrid(selectTypeForce, "2", "2");
     
+    const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
+    styleForElementGrid(inputCreateForceAngle, "2", "3");
     
-    const newtons = document.createElement("b");
-    newtons.innerText = selectTypeForce.value;
-    newtons.type = "number";
-    newtons.style.width = widthModal / 4 + "px";
-    newtons.style.height = heightModal - 6 + "px";
-
-    const grados = document.createElement("b");
-    grados.innerText = "º";
-    grados.type = "number";
-    grados.style.width = widthModal / 4 + "px";
-    grados.style.height = heightModal - 6 + "px";
-    
-    const containerForce = createContainer([selectTypeForce,inputCreateForceMagnitud, inputCreateForceAngle, grados]);
-    
-    const topOfModal = document.createElement("div");
-    topOfModal.style.width = widthModal;
-    topOfModal.style.height = heightModalElement;
-    topOfModal.style.backgroundColor = colorModal;
-    topOfModal.style.border = "2px";
-    topOfModal.style.borderBlockColor = "black";
-    topOfModal.innerText = "Fuerza";
-    topOfModal.align = "center";
-
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Crear", createForce, null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle,null,null,null, selectTypeForce, listenUpdate);
+    btnForce.style.backgroundColor = "rgb(128, 70, 16)"
+    btnForce.style.border = "2px outset rgb(128, 70, 16)";
+    btnForce.style.borderRadius = "5px";
+    btnForce.style.color = "white";
+    btnForce.style.gridRow = "3";
+    btnForce.style.gridColumn = "2";
+    btnForce.style.textAlign = "center";
+    btnForce.style.justifyContent = "center";
+    btnForce.style.width = "100px";
+    btnForce.style.height = "40px";
+    btnForce.style.margin = "10px"
     btnForce.innerText = "Crear";
-    modal.appendChild(topOfModal);
-    modal.appendChild(containerForce);
-    //modal.appendChild(select);
-    modal.appendChild(btnForce);
+    
+    const inputCreateForceMagnitudContainer = createContainerForElementGrid();
+    const selectTypeForceContainer = createContainerForElementGrid();
+    const inputCreateForceAngleContainer = createContainerForElementGrid();
+    const btnForceContainer = createContainerForElementGrid();
+
+    inputCreateForceMagnitudContainer.appendChild(inputCreateForceMagnitud);
+    selectTypeForceContainer.appendChild(selectTypeForce);
+    inputCreateForceAngleContainer.appendChild(inputCreateForceAngle);
+    btnForceContainer.appendChild(btnForce);
+    styleForElementGrid(btnForceContainer, "3", "2");
+
+    modal.appendChild(textMagnitude);
+    modal.appendChild(textMagnitudeUnit);
+    modal.appendChild(textAngle);
+    modal.appendChild(inputCreateForceMagnitudContainer);
+    modal.appendChild(selectTypeForceContainer);
+    modal.appendChild(inputCreateForceAngleContainer);
+    modal.appendChild(btnForceContainer);
 
     return modal;
 }
 
-function createModalMoment(x0, y0) {
-
-    const widthModal = 150;
-    const heightModal = 100;
-
-    const colorModal = "#DDDDDD";
+function createModalMoment(listenUpdate=true) {
+    const widthModal = 380;
+    const heightModal = 180;
 
     const heightModalElement = heightModal / 3;
 
     const modal = document.createElement("div");
+    modal.id = "modalMoment";
+    modal.className = "modal";
     modal.style.position = "absolute";
-    modal.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
-    modal.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left  + "px";
+    modal.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.width = widthModal + "px";
     modal.style.height = heightModal + "px";
-    modal.style.backgroundColor = colorModal;
-    modal.style.borderColor = "black";
-    modal.style.border = "40px";
-    modal.style.visibility = "hidden";
-    modal.style.zIndex = "1000";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.borderRadius = "10px";
+    modal.style.padding = "10px";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr 1fr";
 
+    const textMagnitude = createBelementForGrid("Magnitud", "1", "1");
+    styleForElementGrid(textMagnitude, "1", "1");
+
+    const textMagnitudeUnit = createBelementForGrid("Unidad", "1", "2");
+    styleForElementGrid(textMagnitudeUnit, "1", "2");
+
+    
     const inputCreateMoment = createInputMagnitud("input-create-moment", widthModal * 2, heightModalElement); // width panel*2
+    inputCreateMoment.style.margin = "10px";
+
     const selectTypeMoment = createSelectTypeMoment("select-type-moment", widthModal, heightModalElement);
+    selectTypeMoment.style.width = "200px";
+    selectTypeMoment.style.margin = "5px";
 
-
-    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment,null, inputMagnitude=inputCreateMoment,null,null,null,null,selectTypeMoment);
-
-    const newtonsMetro = document.createElement("b");
-    newtonsMetro.innerText = "Nm";
-    newtonsMetro.type = "number";
-    newtonsMetro.style.width = widthModal / 4 + "px";
-    newtonsMetro.style.height = heightModal - 6 + "px";
-
-    const containerForce = createContainer([selectTypeMoment,inputCreateMoment]);
-
-    const topOfModal = document.createElement("div");
-    topOfModal.style.width = widthModal;
-    topOfModal.style.height = heightModalElement;
-    topOfModal.style.backgroundColor = colorModal;
-    topOfModal.style.border = "2px";
-    topOfModal.style.borderBlockColor = "black";
-    topOfModal.innerText = "Momento";
-    topOfModal.align = "center";
+    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment,null, inputMagnitude=inputCreateMoment,null,null,null,null,selectTypeMoment, listenUpdate);
+    btnMoment.style.backgroundColor = "rgb(128, 70, 16)"
+    btnMoment.style.border = "2px outset rgb(128, 70, 16)";
+    btnMoment.style.borderRadius = "5px";
+    btnMoment.style.color = "white";
+    btnMoment.style.width = "100px";
+    btnMoment.style.height = "40px";
+    btnMoment.style.margin = "10px"
+    btnMoment.style.position = "relative";
+    btnMoment.style.transform = "translate(100%, 0)";
 
     btnMoment.innerText = "Crear";
-    modal.appendChild(topOfModal);
-    modal.appendChild(containerForce);
+
+    const inputCreateMomentContainer = createContainerForElementGrid();
+    const selectTypeMomentContainer = createContainerForElementGrid();
+    
+
+    inputCreateMomentContainer.appendChild(inputCreateMoment);
+    inputCreateMomentContainer.style.width = "100px"
+    selectTypeMomentContainer.appendChild(selectTypeMoment);
+    
+   
+    modal.appendChild(textMagnitude);
+    modal.appendChild(textMagnitudeUnit);
+    modal.appendChild(inputCreateMomentContainer);
+    modal.appendChild(selectTypeMomentContainer);
     modal.appendChild(btnMoment);
 
     return modal;
 }
 
 function jsonToObject(json) {
-    const object = JSON.parse(json);
-    return object;
+    return JSON.parse(json);
 }
 
 function createNodeWithObject(object, _id) {
@@ -2230,7 +2360,7 @@ function updateDificulty(){
     pDificulty.innerText =  dificulty;
 }
 
-function drawDCL() {
+function drawDCL(listenUpdate=true) {
     const allNodes = [dcl, ...dcl.getAllDecendents()]
 
     const nodesInitialBeam = allNodes.slice(0, 2)
@@ -2254,7 +2384,9 @@ function drawDCL() {
     
     const shadowBeam = createShadowBeam(x0, y0, x1 - x0, y1 - y0);
     shadowBeam.hide();
-    listenNodeMovement(initialBeam, shadowBeam, "initialBeam");
+    if(listenUpdate){
+        listenNodeMovement(initialBeam, shadowBeam, "initialBeam", listenUpdate);
+    }
     
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
@@ -2419,12 +2551,11 @@ function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0, nodeId, laye
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    // updateEquations();
-    // updateScorePanel();
+
     return group;
 }
 
-function changeOrigin() {
+function changeOrigin(listenUpdate=true) {
     const newOriginNode = dcl.findNodeById(lastNodeClick.getAttr("id"));
     const oldOriginNode = dcl.findOriginNode();
     oldOriginNode.setIsOrigin(false);
@@ -2435,9 +2566,11 @@ function changeOrigin() {
 
     hideAllPanels();
 
-    updateEquations();
-    updateDificulty();
-    updateClassification();
+    if (listenUpdate){
+        updateEquations();
+        updateDificulty();
+        updateClassification();
+    }
 }
 
 function distanceXYnodes(node1, node2) {
@@ -2527,8 +2660,6 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
         node.moments.forEach(moment => {
             moments.push(moment);
             typeOfMoments.push(node.typeMoment);
-            console.log("el nodo: ",node);
-            
         })
 
         node.forces.forEach(force => {
@@ -2706,8 +2837,6 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
                 coeffyy = `*sin(${prettyAngleFy})`;
             } 
 
-            console.log(proyectionFy)
-            console.log(dx, dy)
             tryPushLinkForces(linkForcesX, `${node.name}y${coeffyx}`, proyectionFy.x);
             tryPushLinkForces(linkForcesY, `${node.name}y${coeffyy}`, proyectionFy.y);
 
@@ -2798,13 +2927,9 @@ function showModal(modal) {
 }
 
 function createGenericModalRotation(x0, y0) {
+    const widthModal = 200;
+    const heightModal = 160;
 
-    const widthModal = 150;
-    const heightModal = 100;
-
-    const colorModal = "#DDDDDD";
-
-    const heightModalElement = heightModal / 3;
 
     const modal = document.createElement("div");
     modal.style.position = "absolute";
@@ -2812,51 +2937,88 @@ function createGenericModalRotation(x0, y0) {
     modal.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
     modal.style.width = widthModal + "px";
     modal.style.height = heightModal + "px";
-    modal.style.backgroundColor = colorModal;
-    modal.style.borderColor = "black";
-    modal.style.border = "40px";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.borderRadius = "5px";
+    modal.style.padding = "10px";
     modal.style.visibility = "hidden";
-    modal.style.zIndex = "1000";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr";
 
+    const textAngle = createBelementForGrid("Angulo (decimal)", "1", "1")
+
+    const inputContainer = createContainerForElementGrid("2", "1");
     const input = document.createElement("input");
     input.type = "number";
     input.min = 0;
     input.max = 359;
     input.value = 0;
-    input.style.width = widthModal / 4 + "px";
+    input.style.width = "80px"
+    input.style.gridRow = "2";
+    input.className = "form-control";
 
-    modal.appendChild(input);
+    inputContainer.appendChild(input);
+
+    modal.appendChild(textAngle);
+    modal.appendChild(inputContainer);
 
     return modal;
 }
 
-function createModalFixedSupport() {
+function createModalFixedSupport(listenUpdate=true) {
     const modal = createGenericModalRotation(0, 0);
     modal.id = "modalFixedSupport";
 
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj = modal.children[0]);
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj = modal.children[0], null, null, listenUpdate);
+    button.style.gridRow = "3";
+    button.style.width = "120px";
+    button.style.height = "40px";
+    button.style.margin = "5px";
+    button.style.color = "white";
 
-    modal.appendChild(button);
+    const buttonContainer = createContainerForElementGrid("3", "1");
+    buttonContainer.appendChild(button);
+    
+    modal.appendChild(buttonContainer);
     return modal;
 }
 
-function createModalRollerSupport() {
+function createModalRollerSupport(listenUpdate=true) {
+
     const modal = createGenericModalRotation(0, 0);
     modal.id = "modalRollerSupport";
 
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj = modal.children[0]);
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj=modal.children[0], null, null, listenUpdate);
+    button.style.gridRow = "3";
+    button.style.width = "120px";
+    button.style.height = "40px";
+    button.style.margin = "5px";
+    button.style.color = "white";
+    
+    const buttonContainer = createContainerForElementGrid("3", "1");
+    buttonContainer.appendChild(button);
 
-    modal.appendChild(button);
+    modal.appendChild(buttonContainer);
     return modal;
 }
 
-function createModalPinnedSupport() {
+function createModalPinnedSupport(listenUpdate=true) {
     const modal = createGenericModalRotation(0, 0);
     modal.id = "modalPinnedSupport";
 
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj = modal.children[0]);
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj=modal.children[0], null, null, listenUpdate);
+    button.style.gridRow = "3";
+    button.style.width = "120px";
+    button.style.height = "40px";
+    button.style.margin = "5px";
+    button.style.color = "white";
+    
+    const buttonContainer = createContainerForElementGrid("3", "1");
+    buttonContainer.appendChild(button);
 
-    modal.appendChild(button);
+    modal.appendChild(buttonContainer);
     return modal;
 }
 
@@ -3115,7 +3277,7 @@ function prettyAngle(angle){
 
 }
 
-function changeDimensions(){
+function changeDimensions(listenUpdate=true){
     const algo = document.querySelector("#dim");
     x_reference.newUnitSize(algo.value);
     y_reference.newUnitSize(algo.value);
@@ -3138,7 +3300,9 @@ function changeDimensions(){
         dimensionValue = "m";
         distanceMultiplier = algo.value;
     }
-    updateEquations();
+    if (listenUpdate){
+        updateEquations();
+    }
 
 }
     

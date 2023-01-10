@@ -3,10 +3,7 @@ const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null;
 let lastElementClick = undefined;
 
-//------------------------------------------------------Creacion canvas-----------------------------------------------//
 const stage = createStage("containerKonva");
-
-// let stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
 
 const layer = new Konva.Layer({name: "layer"});
 stage.add(layer);
@@ -14,17 +11,16 @@ stage.add(layer);
 //------------------------------------------------------Creacion grilla-----------------------------------------------//
 generateGrid(layer);
 
-//------------------------------------------------------Creacion paneles-----------------------------------------------//
 const divKonvaContainer = document.querySelector("#containerKonva");
 
-const modalForce = createModalForce(250, 80);
-const modalMoment = createModalMoment(250, 80); 
-const modalFixedSupport = createModalFixedSupport(250, 80);
-const modalRollerSupport = createModalRollerSupport(250, 80); 
-const modalPinnedSupport = createModalPinnedSupport(250, 80);
-const delPanel = createDelPanel(0,0);
-const anglePanel = createAngleReferencePanel(0,0); //new
-const panel = createPanel(250, 80);
+const modalForce = createModalForce(listenUpdate=false);
+const modalMoment = createModalMoment(listenUpdate=false); 
+const modalFixedSupport = createModalFixedSupport(listenUpdate=false);
+const modalRollerSupport = createModalRollerSupport(listenUpdate=false); 
+const modalPinnedSupport = createModalPinnedSupport(listenUpdate=false);
+const delPanel = createDelPanel(0,0, listenUpdate=false);
+const anglePanel = createAngleReferencePanel(0,0, listenUpdate=false); //new
+const panel = createPanel(listenUpdate=false);
 
 
 divKonvaContainer.appendChild(modalForce);
@@ -36,7 +32,7 @@ divKonvaContainer.appendChild(panel);
 divKonvaContainer.appendChild(delPanel);
 divKonvaContainer.appendChild(anglePanel); //new
 
-listenPanelMovement(panel);
+// listenPanelMovement(panel);
 listenPanelMovement(anglePanel); //new
 listenPanelMovement(delPanel);
 listenPanelMovement(modalMoment); 
@@ -44,10 +40,6 @@ listenPanelMovement(modalForce);
 listenPanelMovement(modalFixedSupport);
 listenPanelMovement(modalRollerSupport); 
 listenPanelMovement(modalPinnedSupport);
-
-
-//------------------------------------------------------Creacion referencia-----------------------------------------------//
-
 
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
 y_reference = new yReference([widthStage-5*blockSnapSize,0]);
@@ -67,7 +59,6 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 x_reference.hideAll();
 y_reference.hideAll();
-//------------------------------------------------------elements dcl-----------------------------------------------//
 
 const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
 
@@ -81,17 +72,16 @@ shadowLine.hide();
 
 dcl.setIsOrigin(true);
 
-
-//------------------------------------------------------Eventos usuario-----------------------------------------------//
-listenNodeMovement(group, shadowLine, "initialBeam");
+listenNodeMovement(group, shadowLine, "initialBeam", listenUpdate=false);
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
 
-turnToRealDCL();
-showReferences();
+const taskInfo = document.querySelector("#taskInfo").dataset;
+const statement = taskInfo.statement;
+document.querySelector("#statement").innerHTML = statement;
 
-listenAngleReference();
 
-updateDificulty();
-updateClassification();
+const correctJson = document.getElementById('correctDcl').textContent;
+const correctDcl = recreateDcl(correctJson);
+console.log(correctDcl);

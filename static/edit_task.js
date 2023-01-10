@@ -6,14 +6,8 @@ let lastElementClick = undefined;
 
 
 //------------------------------------------------------Creacion canvas-----------------------------------------------//
-const stage = new Konva.Stage({
-    name: "stage",
-    container: "containerKonva",
-    width: widthStage,
-    height: heightStage
-});
+const stage = createStage("containerKonva");
 
-// let stage2 = Konva.Node.create(JSON.parse(stage.clone({name: "stage2"}).toJSON()), 'container2');
 
 const layer = new Konva.Layer({name: "layer"});
 stage.add(layer);
@@ -101,11 +95,13 @@ updateClassification();
 turnToRealDCL();
 
 const taskInfo = document.querySelector("#taskInfo");
+
 const statement = taskInfo.dataset.statement;
 document.querySelector("#statement").value = statement;
 
 const sizeFactor = taskInfo.dataset.sizefactor;
 document.querySelector("#dim").value = sizeFactor;
+console.log(document.querySelector("#dim"))
 
 const applySizeFactor = document.querySelector("#dimSubmit");
 
