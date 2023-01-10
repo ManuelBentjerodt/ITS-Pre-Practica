@@ -1108,6 +1108,8 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
 
 function createSelectTypeForce(idParam, widthPanel, heightPanel) {
     const select = document.createElement("select");
+    select.className = "form-select"
+    select.style.fontSize = "14px";
     select.style.width = widthPanel/3 + "px";
     select.style.height = heightPanel + "px";
     select.setAttribute("id", idParam);
@@ -1164,6 +1166,7 @@ function createInputMagnitud(idParam, widthPanel, heightPanel) {
     input.value = "1"
     input.style.width = widthPanel / 7 + "px";
     input.style.height = heightPanel - 6 + "px";
+    input.className = "form-control";
 
     return input;
 }
@@ -1177,6 +1180,7 @@ function createInputAngle(idParam, widthPanel, heightPanel) {
     input.value = "90"
     input.style.width = widthPanel / 4 + "px";
     input.style.height = heightPanel - 6 + "px";
+    input.className = "form-control";
 
     return input;
 }
@@ -1876,61 +1880,131 @@ function generateGrid(layer) {
     }
 }
 
-function createModalForce(listenUpdate=true) {
-    const widthModal = 150;
-    const heightModal = 100;
+function createBelementForGrid(text, row, col){
+    const element = document.createElement("b");
+    element.innerText = text;
+    element.style.gridRow = row;
+    element.style.gridColumn = col;
+    element.style.textAlign = "center";
+    element.style.justifyContent = "center";
+    element.style.color = "white";
+
+    return element;
+}
+
+function createContainerForElementGrid(){
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container.style.justifyContent = "center";
     
-    const colorModal = "#DDDDDD";
+    return container;
+}
+
+function styleForElementGrid(element, row, col){
+    element.style.position = "relative";
+    element.style.gridRow = row;
+    element.style.gridColumn = col;
+    element.style.alignItems = "center";
+    element.style.justifyContent = "center";
+    element.style.borderRadius = "5px";
+
+}
+
+function createModalForce(listenUpdate=true) {
+    const widthModal = 400;
+    const heightModal = 200;
+    
     
     const heightModalElement = heightModal / 3;
 
     const modal = document.createElement("div");
     modal.id = "modalForce";
+    modal.className = "modal";
     modal.style.position = "absolute";
     modal.style.left = divKonvaContainer.getBoundingClientRect().left  + "px";
     modal.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.width = widthModal + "px";
     modal.style.height = heightModal + "px";
-    modal.style.backgroundColor = colorModal;
-    modal.style.borderColor = "black";
-    modal.style.border = "40px";
-    // modal.style.visibility = "hidden";
-    modal.style.zIndex = "1000";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.borderRadius = "10px";
+    modal.style.padding = "10px";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr 1fr 1fr";
+
+    const textMagnitude = createBelementForGrid("Magnitud", "1", "1");
+    const textMagnitudeUnit = createBelementForGrid("Unidad", "1", "2");
+    const textAngle = createBelementForGrid("Angulo", "1", "3");
 
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
-    const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
+    styleForElementGrid(inputCreateForceMagnitud, "2", "1");
+
     const selectTypeForce = createSelectTypeForce("select-type-force",widthModal, heightModalElement);
-
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Force", createForce, null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle,null,null,null, selectTypeForce, listenUpdate);
-
-    const newtons = document.createElement("b");
-    newtons.innerText = selectTypeForce.value;
-    newtons.type = "number";
-    newtons.style.width = widthModal / 4 + "px";
-    newtons.style.height = heightModal - 6 + "px";
-
-    const grados = document.createElement("b");
-    grados.innerText = "º";
-    grados.type = "number";
-    grados.style.width = widthModal / 4 + "px";
-    grados.style.height = heightModal - 6 + "px";
+    styleForElementGrid(selectTypeForce, "2", "2");
     
-    const containerForce = createContainer([selectTypeForce,inputCreateForceMagnitud, inputCreateForceAngle, grados]);
+    const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
+    styleForElementGrid(inputCreateForceAngle, "2", "3");
     
-    const topOfModal = document.createElement("div");
-    topOfModal.style.width = widthModal;
-    topOfModal.style.height = heightModalElement;
-    topOfModal.style.backgroundColor = colorModal;
-    topOfModal.style.border = "2px";
-    topOfModal.style.borderBlockColor = "black";
-    topOfModal.innerText = "Fuerza";
-    topOfModal.alignItems = "center";
-
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Crear", createForce, null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle,null,null,null, selectTypeForce, listenUpdate);
+    btnForce.style.backgroundColor = "rgb(128, 70, 16)"
+    btnForce.style.border = "2px outset rgb(128, 70, 16)";
+    btnForce.style.borderRadius = "5px";
+    btnForce.style.color = "white";
+    btnForce.style.gridRow = "3";
+    btnForce.style.gridColumn = "2";
+    btnForce.style.textAlign = "center";
+    btnForce.style.justifyContent = "center";
+    btnForce.style.width = "100px";
+    btnForce.style.height = "30px";
     btnForce.innerText = "Crear";
-    modal.appendChild(topOfModal);
-    modal.appendChild(containerForce);
-    //modal.appendChild(select);
-    modal.appendChild(btnForce);
+    
+    const inputCreateForceMagnitudContainer = createContainerForElementGrid();
+    const selectTypeForceContainer = createContainerForElementGrid();
+    const inputCreateForceAngleContainer = createContainerForElementGrid();
+
+    inputCreateForceMagnitudContainer.appendChild(inputCreateForceMagnitud);
+    selectTypeForceContainer.appendChild(selectTypeForce);
+    inputCreateForceAngleContainer.appendChild(inputCreateForceAngle);
+
+
+    modal.appendChild(textMagnitude);
+    modal.appendChild(textMagnitudeUnit);
+    modal.appendChild(textAngle);
+    modal.appendChild(inputCreateForceMagnitudContainer);
+    modal.appendChild(selectTypeForceContainer);
+    modal.appendChild(inputCreateForceAngleContainer);
+  
+
+    // const newtons = document.createElement("b");
+    // newtons.innerText = selectTypeForce.value;
+    // newtons.type = "number";
+    // newtons.style.width = widthModal / 4 + "px";
+    // newtons.style.height = heightModal - 6 + "px";
+
+    // const grados = document.createElement("b");
+    // grados.innerText = "º";
+    // grados.type = "number";
+    // grados.style.width = widthModal / 4 + "px";
+    // grados.style.height = heightModal - 6 + "px";
+    
+    // const containerForce = createContainer([selectTypeForce,inputCreateForceMagnitud, inputCreateForceAngle, grados]);
+    
+    // const topOfModal = document.createElement("div");
+    // topOfModal.style.width = widthModal;
+    // topOfModal.style.height = heightModalElement;
+    // topOfModal.style.border = "2px";
+    // topOfModal.style.borderBlockColor = "black";
+    // topOfModal.innerText = "Fuerza";
+    // topOfModal.alignItems = "center";
+
+    // btnForce.innerText = "Crear";
+    // modal.appendChild(topOfModal);
+    // modal.appendChild(containerForce);
+    // //modal.appendChild(select);
+    // modal.appendChild(btnForce);
 
     return modal;
 }
