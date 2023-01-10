@@ -24,3 +24,6 @@ let showReferencesFlag = false;
 
 let distanceMultiplier = 1;
 let dimensionValue = "m";
+
+const WIDTHPANEL = 280;
+const HEIGHTPANEL = 360;
