@@ -16,7 +16,7 @@ class Task(models.Model):
     image = models.ImageField(null=True,blank = True,upload_to = "images/taskImages/")
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
-    
+
 
 class Account(models.Model):
     id = models.IntegerField(default=0, primary_key=True)

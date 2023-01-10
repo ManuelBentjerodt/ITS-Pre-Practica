@@ -180,12 +180,10 @@ class Node {
 
     generateCopy() {
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
-        //const copy = this.clone()
         copy.getAllDecendents().forEach(descendent => {
             removeAttributesForJSON(descendent);
         });
         removeAttributesForJSON(copy);
-    
         return copy;
     }
 

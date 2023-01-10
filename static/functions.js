@@ -864,7 +864,6 @@ function createForce(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0, lay
         const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
         console.log("type de typeforcees: ",typeForce);
         nodeParent.addForce(parseFloat(magnitud), parseFloat(angle),typeForce);
-        nodeParent.addTypeForce(typeForce);
         nodeParent.addKonvaForce(group);
         group.setAttr("id", konvaElement.getAttr("id"))
     }
@@ -1971,6 +1970,7 @@ function createNodeWithObject(object, _id) {
 function recreateDcl(json) {
     const object = jsonToObject(json);
     const newDCL = createNodeWithObject(object, object.id);
+    
     return newDCL;
 }
 
@@ -2353,6 +2353,7 @@ function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0, nodeId, laye
     let x0lastPos = nodeId.coordinate[0];
     let y0lastPos = nodeId.coordinate[1];
 
+    console.log("Node typemomment: ",nodeId.typeMoment)
     let magnitud = val;
     let txt = magnitud + " " + nodeId.typeMoment;
 

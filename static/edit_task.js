@@ -73,11 +73,13 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
-const dimensionJSON = document.querySelector("#sizeFactor");
 
-console.log("holadimension: ",dimensionJSON);
+console.log("el dcl qyue se recrea es: ",dclJSON);
 
 const dcl = recreateDcl(dclJSON);
+
+
+
 
 x_reference.hideAll();
 y_reference.hideAll();
@@ -106,8 +108,8 @@ const sizeFactor = taskInfo.dataset.sizefactor;
 document.querySelector("#dim").value = sizeFactor;
 
 const applySizeFactor = document.querySelector("#dimSubmit");
-console.log("dimension de antes: ",sizeFactor);
-// applySizeFactor.click();
+
+
 
 x_reference.newUnitSize(sizeFactor);
 y_reference.newUnitSize(sizeFactor);
