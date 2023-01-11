@@ -10,7 +10,7 @@
 </head>
 <body>
 
-    <h1>PASO 5</h1>
+    <h1>PASO 3</h1>
     <div class="accordion" id="accordionExample">
         <div class="card">
           <div class="card-header" id="headingOne">
@@ -22,7 +22,7 @@
           </div>
           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
             <div class="card-body">
-                Resolver valores de las incognitas.
+                Desarrollar el DCL.
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@
         
         
     </p> 
-    <div id="containerKonva" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
+    <div id="container" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div>
     <!-- <br>
     <div id="container2" style="background-color: antiquewhite; border: 5px; border-color: black; margin-left: 40px; margin-right: 25px; width: 1440px;"></div> -->
     <div>
@@ -50,19 +50,19 @@
 
     {% load static %}
     
-    <script src="{%static '/nodesName.js'%}"></script>
-    <script src="{%static '/node.js'%}"></script>
-    <script src="{%static '/variables.js'%}"></script>
-    <script src="{%static '/y_reference.js'%}"></script>
-    <script src="{%static '/x_reference.js'%}"></script>
-    <script src="{%static '/functions.js'%}"></script>
-    <script src="{%static '/create_task.js'%}"></script>
+    <script src="{% static 'js/nodesName.js' %}"></script>
+    <script src="{% static 'js/node.js' %}"></script>
+    <script src="{% static 'js/variables.js' %}"></script>
+    <script src="{% static 'js/y_reference.js' %}"></script>
+    <script src="{% static 'js/x_reference.js' %}"></script>
+    <script src="{% static 'js/functions.js' %}"></script>
+    <script src="{% static 'js/create_task.js' %}"></script>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}
 
-        <script src="{%static '/save_task.js'%}"></script>
+        <script src="{% static 'js/save_task.js' %}"></script>
         <button type="submit" onclick="saveTask()">GUARDAR</button>
     </form>
 
