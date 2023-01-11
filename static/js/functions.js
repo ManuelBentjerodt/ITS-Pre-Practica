@@ -141,6 +141,7 @@ function createBeam(nameBeam = "beam", _id = null, coordinates = null, _node = n
 }
 
 function createBeam2(_node = null, _parent = null, listenUpdate=true) {
+    console.log(listenUpdate)
     const konvaElement = lastNodeClick;
     let [x0, y0] = [];
     let idByDate;
@@ -235,7 +236,9 @@ function createBeam2(_node = null, _parent = null, listenUpdate=true) {
     hideAllPanels();
 
     listenNodeMovement(group, shadowLine, "beam2", listenUpdate);
-    calculateEquations();
+    if (listenUpdate){
+        calculateEquations();
+    }
 
     return group;
 }
@@ -527,6 +530,7 @@ function createFixedSupport(_node = null, rotation, listenUpdate=true) {
 }
 
 function createRollerSupport(_node = null, rotation, listenUpdate) {
+    console.log(_node, rotation, listenUpdate)
     let ID;
     let nodeParent;
     let x0;
@@ -831,7 +835,7 @@ function createConnectingRod(_node = null, listenUpdate=true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color="black", typeForce, listenUpdate=true) {
+function createForce(valMagnitud, valAngle, color="black", typeForce, x0=0, y0=0, listenUpdate=true) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lasPos = lastBeamNodeClick.y
 
@@ -842,7 +846,6 @@ function createForce(valMagnitud, valAngle, color="black", typeForce, listenUpda
 
     let dragg = true;
     
-
     const large = largeForce;
     const strokeVal = strokeForce
 
@@ -965,8 +968,7 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate=true) {
     })
 }
 
-function createMoment(val, color = "black", typeMoment, listenUpdate=true) {
-    let [x0, y0] = [0, 0];
+function createMoment(val, color = "black", typeMoment, x0=0, y0=0, listenUpdate=true) {
     let x0lastPos = lastBeamNodeClick.x
     let y0lastPos = lastBeamNodeClick.y
 
@@ -1091,21 +1093,30 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
     btn.addEventListener("dblclick", () => {
 
         if (idNameText == "beamBtn") {
-            efunction();
+            console.log(1, idNameText)
+            efunction(listenUpdate);
         } else if (idNameText == "forceBtn") {
-            efunction(inputMagnitud.value, inputAngle.value,"black", selectType.value, listenUpdate);
+            console.log(2, idNameText)
+            efunction(inputMagnitud.value, inputAngle.value,"black", selectType.value, 0, 0, listenUpdate);
         } else if (idNameText == "momentBtn") {
-            efunction(inputMagnitud.value,"black", selectType.value, listenUpdate)
+            console.log(3, idNameText)
+            efunction(inputMagnitud.value,"black", selectType.value, 0, 0, listenUpdate)
         } else if (idNameText == "deleteElementBtn") {
+            console.log(4, idNameText)
             efunction(element, listenUpdate);
         } else if (idNameText == "modalRotationBtn") {
+            console.log(5, idNameText)
             efunction(null, rotation=selectObj.value, listenUpdate);
         } else if (idNameText == "modalBtn") {
+            console.log(6, idNameText)
             efunction(modal, listenUpdate);
         } else if (idNameText == "AngleBtn") {
+            console.log(7, idNameText)
             efunction(listenUpdate);
         } else {
-            efunction();
+            console.log(8, idNameText)
+            console.log(listenUpdate)
+            efunction(null, null, listenUpdate);
         }
 
     });
@@ -1166,7 +1177,6 @@ function createSelectTypeMoment(idParam, widthPanel, heightPanel){
 }
 
 
-
 function createInputMagnitud(idParam, widthPanel, heightPanel) {
     const input = document.createElement("input");
     input.type = "number";
@@ -1203,7 +1213,7 @@ function createContainer(list) {
     return container;
 }
 
-function createPanel(x0, y0, listenUpdate=true) {
+function createPanel(listenUpdate=true) {
     const widthPanel = WIDTHPANEL;
     const heightPanel = HEIGHTPANEL;
     
@@ -1211,8 +1221,8 @@ function createPanel(x0, y0, listenUpdate=true) {
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
-    panel.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
-    panel.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    panel.style.left = divKonvaContainer.getBoundingClientRect().left  + "px";
+    panel.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     panel.style.width = widthPanel + "px";
     panel.style.height = heightPanel + "px";
     panel.style.backgroundColor = "rgb(0, 83, 56)";
@@ -1240,24 +1250,25 @@ function createPanel(x0, y0, listenUpdate=true) {
     bodyPanel.style.display = "grid";
     bodyPanel.style.gridTemplateColumns = "1fr 1fr";
     bodyPanel.style.gridTemplateRows = "1fr 1fr 1fr 1fr";
+    
+    const baseUrl = window.location.origin;
+    const imgRollerSupport = `url(${baseUrl}/images/rollerSupport.png)`;
+    const imgPinnedSupport = `url(${baseUrl}/images/pinnedSupport.png)`;
+    const imgConnectingRod = `url(${baseUrl}/images/connectingRod.png)`;
+    const imgBallJoint = `url(${baseUrl}/images/ballJoint.png)`;
+    const imgMoment = `url(${baseUrl}/images/moment.png)`;
+    const imgForce = `url(${baseUrl}/images/force.png)`;
+    const imgFixedSupport = `url(${baseUrl}/images/fixedSupport.png)`;
+    const imgBeam = `url(${baseUrl}/images/beam.png)`;
 
-    const imgRollerSupport = "url(images/rollerSupport.png)";
-    const imgPinnedSupport = "url(images/pinnedSupport.png)";
-    const imgConnectingRod = "url(images/connectingRod.png)";
-    const imgBallJoint = "url(images/ballJoint.png)";
-    const imgMoment = "url(images/moment.png)";
-    const imgForce = "url(images/force.png)";
-    const imgFixedSupport = "url(images/fixedSupport.png)";
-    const imgBeam = "url(images/beam.png)";
-
-    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam, listenUpdate=listenUpdate);
-    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport, listenUpdate=listenUpdate);
-    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport, listenUpdate=listenUpdate);
-    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport, listenUpdate=listenUpdate);
-    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image = imgBallJoint, null, null, null, null, null, null,  listenUpdate=listenUpdate);
-    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image = imgConnectingRod, null, null, null, null, null, null, listenUpdate=listenUpdate);
-    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, modalForce, null, listenUpdate=listenUpdate);
-    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, modalMoment, null, listenUpdate=listenUpdate);
+    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image=imgBeam, null, null, null, null, null, null, listenUpdate=listenUpdate);
+    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image=imgRollerSupport, null, null, null, null, modal=modalRollerSupport, listenUpdate=listenUpdate);
+    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image=imgPinnedSupport, null, null, null, null, modal=modalPinnedSupport, listenUpdate=listenUpdate);
+    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image=image=imgFixedSupport, null, null, null, null, modal=modalFixedSupport, listenUpdate=listenUpdate);
+    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image=imgBallJoint, null, null, null, null, null, null,  listenUpdate=listenUpdate);
+    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image=imgConnectingRod, null, null, null, null, null, null, listenUpdate=listenUpdate);
+    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image=imgForce, null, null, null, null, modalForce, null, listenUpdate=listenUpdate);
+    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image=imgMoment, null, null, null, null, modalMoment, null, listenUpdate=listenUpdate);
     const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate=listenUpdate);
     btnChangeOrigin.style.color = "white";
 
@@ -1585,8 +1596,8 @@ function updateCounts() {
 }
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
-function delElement() {
-    deleteElement(lastElementClick);
+function delElement(listenUpdate=true) {
+    deleteElement(lastElementClick, listenUpdate);
     hideAllPanels();
 }
 function listenAngleCreated(konvaArc){
@@ -1645,41 +1656,42 @@ function createAngleReference(){
 
 
 
-function createDelPanel(x0 = 0, y0 = 0) {
+function createDelPanel(listenUpdate) {
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
-    const imgDelete = "url(images/delete.png)";
+
+    const baseUrl = window.location.origin;
+    const imgDelete = `url(${baseUrl}/images/delete.png)`;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
-    panel.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
-    panel.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    panel.style.left = divKonvaContainer.getBoundingClientRect().left + "px";
+    panel.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     panel.style.width = widthPanel + "px";
     panel.style.height = heightPanel + "px";
     panel.style.backgroundColor = colorPanel;
-    panel.style.borderColor = "black";
-    panel.style.border = "40px";
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image = imgDelete);
+    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image=imgDelete, null, null, null, null, null, null, listenUpdate);
 
     panel.appendChild(deleteElementBtn);
 
     return panel;
 }
 
-function createAngleReferencePanel(x0 = 0, y0 = 0){
+function createAngleReferencePanel(){
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
-    const imgDelete = "url(images/referenceAngle.png)";
+    const baseUrl = window.location.origin;
+    const imgDelete = `url(${baseUrl}/images/referenceAngle.png)`;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
-    panel.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
-    panel.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    panel.style.left = divKonvaContainer.getBoundingClientRect().left + "px";
+    panel.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     panel.style.width = widthPanel + "px";
     panel.style.height = heightPanel + "px";
     panel.style.backgroundColor = colorPanel;
@@ -2925,15 +2937,14 @@ function showModal(modal) {
 
 }
 
-function createGenericModalRotation(x0, y0) {
+function createGenericModalRotation(Idname) {
     const widthModal = 200;
     const heightModal = 160;
 
-
     const modal = document.createElement("div");
     modal.style.position = "absolute";
-    modal.style.left = divKonvaContainer.getBoundingClientRect().left + x0 + "px";
-    modal.style.top = divKonvaContainer.getBoundingClientRect().left + y0 + "px";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left + "px";
+    modal.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.width = widthModal + "px";
     modal.style.height = heightModal + "px";
     modal.style.backgroundColor = "rgb(0, 83, 56)";
@@ -2945,6 +2956,7 @@ function createGenericModalRotation(x0, y0) {
     modal.style.display = "grid";
     modal.style.gridTemplateRows = "1fr 1fr 1fr";
     modal.style.gridTemplateColumns = "1fr";
+    modal.id = Idname;
 
     const textAngle = createBelementForGrid("Angulo (decimal)", "1", "1")
 
@@ -2967,10 +2979,10 @@ function createGenericModalRotation(x0, y0) {
 }
 
 function createModalFixedSupport(listenUpdate=true) {
-    const modal = createGenericModalRotation(0, 0);
-    modal.id = "modalFixedSupport";
-
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj = modal.children[0], null, null, listenUpdate);
+    const modal = createGenericModalRotation("modalFixedSupport");
+    const select = modal.children[1].children[0];
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj=select, null, null, listenUpdate);
+    
     button.style.gridRow = "3";
     button.style.width = "120px";
     button.style.height = "40px";
@@ -2985,11 +2997,10 @@ function createModalFixedSupport(listenUpdate=true) {
 }
 
 function createModalRollerSupport(listenUpdate=true) {
-
-    const modal = createGenericModalRotation(0, 0);
-    modal.id = "modalRollerSupport";
-
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj=modal.children[0], null, null, listenUpdate);
+    const modal = createGenericModalRotation("modalRollerSupport");
+    const select = modal.children[1].children[0];
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj=select, null, null, listenUpdate);
+    
     button.style.gridRow = "3";
     button.style.width = "120px";
     button.style.height = "40px";
@@ -3004,10 +3015,10 @@ function createModalRollerSupport(listenUpdate=true) {
 }
 
 function createModalPinnedSupport(listenUpdate=true) {
-    const modal = createGenericModalRotation(0, 0);
-    modal.id = "modalPinnedSupport";
-
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj=modal.children[0], null, null, listenUpdate);
+    const modal = createGenericModalRotation("modalPinnedSupport");
+    const select = modal.children[1].children[0];
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj=select, null, null, listenUpdate);
+    
     button.style.gridRow = "3";
     button.style.width = "120px";
     button.style.height = "40px";
@@ -3102,7 +3113,6 @@ function removeDraggableFromAllNodes() {
             })
         }
         const forces = node.konvaObjects.forces;
-        console.log(forces)
         forces.forEach(force => {
 
             force.getChildren()[0].setAttr("draggable", false);
@@ -3131,7 +3141,7 @@ function addDraggableToAllNodes() {
     })
 }
 
-function turnToRealDCL() {
+function turnToRealDCL(listenUpdate=true) {
     const check = document.querySelector("#turnToRealDCL");
 
     check.addEventListener("change", () => {
@@ -3156,41 +3166,21 @@ function turnToRealDCL() {
                         const Xy = x - lasForce*Math.cos(degToRad(forceAngleY));
                         const Yy = y + lasForce*Math.sin(degToRad(forceAngleY));
 
-                        if (!node.turnedToRealDCL){
-
-                            if (!node.konvaObjects.forceXsupport && (node.link === "fixedSupport" || node.link === "pinnedSupport")){
-                                const forceX = createForce(`${node.name}x`, forceAngleX, "green", Xx, Yx);
-                                node.setKonvaForceXsupport(forceX);
-                            }
-                            if (!node.konvaObjects.forceYsupport  && (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport")){
-                                const forceY = createForce(`${node.name}y`, forceAngleY, "green", Xy, Yy);
-                                node.setKonvaForceYsupport(forceY);   
-                            }
-                            if (!node.konvaObjects.momentSupport && node.link === "fixedSupport"){
-                                const moment = createMoment(`${node.name}m`, "green", x, y)
-                                node.setKonvaMomentSupport(moment);
-                            }
-                            node.setTurnedToRealDCL(true);
-
-                        } else {
-                            if (node.konvaObjects.forceXsupport){
-                                node.konvaObjects.forceXsupport.show();  
-                                changePosWithSetAttr(node.konvaObjects.forceXsupport, Xx, Yx);
-
-                            } 
-                            if (node.konvaObjects.forceYsupport){
-                                node.konvaObjects.forceYsupport.show();
-                                changePosWithSetAttr(node.konvaObjects.forceYsupport, Xy, Yy);
-                            }
-                            if (node.konvaObjects.momentSupport){
-                                node.konvaObjects.momentSupport.show(); 
-                                changePosWithSetAttr(node.konvaObjects.momentSupport, x, y);
-                            } 
+                        if (node.link === "fixedSupport" || node.link === "pinnedSupport"){
+                            const forceX = createForce(`${node.name}x`, forceAngleX, "green", "realDCL", Xx, Yx, listenUpdate);
+                            node.setKonvaForceXsupport(forceX);
                         }
-                        
+                        if (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport"){
+                            const forceY = createForce(`${node.name}y`, forceAngleY, "green", "realDCL", Xy, Yy, listenUpdate);
+                            node.setKonvaForceYsupport(forceY);   
+                        }
+                        if (node.link === "fixedSupport"){
+                            const moment = createMoment(`${node.name}m`, "green", "realDcl", x, y, listenUpdate)
+                            node.setKonvaMomentSupport(moment);
+                        }
+                        node.setTurnedToRealDCL(true);
                     }
-                    
-            })
+            });
 
             visibilityLines("horizontalLine", "hide");
             visibilityLines("verticalLine", "hide");
@@ -3202,9 +3192,9 @@ function turnToRealDCL() {
                 const [x, y] = node.coordinate;
                 if (node.link) {
                     node.konvaObjects.link.show();
-                    if (node.konvaObjects.forceXsupport) node.konvaObjects.forceXsupport.hide();
-                    if (node.konvaObjects.forceYsupport) node.konvaObjects.forceYsupport.hide();
-                    if (node.konvaObjects.momentSupport) node.konvaObjects.momentSupport.hide();
+                    if (node.konvaObjects.forceXsupport) node.konvaObjects.forceXsupport.destroy();
+                    if (node.konvaObjects.forceYsupport) node.konvaObjects.forceYsupport.destroy();
+                    if (node.konvaObjects.momentSupport) node.konvaObjects.momentSupport.destroy();
                 }
 
             })
