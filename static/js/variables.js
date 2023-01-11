@@ -27,3 +27,6 @@ let dimensionValue = "m";
 
 const WIDTHPANEL = 280;
 const HEIGHTPANEL = 360;
+
+const baseUrl = window.location.origin;
+const imagesFolder = `${baseUrl}/static/images`;
