@@ -7,6 +7,7 @@ function saveTask(e) {
     const sizeFactor = document.querySelector("#dim").value;
     const difficulty = document.querySelector("#difficultyValue").innerText;
     const statement = document.querySelector("#statement").value;
+    const image = document.querySelector("#imagePreview").src;
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
     const href = window.location.href;
 
@@ -15,6 +16,7 @@ function saveTask(e) {
         "sizeFactor": sizeFactor,
         "statement": statement,
         "dclJSON": dclJSON,
+        "image": image,
     })
     fetch(`${href}`, {
         method: "POST",
