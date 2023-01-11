@@ -1252,14 +1252,14 @@ function createPanel(listenUpdate=true) {
     bodyPanel.style.gridTemplateRows = "1fr 1fr 1fr 1fr";
     
     const baseUrl = window.location.origin;
-    const imgRollerSupport = `url(${baseUrl}/static/images/rollerSupport.png)`;
-    const imgPinnedSupport = `url(${baseUrl}/static/images/pinnedSupport.png)`;
-    const imgConnectingRod = `url(${baseUrl}/static/images/connectingRod.png)`;
-    const imgBallJoint = `url(${baseUrl}/static/images/ballJoint.png)`;
-    const imgMoment = `url(${baseUrl}/static/images/moment.png)`;
-    const imgForce = `url(${baseUrl}/static/images/force.png)`;
-    const imgFixedSupport = `url(${baseUrl}/static/images/fixedSupport.png)`;
-    const imgBeam = `url(${baseUrl}/static/images/beam.png)`;
+    const imgRollerSupport = `url(${imagesFolder}/rollerSupport.png)`;
+    const imgPinnedSupport = `url(${imagesFolder}/pinnedSupport.png)`;
+    const imgConnectingRod = `url(${imagesFolder}/connectingRod.png)`;
+    const imgBallJoint = `url(${imagesFolder}/ballJoint.png)`;
+    const imgMoment = `url(${imagesFolder}/moment.png)`;
+    const imgForce = `url(${imagesFolder}/force.png)`;
+    const imgFixedSupport = `url(${imagesFolder}/fixedSupport.png)`;
+    const imgBeam = `url(${imagesFolder}/beam.png)`;
 
     const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image=imgBeam, null, null, null, null, null, null, listenUpdate=listenUpdate);
     const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image=imgRollerSupport, null, null, null, null, modal=modalRollerSupport, listenUpdate=listenUpdate);
@@ -1662,7 +1662,7 @@ function createDelPanel(listenUpdate) {
     const colorPanel = "#DDDDDD";
 
     const baseUrl = window.location.origin;
-    const imgDelete = `url(${baseUrl}/static/images/delete.png)`;
+    const imgDelete = `url(${imagesFolder}/delete.png)`;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
@@ -1686,7 +1686,7 @@ function createAngleReferencePanel(){
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
     const baseUrl = window.location.origin;
-    const imgDelete = `url(${baseUrl}/static/images/referenceAngle.png)`;
+    const imgDelete = `url(${imagesFolder}/referenceAngle.png)`;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
