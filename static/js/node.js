@@ -8,8 +8,6 @@ class Node {
         this.link = null,              // type = 'deslizante', 'fixedSupport', etc
         this.forces = [],                // array(magnitud, angle, type)
         this.moments = [],                // magnitud   
-        this.typeForce = null,          //type = newtons, kilonewtons, etc
-        this.typeMoment = null,         //type = newton-meters, kilonewton-meters, etc
 
         this.konvaObjects = {
             beam: null,
@@ -45,7 +43,6 @@ class Node {
         moments,
         isOrigin,
         linkRotation,
-        typeForce
         }, _id=this.id) {
 
         
@@ -54,14 +51,13 @@ class Node {
         this.setLink(link);
         this.setIsOrigin(isOrigin);
         this.setLinkRotation(linkRotation);
-        this.addTypeForce(typeForce);
 
         forces.forEach(force => {
             this.addForce(force[0], force[1],force[2])
         })
 
         moments.forEach(moment => {
-            this.addMoment(moment)
+            this.addMoment(moment[0], moment[1])
         })
 
         childNodes.forEach(child => {
@@ -115,19 +111,13 @@ class Node {
         this.link = null;
     }
 
-    addForce(magnitud, angle,type) {
+    addForce(magnitud, angle, type) {
         this.forces.push([magnitud, angle,type]);
     }
 
-    addTypeForce(type) {    
-        this.typeForce = type;
-    }
-    addTypeMoment(type) {
-        this.typeMoment = type;
-    }
 
-    addMoment(magnitud) {
-        this.moments.push(magnitud);
+    addMoment(magnitud, type) {
+        this.moments.push([magnitud, type]);
     }
 
     setKonvaBeam(object) {

@@ -7,6 +7,7 @@ function saveTask(e) {
     const sizeFactor = document.querySelector("#dim").value;
     const difficulty = document.querySelector("#difficultyValue").innerText;
     const statement = document.querySelector("#statement").value;
+
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
     const href = window.location.href;
 
@@ -16,6 +17,7 @@ function saveTask(e) {
         "statement": statement,
         "dclJSON": dclJSON,
     })
+    
     fetch(`${href}`, {
         method: "POST",
         headers: {
@@ -24,9 +26,12 @@ function saveTask(e) {
         },
         body: data
     })
-    .then((response) => response.json())
-    .then((data) => window.location.href = data.redirect)
-
+    .then((response) => {
+        return response.json()
         
-
+    })
+    .then((data) => {
+        window.location.href = data.redirect
+    })
 }   
+

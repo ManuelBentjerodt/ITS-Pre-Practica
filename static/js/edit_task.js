@@ -67,21 +67,38 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
-const dcl = recreateDcl(dclJSON);
+
+let dcl;
+let initialBeam;
+
+const DCL = {}
+
+if (dclJSON == "null") {
+    [dcl, initialBeam] = createBeam(nameBeam="initialBeam");
+    dcl.setIsOrigin(true);
+    const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
+    shadowLine.hide();
+    listenNodeMovement(initialBeam, shadowLine, "initialBeam");
+    console.log("primera vez editando");
+    
+} else {
+    dcl = recreateDcl(dclJSON);
+    drawDCL(dcl);
+    initialBeam = dcl.childNodes[0].konvaObjects.beam
+    console.log("ya has editado otras veces")
+}
 
 x_reference.hideAll();
 y_reference.hideAll();
 
+const initialBeamSubElements = initialBeam.getChildren();
 
 showReferences();
 
-drawDCL(dcl);
 
-const initialBeam = dcl.childNodes[0].konvaObjects.beam.getChildren();
-
-paintIfMouseOver(initialBeam[0], nfillc, nstrokec, initialBeam[0].getAttr("fill"), initialBeam[0].getAttr("stroke"));
-paintIfMouseOver(initialBeam[1], nfillc, nstrokec, initialBeam[1].getAttr("fill"), initialBeam[1].getAttr("stroke"));
-paintIfMouseOver(initialBeam[2], nfillc, nstrokec, initialBeam[2].getAttr("fill"), initialBeam[2].getAttr("stroke"));
+paintIfMouseOver(initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElements[0].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
+paintIfMouseOver(initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[1].getAttr("stroke"));
+paintIfMouseOver(initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));
 
 updateEquations();
 updateDificulty();
@@ -91,15 +108,11 @@ turnToRealDCL();
 const taskInfo = document.querySelector("#taskInfo");
 
 const statement = taskInfo.dataset.statement;
-document.querySelector("#statement").value = statement;
+if (statement != "None") document.querySelector("#statement").value = statement;
 
 const sizeFactor = taskInfo.dataset.sizefactor;
 document.querySelector("#dim").value = sizeFactor;
-console.log(document.querySelector("#dim"))
 
 const applySizeFactor = document.querySelector("#dimSubmit");
 applySizeFactor.click();
-
-
-
 
