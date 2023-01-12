@@ -57,7 +57,7 @@ class Node {
         })
 
         moments.forEach(moment => {
-            this.addMoment(moment)
+            this.addMoment(moment[0], moment[1])
         })
 
         childNodes.forEach(child => {

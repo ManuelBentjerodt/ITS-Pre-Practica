@@ -68,7 +68,10 @@ layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
 
-let dcl, initialBeam;
+let dcl;
+let initialBeam;
+
+const DCL = {}
 
 if (dclJSON == "null") {
     [dcl, initialBeam] = createBeam(nameBeam="initialBeam");
@@ -76,11 +79,13 @@ if (dclJSON == "null") {
     const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
     shadowLine.hide();
     listenNodeMovement(initialBeam, shadowLine, "initialBeam");
+    console.log("primera vez editando");
     
 } else {
     dcl = recreateDcl(dclJSON);
     drawDCL(dcl);
     initialBeam = dcl.childNodes[0].konvaObjects.beam
+    console.log("ya has editado otras veces")
 }
 
 x_reference.hideAll();
@@ -107,11 +112,7 @@ if (statement != "None") document.querySelector("#statement").value = statement;
 
 const sizeFactor = taskInfo.dataset.sizefactor;
 document.querySelector("#dim").value = sizeFactor;
-console.log(document.querySelector("#dim"))
 
 const applySizeFactor = document.querySelector("#dimSubmit");
 applySizeFactor.click();
-
-
-
 

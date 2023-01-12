@@ -137,7 +137,6 @@ function createBeam(nameBeam="beam", _id = null, coordinates = null, _node = nul
 
     y_reference.addPoint(line.getChildren()[1]);
     y_reference.addPoint(line.getChildren()[2]);
-    console.log("hay algun problema?")
 
     hideAllPanels();
 
@@ -145,7 +144,6 @@ function createBeam(nameBeam="beam", _id = null, coordinates = null, _node = nul
 }
 
 function createBeam2(_node = null, _parent = null, listenUpdate = true) {
-    console.log(listenUpdate)
     const konvaElement = lastNodeClick;
     let [x0, y0] = [];
     let idByDate;
@@ -534,7 +532,6 @@ function createFixedSupport(_node = null, rotation, listenUpdate = true) {
 }
 
 function createRollerSupport(_node = null, rotation, listenUpdate) {
-    console.log(_node, rotation, listenUpdate)
     let ID;
     let nodeParent;
     let x0;
@@ -823,6 +820,7 @@ function createConnectingRod(_node = null, listenUpdate = true) {
     }
 
     layer.add(group);
+    
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
@@ -839,9 +837,8 @@ function createConnectingRod(_node = null, listenUpdate = true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color = "black", typeForce, x0 = 0, y0 = 0, listenUpdate = true) {
-    let x0lastPos = lastBeamNodeClick.x
-    let y0lasPos = lastBeamNodeClick.y
+function createForce(valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null) {
+    let [x0, y0] = node.coordinate;
 
     let magnitud = valMagnitud;
     let angle = valAngle;
@@ -857,13 +854,14 @@ function createForce(valMagnitud, valAngle, color = "black", typeForce, x0 = 0, 
     const ly = large * Math.sin(degToRad(angle))
 
     if (color != "black") {
-        x0lastPos = x0;
-        y0lasPos = y0;
+        console.log("estoy en true ", X, Y)
+        x0 = X;
+        y0 = Y;
         txt = valMagnitud;
         dragg = false;
     }
 
-    const group = new Konva.Group({ tension: [magnitud, angle, typeForce], name: "force", x: x0lastPos, y: y0lasPos });
+    const group = new Konva.Group({ tension: [magnitud, angle, typeForce], name: "force", x: x0, y: y0 });
     const arrow = new Konva.Arrow({
         x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
         y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
@@ -892,11 +890,9 @@ function createForce(valMagnitud, valAngle, color = "black", typeForce, x0 = 0, 
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
     if (color == "black") {
-        const konvaElement = lastNodeClick;
-        const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
-        nodeParent.addKonvaForce(group);
-        group.setAttr("id", konvaElement.getAttr("id"))
+        node.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
+        node.addKonvaForce(group);
+        group.setAttr("id", node.id);
     }
 
     panel.style.visibility = "hidden";
@@ -971,16 +967,17 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate = true) 
     })
 }
 
-function createMoment(val, color = "black", typeMoment, x0 = 0, y0 = 0, listenUpdate = true) {
-    let x0lastPos = lastBeamNodeClick.x
-    let y0lastPos = lastBeamNodeClick.y
+function createMoment(val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0) {
+    console.log(val)
+    console.log()
+    let [x0, y0] = node.coordinate
 
     let magnitud = val;
     let txt = magnitud + " " + typeMoment;
 
     if (color != "black") {
-        x0lastPos = x0;
-        y0lastPos = y0;
+        x0 = X;
+        y0 = Y;
     }
 
     let listOfPoints;
@@ -996,11 +993,7 @@ function createMoment(val, color = "black", typeMoment, x0 = 0, y0 = 0, listenUp
         // txt += " Nm";
 
     } else {
-
         if (color != "black") {
-
-            x0lastPos = x0;
-            y0lastPos = y0;
             listOfPoints = positiveList;
             txt = magnitud;
         } else {
@@ -1008,8 +1001,7 @@ function createMoment(val, color = "black", typeMoment, x0 = 0, y0 = 0, listenUp
         }
     }
 
-
-    const group = new Konva.Group({ name: "moment", tension: magnitud, x: x0lastPos, y: y0lastPos });
+    const group = new Konva.Group({ name: "moment", tension: magnitud, x: x0, y: y0 });
     const arrow = new Konva.Arrow({
         x: 0,
         y: 0,
@@ -1037,13 +1029,11 @@ function createMoment(val, color = "black", typeMoment, x0 = 0, y0 = 0, listenUp
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
     if (color == "black") {
-        const konvaElement = lastNodeClick;
-        const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addMoment(parseFloat(magnitud), typeMoment);
-        nodeParent.addKonvaMoment(group);
-        group.setAttr("id", konvaElement.getAttr("id"));
+        node.addMoment(parseFloat(magnitud), typeMoment);
+        node.addKonvaMoment(group);
+        group.setAttr("id", node.id);
     }
-
+    console.log(group)
     layer.add(group);
 
     panel.style.visibility = "hidden";
@@ -1097,10 +1087,11 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
         if (idNameText == "beamBtn") {
             efunction(listenUpdate);
         } else if (idNameText == "forceBtn") {
-            console.log(2, idNameText)
-            efunction(inputMagnitud.value, inputAngle.value, "black", selectType.value, 0, 0, listenUpdate);
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            efunction(inputMagnitud.value, inputAngle.value, selectType.value, node, "black", listenUpdate);
         } else if (idNameText == "momentBtn") {
-            efunction(inputMagnitud.value, "black", selectType.value, 0, 0, listenUpdate)
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            efunction(inputMagnitud.value, selectType.value, node, "black", listenUpdate)
         } else if (idNameText == "deleteElementBtn") {
             efunction(element, listenUpdate);
         } else if (idNameText == "modalRotationBtn") {
@@ -1589,7 +1580,7 @@ function updateCounts() {
 }
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
-function delElement(listenUpdate = true) {
+function delElement(listenUpdate=true) {
     deleteElement(lastElementClick, listenUpdate);
     hideAllPanels();
 }
@@ -2127,35 +2118,37 @@ function getDate() {
     return date;
 }
 
-function drawLink(node) {
+function drawLink(node, listenUpdate=true) {
     const rotation = parseInt(node.linkRotation);
     if (node.link === "rollerSupport") {
-        createRollerSupport(node, rotation);
+        createRollerSupport(node, rotation, listenUpdate);
     } else if (node.link === "pinnedSupport") {
-        createPinnedSupport(node, rotation);
+        createPinnedSupport(node, rotation, listenUpdate);
     } else if (node.link === "fixedSupport") {
-        createFixedSupport(node, rotation);
+        createFixedSupport(node, rotation, listenUpdate);
     } else if (node.link === "ballJoint") {
-        createBallJoint(node), rotation;
+        createBallJoint(node), rotation, listenUpdate;
     } else if (node.link === "connectingRod") {
-        createConnectingRod(node, rotation);
+        createConnectingRod(node, rotation, listenUpdate);
     }
 }
 
-function drawForces(node) {
+function drawForces(node, listenUpdate=true) {
     node.forces.forEach(force => {
         if (force != null) {
-            createForceEditTask(force[0], force[1], "black", 0, 0, node, layer, "aux", force[2]);
+            createForce(force[0], force[1], force[2], node, "black", listenUpdate)
         }
     })
 
 }
 
-function drawMoments(node) {
+// create dfs   
 
+function drawMoments(node, listenUpdate) {
     node.moments.forEach(moment => {
         if (moment != null) {
-            createMomentEditTask(moment, "black", node.coordinate[0], node.coordinate[1], node);
+            console.log(moment)
+            createMoment(moment[0], moment[1], node, "black", listenUpdate);
         }
     })
 
@@ -2375,7 +2368,7 @@ function drawDCL(listenUpdate = true) {
     let [x1, y1] = nodesInitialBeam[1].coordinate;
 
     const initialBeam = createBeam(
-        nameBeam = "initialBeam",
+        nameBeam="initialBeam",
         _id = nodesInitialBeam[1].id,
         coordinates = [
             [x0, y0],
@@ -2384,11 +2377,11 @@ function drawDCL(listenUpdate = true) {
         _node = nodesInitialBeam[1]
     )[1];
 
-
     initialBeam.getChildren()[1].setAttr("fill", nodeColor);
 
     const shadowBeam = createShadowBeam(x0, y0, x1 - x0, y1 - y0);
     shadowBeam.hide();
+
     if (listenUpdate) {
         listenNodeMovement(initialBeam, shadowBeam, "initialBeam", listenUpdate);
     }
@@ -2396,23 +2389,17 @@ function drawDCL(listenUpdate = true) {
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
 
-
     nodesInitialBeam.forEach(node => {
-        drawForces(node);
-        drawMoments(node);
-
+        drawForces(node, listenUpdate);
+        drawMoments(node, listenUpdate);
     })
-
 
     otherNodes.forEach(node => {
         createBeam2(node, node.parent)
-        drawLink(node);
-        drawForces(node);
-        drawMoments(node);
+        drawLink(node, listenUpdate);
+        drawForces(node, listenUpdate);
+        drawMoments(node, listenUpdate);
     })
-
-
-
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
@@ -3019,15 +3006,15 @@ function turnToRealDCL(listenUpdate = true) {
                     const Yy = y + lasForce * Math.sin(degToRad(forceAngleY));
 
                     if (node.link === "fixedSupport" || node.link === "pinnedSupport") {
-                        const forceX = createForce(`${node.name}x`, forceAngleX, "green", "realDCL", Xx, Yx, listenUpdate);
+                        const forceX = createForce(`${node.name}x`, forceAngleX, "Reaction", node, "green", listenUpdate, Xx, Yx);
                         node.setKonvaForceXsupport(forceX);
                     }
                     if (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport") {
-                        const forceY = createForce(`${node.name}y`, forceAngleY, "green", "realDCL", Xy, Yy, listenUpdate);
+                        const forceY = createForce(`${node.name}y`, forceAngleY, "Reaction", node, "green", listenUpdate, Xy, Yy);
                         node.setKonvaForceYsupport(forceY);
                     }
                     if (node.link === "fixedSupport") {
-                        const moment = createMoment(`${node.name}m`, "green", "realDcl", x, y, listenUpdate)
+                        const moment = createMoment(`${node.name}m`, "Reaction", node, "green", listenUpdate, x, y)
                         node.setKonvaMomentSupport(moment);
                     }
                     node.setTurnedToRealDCL(true);

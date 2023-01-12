@@ -15,15 +15,13 @@
 <main>
     <div class="container">
         <textarea id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></textarea>
-        
         <div id="containerView" style="width: 1440px; display: flex; margin-top: 8px; ">
             <input type="file" class="form-control" id="imageInput" name="image" accept="image/*">
             <button id="clearImage" class="btn btn-primary" style="margin-left: 8px;">Limpiar</button>
         </div>
         <div id="imagePreviewContainer" style="display: flex; align-items: center; justify-content: center;">
-            <img id="imagePreview" src="" class= "img-thumbnail" alt="Image Preview" style="max-height: 400px; display: none;">
+            <img id="imagePreview" src="{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
         </div>
-        
         <p style="margin-top: 8px;">
             Reemplazar viculos por fuerzas
             (Vista no editable)

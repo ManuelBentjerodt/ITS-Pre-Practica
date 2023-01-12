@@ -19,7 +19,7 @@ function saveTask(e) {
     })
     
     fetch(`${href}`, {
-        method: "PATCH",
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csfrToken,
@@ -35,31 +35,3 @@ function saveTask(e) {
     })
 }   
 
-// const imageInput = document.querySelector("#imageInput");
-
-
-// function saveTask(e) {
-//     const taskId = this.dataset.taskid;
-//     const image = imageInput.files[0];
-
-//     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-//     const href = window.location.href;
-
-    
-    
-//     fetch(`${href}`, {
-//         method: "PATCH",
-//         headers: {
-//             "Content-Type": "application/json",
-//             "X-CSRFToken": csfrToken,
-//         },
-//         body: data
-//     })
-//     .then((response) => {
-//         response.json()
-//         console.log(response.json())
-//     })
-//     .then((data) => {
-//         window.location.href = data.redirect
-//     })
-// }  
