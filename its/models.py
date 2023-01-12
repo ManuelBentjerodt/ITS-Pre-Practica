@@ -29,3 +29,9 @@ class TaskPerAccount(models.Model):
     task = models.ForeignKey(Task,on_delete=models.CASCADE)
     account = models.ForeignKey(Account,on_delete=models.CASCADE)
     
+class Tag(models.Model):
+    name = models.CharField(max_length=30)
+    tasks = models.ManyToManyField(Task, related_name='tags')
+
+    def __str__(self):
+        return self.name

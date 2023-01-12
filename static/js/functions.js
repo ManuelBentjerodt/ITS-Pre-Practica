@@ -1069,7 +1069,7 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
 
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel + "px";
-    btn.style.backgroundSize = "cover"; // todo en button
+    btn.style.backgroundSize = "contain"; // todo en button
     btn.style.backgroundColor = "rgb(128, 70, 16)"
     btn.style.border = "2px outset rgb(128, 70, 16)";
     btn.style.borderRadius = "5px";
@@ -1246,26 +1246,26 @@ function createPanel(listenUpdate = true) {
     const imgFixedSupport = `url(${imagesFolder}/fixedSupport.png)`;
     const imgBeam = `url(${imagesFolder}/beam.png)`;
 
-    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam, null, null, null, null, null, null, listenUpdate = listenUpdate);
-    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport, listenUpdate = listenUpdate);
-    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport, listenUpdate = listenUpdate);
-    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport, listenUpdate = listenUpdate);
-    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image = imgBallJoint, null, null, null, null, null, null, listenUpdate = listenUpdate);
-    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image = imgConnectingRod, null, null, null, null, null, null, listenUpdate = listenUpdate);
-    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, modalForce, null, listenUpdate = listenUpdate);
-    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, modalMoment, null, listenUpdate = listenUpdate);
-    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate = listenUpdate);
+    const btnBeam2 = createButton(widthPanel/2.3, heightPanelElement/2.8, "beam2btn", "Beam", createBeam2, image=imgBeam, null, null, null, null, null, null, listenUpdate=listenUpdate);
+    const btnRollerSupport = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Roller support ", showModal, image=imgRollerSupport, null, null, null, null, modal=modalRollerSupport, listenUpdate=listenUpdate);
+    const btnPinnedSupport = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Pinned support", showModal, image=imgPinnedSupport, null, null, null, null, modal=modalPinnedSupport, listenUpdate=listenUpdate);
+    const btnFixedSupport = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Fixed support", showModal, image=image=imgFixedSupport, null, null, null, null, modal=modalFixedSupport, listenUpdate=listenUpdate);
+    const btnBallJoint = createButton(widthPanel/2.3, heightPanelElement/2.8, "ballJointBtn", "Ball joint", createBallJoint, image=imgBallJoint, null, null, null, null, null, null,  listenUpdate=listenUpdate);
+    const btnConnectingRod = createButton(widthPanel/2.3, heightPanelElement/2.8, "connectingRodBtn", "Connecting rod", createConnectingRod, image=imgConnectingRod, null, null, null, null, null, null, listenUpdate=listenUpdate);
+    const btnForce = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Force", showModal, image=imgForce, null, null, null, null, modalForce, null, listenUpdate=listenUpdate);
+    const btnMoment = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Moment", showModal, image=imgMoment, null, null, null, null, modalMoment, null, listenUpdate=listenUpdate);
+    const btnChangeOrigin = createButton(widthPanel/2.3, heightPanelElement/2.8, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate=listenUpdate);
     btnChangeOrigin.style.color = "white";
 
-    styleForElementGridPanel(btnBeam2, "1", "1");
-    styleForElementGridPanel(btnRollerSupport, "1", "2");
-    styleForElementGridPanel(btnPinnedSupport, "2", "1");
-    styleForElementGridPanel(btnFixedSupport, "2", "2");
-    styleForElementGridPanel(btnBallJoint, "3", "1");
-    styleForElementGridPanel(btnConnectingRod, "3", "2");
-    styleForElementGridPanel(btnForce, "4", "1");
-    styleForElementGridPanel(btnMoment, "4", "2");
-    styleForElementGridPanel(btnChangeOrigin, "5", "1");
+    // styleForElementGridPanel(btnBeam2, "1", "1");
+    // styleForElementGridPanel(btnRollerSupport, "1", "2");
+    // styleForElementGridPanel(btnPinnedSupport, "2", "1");
+    // styleForElementGridPanel(btnFixedSupport, "2", "2");
+    // styleForElementGridPanel(btnBallJoint, "3", "1");
+    // styleForElementGridPanel(btnConnectingRod, "3", "2");
+    // styleForElementGridPanel(btnForce, "4", "1");
+    // styleForElementGridPanel(btnMoment, "4", "2");
+    // styleForElementGridPanel(btnChangeOrigin, "5", "1");
 
     bodyPanel.appendChild(btnBeam2)
     bodyPanel.appendChild(btnRollerSupport);
@@ -2097,6 +2097,7 @@ function createNodeWithObject(object, _id) {
 function recreateDcl(json) {
     const object = jsonToObject(json);
     const newDCL = createNodeWithObject(object, object.id);
+    
     return newDCL;
 }
 
@@ -2400,6 +2401,12 @@ function drawDCL(listenUpdate = true) {
         drawForces(node, listenUpdate);
         drawMoments(node, listenUpdate);
     })
+
+    standarizedDCL= standarizeDCL(nodesInitialBeam,otherNodes);
+
+
+
+    
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
@@ -3138,3 +3145,47 @@ function changeDimensions(listenUpdate = true) {
 function helloWorld() {
     console.log("hello world");
 }
+function findMinCoordinate(coordinates){
+    //en esta funcion se encuentra la coordenada mas a la izquierda y mas arriba para setear el marco de referencia
+    let minXCoordoinates = [];
+    
+    const minX = Math.min(...coordinates.map(coord => coord[0]));
+    
+    for (let i = 0; i < coordinates.length; i++){
+        if (coordinates[i][0] == minX){
+            minXCoordoinates.push(coordinates[i]);
+
+        }
+    }
+    const minY = Math.min(...minXCoordoinates.map(coord => coord[1]));
+    const  minCoordinate = [minX, minY];
+    return minCoordinate;
+
+}
+function standarizeDCL(nodesInitialBeam,otherNodes){
+
+    let coordinates = [];
+    
+    nodesInitialBeam.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+    
+    
+
+    otherNodes.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+
+    const minCoordinate = findMinCoordinate(coordinates);
+    
+    console.log(JSON.parse(JSON.stringify(coordinates)))
+    
+    for (let i = 0; i < coordinates.length; i++){
+        coordinates[i][0] -= minCoordinate[0];
+        coordinates[i][1] -= minCoordinate[1];
+    }
+
+    console.log(coordinates);
+}
+
+

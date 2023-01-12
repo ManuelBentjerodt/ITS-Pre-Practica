@@ -88,6 +88,9 @@ if (dclJSON == "null") {
     console.log("ya has editado otras veces")
 }
 
+
+
+
 x_reference.hideAll();
 y_reference.hideAll();
 
@@ -100,7 +103,7 @@ paintIfMouseOver(initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElem
 paintIfMouseOver(initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[1].getAttr("stroke"));
 paintIfMouseOver(initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));
 
-updateEquations();
+
 updateDificulty();
 updateClassification();
 turnToRealDCL();
@@ -114,5 +117,25 @@ const sizeFactor = taskInfo.dataset.sizefactor;
 document.querySelector("#dim").value = sizeFactor;
 
 const applySizeFactor = document.querySelector("#dimSubmit");
-applySizeFactor.click();
 
+
+
+x_reference.newUnitSize(sizeFactor);
+y_reference.newUnitSize(sizeFactor);
+
+x_reference.drawIndexes();
+x_reference.updateSegmentedLines();
+y_reference.drawIndexes();
+y_reference.updateSegmentedLines();
+
+if (sizeFactor < 1){       
+    unitSize = sizeFactor*100; // ahora esta en cm
+    dimensionValue = "cm";
+    distanceMultiplier = unitSize;
+    
+}
+else{
+    dimensionValue = "m";
+    distanceMultiplier = sizeFactor;
+}
+updateEquations();
