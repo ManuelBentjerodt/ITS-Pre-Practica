@@ -51,7 +51,7 @@ class EditTaskView(View):
         print()
         print(task.image)
         print()
-        return render (request, 'teacher/task/edit_task.html', context)
+        return render (request, 'teacher/edit_task.html', context)
 
 
     def post(self, request, id):
@@ -68,7 +68,7 @@ class EditTaskView(View):
             task.image = request.FILES['image']
 
         task.save()
-        
+
         return JsonResponse({'success': True, 'redirect': '/teacher_home'})
         # return redirect('teacher_home')
 
