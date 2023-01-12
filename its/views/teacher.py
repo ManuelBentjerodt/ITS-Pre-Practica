@@ -24,17 +24,21 @@ def delete_task(request, id=None):
 
 class CreateTaskView(View):
     def get(self, request):
-        return render (request,'teacher/task/create_task.html')
-
-    def post(self, request):
-        jsondata = json.loads(request.body)
         task = Task()
-        task.difficulty = float(jsondata['difficulty'])
-        task.dcl = jsondata['dclJSON']
-        task.sizeFactor = float(jsondata['sizeFactor'])
-        task.statement = jsondata['statement']
         task.save()
-        return JsonResponse({'success': True, 'redirect': '/teacher_home'})  
+
+        return redirect('edit_task', id=task.id)
+        # return render (request,'teacher/task/create_task.html')
+
+    # def post(self, request):
+    #     jsondata = json.loads(request.body)
+    #     task = Task()
+    #     task.difficulty = float(jsondata['difficulty'])
+    #     task.dcl = jsondata['dclJSON']
+    #     task.sizeFactor = float(jsondata['sizeFactor'])
+    #     task.statement = jsondata['statement']
+    #     task.save()
+    #     return JsonResponse({'success': True, 'redirect': '/teacher_home'})  
     
         
 
@@ -46,18 +50,23 @@ class EditTaskView(View):
             'dclJSON': task.dcl,
             'sizeFactor': task.sizeFactor,
             'difficulty': task.difficulty,
-            'statement': task.statement
+            'statement': task.statement,
         }
-        return render (request,'teacher/task/edit_task.html',context)
+        return render (request, 'teacher/task/edit_task.html', context)
 
 
     def post(self, request, id):
-        jsondata = json.loads(request.body)
         task = Task.objects.get(id = id)
-        task.dcl = jsondata['dclJSON']
-        task.sizeFactor = float(jsondata['sizeFactor'])
-        task.difficulty = float(jsondata['difficulty'])
-        task.statement = jsondata['statement']
+        if request.content_type == "application/json":
+            jsondata = json.loads(request.body)
+            task.dcl = jsondata['dclJSON']
+            task.sizeFactor = float(jsondata['sizeFactor'])
+            task.difficulty = float(jsondata['difficulty'])
+            task.statement = jsondata['statement']
+
+        else:
+            task.image = request.FILES['image']
+
         task.save()
         return JsonResponse({'success': True, 'redirect': '/teacher_home'})
 

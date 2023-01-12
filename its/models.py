@@ -17,7 +17,6 @@ class Task(models.Model):
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
     
-
 class Account(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
     email = models.CharField(max_length=50, unique=True)
