@@ -38,7 +38,7 @@
                         <th scope="col">Enunciado</th>
                         <th scope="col">Dificultad</th>
                         <th scope="col">Accion</th>
-                        <th scope="col">Tags</th>
+                        <!-- <th scope="col">Tags</th> -->
 
                     </tr>
                 </thead>
@@ -55,12 +55,11 @@
                             <a href="{% url 'edit_task' task.id %}" class="btn btn-warning">Editar</a>
                             <a href="{% url 'delete_task' task.id %}" class="btn btn-danger">Eliminar</a>
                         </td>
-                        {% for i in task.tag.all %}
-                        <td>{{i.name}}</td>
+                        
                         
                     </tr>
                     
-                    {% endfor %}
+                    
                 {% endfor%}
             </tbody>
         </table>
