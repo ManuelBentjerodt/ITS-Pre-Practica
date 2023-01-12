@@ -18,8 +18,8 @@ const modalMoment = createModalMoment(listenUpdate=false);
 const modalFixedSupport = createModalFixedSupport(listenUpdate=false);
 const modalRollerSupport = createModalRollerSupport(listenUpdate=false); 
 const modalPinnedSupport = createModalPinnedSupport(listenUpdate=false);
-const delPanel = createDelPanel(0,0, listenUpdate=false);
-const anglePanel = createAngleReferencePanel(0,0, listenUpdate=false); //new
+const delPanel = createDelPanel(listenUpdate=false);
+const anglePanel = createAngleReferencePanel(listenUpdate=false); //new
 const panel = createPanel(listenUpdate=false);
 
 
@@ -76,6 +76,9 @@ listenNodeMovement(group, shadowLine, "initialBeam", listenUpdate=false);
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
+
+showReferences();
+turnToRealDCL(listenUpdate=false);
 
 const taskInfo = document.querySelector("#taskInfo").dataset;
 const statement = taskInfo.statement;

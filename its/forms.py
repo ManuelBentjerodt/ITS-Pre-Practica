@@ -20,3 +20,5 @@ class TaskFormDraw(forms.ModelForm):
     class Meta:
         model = TaskPerAccount
         fields = ["student_draw", "solved",] #'__all__'
+
+

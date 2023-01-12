@@ -9,14 +9,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     {% load static %}
-    <script src="{%static '/nodesName.js'%}" defer></script>
-    <script src="{%static '/node.js'%}" defer></script>
-    <script src="{%static '/variables.js'%}" defer></script>
-    <script src="{%static '/y_reference.js'%}" defer></script>
-    <script src="{%static '/x_reference.js'%}" defer></script>
-    <script src="{%static '/functions.js'%}" defer></script>
-    <script src="{%static '/create_task.js'%}" defer></script>
-    <script src="{%static '/save_task.js'%}" defer></script>
+    {{dclJSON|json_script:"dclJSON"}}
+    <script src="{% static 'js/nodesName.js' %}" defer></script>
+    <script src="{% static 'js/node.js' %}" defer></script>
+    <script src="{% static 'js/x_reference.js' %}" defer></script>
+    <script src="{% static 'js/y_reference.js' %}" defer></script>
+    <script src="{% static 'js/variables.js' %}" defer></script>
+    <script src="{% static 'js/functions.js' %}" defer></script>
+    <script src="{% static 'js/edit_task.js' %}" defer></script>
+    <script src="{% static 'js/save_task.js' %}" defer></script>
     <title>ITS ESTATICA</title>
 </head>
 <body>

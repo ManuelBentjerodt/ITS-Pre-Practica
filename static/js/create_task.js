@@ -17,14 +17,14 @@ generateGrid(layer);
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
 const divKonvaContainer = document.querySelector("#containerKonva");
 
-const modalForce = createModalForce(250, 80);
-const modalMoment = createModalMoment(250, 80); 
-const modalFixedSupport = createModalFixedSupport(250, 80);
-const modalRollerSupport = createModalRollerSupport(250, 80); 
-const modalPinnedSupport = createModalPinnedSupport(250, 80);
-const delPanel = createDelPanel(0,0);
-const anglePanel = createAngleReferencePanel(0,0); //new
-const panel = createPanel(250, 80);
+const modalForce = createModalForce();
+const modalMoment = createModalMoment(); 
+const modalFixedSupport = createModalFixedSupport();
+const modalRollerSupport = createModalRollerSupport(); 
+const modalPinnedSupport = createModalPinnedSupport();
+const delPanel = createDelPanel();
+const anglePanel = createAngleReferencePanel(); //new
+const panel = createPanel();
 
 
 divKonvaContainer.appendChild(modalForce);

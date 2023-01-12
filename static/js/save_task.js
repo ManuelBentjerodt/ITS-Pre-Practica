@@ -16,8 +16,6 @@ function saveTask(e) {
         "statement": statement,
         "dclJSON": dclJSON,
     })
-
-
     fetch(`${href}`, {
         method: "POST",
         headers: {
