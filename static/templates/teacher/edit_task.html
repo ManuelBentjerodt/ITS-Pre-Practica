@@ -9,13 +9,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     {% load static %}
+    {{dclJSON|json_script:"dclJSON"}}
     <script src="{% static 'js/nodesName.js' %}" defer></script>
     <script src="{% static 'js/models/node.js' %}" defer></script>
-    <script src="{% static 'js/variables.js' %}" defer></script>
-    <script src="{% static 'js/models/y_reference.js' %}" defer></script>
     <script src="{% static 'js/models/x_reference.js' %}" defer></script>
+    <script src="{% static 'js/models/y_reference.js' %}" defer></script>
+    <script src="{% static 'js/variables.js' %}" defer></script>
     <script src="{% static 'js/functions.js' %}" defer></script>
-    <script src="{% static 'js/templates/step1.js' %}" defer></script>
+    <script src="{% static 'js/templates/edit_task.js' %}" defer></script>
+    <script src="{% static 'js/save_task.js' %}" defer></script>
+    <script src="{% static 'js/preview_image.js' %}" defer></script>
     <title>ITS ESTATICA</title>
 </head>
 <body>
@@ -35,12 +38,15 @@
     </header>
     <main>
         <div class="container">
-            {{correctDcl|json_script:'correctDcl'}}
-            <input type="hidden" id="taskInfo" data-statement="{{statement}}" data-correctdcl="{{correctDcl}}">
-            <p>Enunciado</p>
-            <div id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></div>
-            <img src="" alt="Imagen del enunciado" style="width: 1440px; height: 10px; background-color: rgb(168, 168, 168);">
-            <p>
+            <textarea id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></textarea>
+            <div id="containerView" style="width: 1440px; display: flex; margin-top: 8px; ">
+                <input type="file" class="form-control" id="imageInput" name="image" accept="image/*">
+                <button id="clearImage" class="btn btn-primary" style="margin-left: 8px;">Limpiar</button>
+            </div>
+            <div id="imagePreviewContainer" style="display: flex; align-items: center; justify-content: center;">
+                <img id="imagePreview" src="{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
+            </div>
+            <p style="margin-top: 8px;">
                 Reemplazar viculos por fuerzas
                 (Vista no editable)
                 <input type="checkbox" id="turnToRealDCL">
@@ -57,9 +63,19 @@
                 <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
                 {% include 'modalInfo.html'%}      
             </p> 
-            <div id="containerKonva" id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);"></div>
-            </div>
-        </div> 
+        <div id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);">
+        </div>
+        <div id="equations" style="width: 1444px; height: 340px; background-color: rgb(0, 83, 56); color: whitesmoke; border: 10px outset rgb(128, 70, 16); margin-top: 15px; padding: 5px;">
+            <p id="forcesX">ΣFx: = 0</p>
+            <p id="forcesY">ΣFy: = 0</p>
+            <p id="moments">ΣM: = 0</p>
+            <p id="difficulty">Dificultad: = <span id="difficultyValue">0</span></p>
+            <p id="classification">Tags: = []</p>
+        </div>
+        <button id="saveButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">Guardar</button>
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>
+        <input type="hidden" id="taskInfo" data-statement="{{statement}}" data-sizeFactor="{{sizeFactor}}">
+        </div>
     </main>
 </body>
 </html>
