@@ -1,4 +1,4 @@
-function createStage(containerId, stageWidth=widthStage, stageHeight=heightStage) {
+function createStage(containerId, stageWidth = widthStage, stageHeight = heightStage) {
     const stage = new Konva.Stage({
         container: containerId,
         width: stageWidth,
@@ -62,6 +62,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
         points: [0, 0, x1, y1],
         strokeWidth: 5,
         stroke: "black",
+        fill : "black",
         id: idByDate + 1
     });
 
@@ -94,7 +95,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     return group;
 }
 
-function createBeam(nameBeam = "beam", _id = null, coordinates = null, _node = null) {
+function createBeam(nameBeam="beam", _id = null, coordinates = null, _node = null) {
     let x0 = lastBeamNodeClick.x
     let y0 = lastBeamNodeClick.y
     let x1 = blockSnapSize * 3;
@@ -115,14 +116,17 @@ function createBeam(nameBeam = "beam", _id = null, coordinates = null, _node = n
 
     let originNode;
     let secondNode;
+
     if (_node) {
         secondNode = _node;
         originNode = _node.parent;
+        
     } else {
         originNode = new Node([x0, y0], id = line.getChildren()[1].getAttr("id"));
         secondNode = new Node([x0 + x1, y0 + y1], id = line.getChildren()[2].getAttr("id"));
         joinNodes(originNode, secondNode);
     }
+    
 
     originNode.setKonvaCircle(line.getChildren()[1]);
     secondNode.setKonvaCircle(line.getChildren()[2]);
@@ -134,14 +138,12 @@ function createBeam(nameBeam = "beam", _id = null, coordinates = null, _node = n
     y_reference.addPoint(line.getChildren()[1]);
     y_reference.addPoint(line.getChildren()[2]);
 
-
     hideAllPanels();
 
     return [originNode, line];
 }
 
-function createBeam2(_node = null, _parent = null, listenUpdate=true) {
-    console.log(listenUpdate)
+function createBeam2(_node = null, _parent = null, listenUpdate = true) {
     const konvaElement = lastNodeClick;
     let [x0, y0] = [];
     let idByDate;
@@ -236,7 +238,7 @@ function createBeam2(_node = null, _parent = null, listenUpdate=true) {
     hideAllPanels();
 
     listenNodeMovement(group, shadowLine, "beam2", listenUpdate);
-    if (listenUpdate){
+    if (listenUpdate) {
         calculateEquations();
     }
 
@@ -275,7 +277,7 @@ function moveElementsAttached(element, newPosition, distanceToY, distanceToX) {
     }
 }
 
-function listenNodeMovement(konvaBeam, shadow, typeOfBeam, listenUpdate=true) {
+function listenNodeMovement(konvaBeam, shadow, typeOfBeam, listenUpdate = true) {
     let shadowList;
     let beamLine;
     let beamCircle;
@@ -440,7 +442,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam, listenUpdate=true) {
             const distanceToY = heightStage - blockSnapSize - circle2Pos.y;
 
             moveElementsAttached(nodeBeamCircle, beamCircle.position(), distanceToX, distanceToY);
-            if (listenUpdate){
+            if (listenUpdate) {
                 updateEquations();
                 updateDificulty();
                 updateClassification();
@@ -453,7 +455,7 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam, listenUpdate=true) {
 
 //------------------------------------------------------Links externos-----------------------------------------------//
 
-function createFixedSupport(_node = null, rotation, listenUpdate=true) {
+function createFixedSupport(_node = null, rotation, listenUpdate = true) {
     const colorStroke = "black"
 
     let x0;
@@ -519,7 +521,7 @@ function createFixedSupport(_node = null, rotation, listenUpdate=true) {
     layer.add(group);
 
     indexOfNodeNames += 1;
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
@@ -530,7 +532,6 @@ function createFixedSupport(_node = null, rotation, listenUpdate=true) {
 }
 
 function createRollerSupport(_node = null, rotation, listenUpdate) {
-    console.log(_node, rotation, listenUpdate)
     let ID;
     let nodeParent;
     let x0;
@@ -600,7 +601,7 @@ function createRollerSupport(_node = null, rotation, listenUpdate) {
     layer.add(group);
 
     indexOfNodeNames += 1;
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
@@ -610,7 +611,7 @@ function createRollerSupport(_node = null, rotation, listenUpdate) {
     return group;
 }
 
-function createPinnedSupport(_node = null, rotation, listenUpdate=true) {
+function createPinnedSupport(_node = null, rotation, listenUpdate = true) {
     let ID;
     let nodeParent;
     let x0;
@@ -674,19 +675,19 @@ function createPinnedSupport(_node = null, rotation, listenUpdate=true) {
     delPanel.style.visibility = "hidden";
 
     indexOfNodeNames += 1;
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
     }
-   
+
     rotateKonvaObject(group, rotation);
     return group;
 }
 
 //------------------------------------------------------Links internos-----------------------------------------------//
 
-function createBallJoint(_node = null, listenUpdate=true) {
+function createBallJoint(_node = null, listenUpdate = true) {
     let ID;
     let nodeParent;
     let x0;
@@ -743,7 +744,7 @@ function createBallJoint(_node = null, listenUpdate=true) {
     delPanel.style.visibility = "hidden";
 
     indexOfNodeNames += 1;
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
@@ -752,7 +753,7 @@ function createBallJoint(_node = null, listenUpdate=true) {
     return group;
 }
 
-function createConnectingRod(_node = null, listenUpdate=true) {
+function createConnectingRod(_node = null, listenUpdate = true) {
     let ID;
     let nodeParent;
     let x0;
@@ -819,12 +820,13 @@ function createConnectingRod(_node = null, listenUpdate=true) {
     }
 
     layer.add(group);
+    
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
 
     indexOfNodeNames += 1;
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
@@ -835,17 +837,16 @@ function createConnectingRod(_node = null, listenUpdate=true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, color="black", typeForce, x0=0, y0=0, listenUpdate=true) {
-    let x0lastPos = lastBeamNodeClick.x
-    let y0lasPos = lastBeamNodeClick.y
+function createForce(valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null) {
+    let [x0, y0] = node.coordinate;
 
     let magnitud = valMagnitud;
     let angle = valAngle;
-    
-    let txt = magnitud + " " +typeForce+ ", " + angle + " °";
+
+    let txt = magnitud + " " + typeForce + ", " + angle + " °";
 
     let dragg = true;
-    
+
     const large = largeForce;
     const strokeVal = strokeForce
 
@@ -853,13 +854,14 @@ function createForce(valMagnitud, valAngle, color="black", typeForce, x0=0, y0=0
     const ly = large * Math.sin(degToRad(angle))
 
     if (color != "black") {
-        x0lastPos = x0;
-        y0lasPos = y0;
+        console.log("estoy en true ", X, Y)
+        x0 = X;
+        y0 = Y;
         txt = valMagnitud;
         dragg = false;
     }
 
-    const group = new Konva.Group({ tension: [magnitud, angle,typeForce], name: "force", x: x0lastPos, y: y0lasPos });
+    const group = new Konva.Group({ tension: [magnitud, angle, typeForce], name: "force", x: x0, y: y0 });
     const arrow = new Konva.Arrow({
         x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
         y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
@@ -888,11 +890,9 @@ function createForce(valMagnitud, valAngle, color="black", typeForce, x0=0, y0=0
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
     if (color == "black") {
-        const konvaElement = lastNodeClick;
-        const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addForce(parseFloat(magnitud), parseFloat(angle),typeForce);
-        nodeParent.addKonvaForce(group);
-        group.setAttr("id", konvaElement.getAttr("id"))
+        node.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
+        node.addKonvaForce(group);
+        group.setAttr("id", node.id);
     }
 
     panel.style.visibility = "hidden";
@@ -900,16 +900,16 @@ function createForce(valMagnitud, valAngle, color="black", typeForce, x0=0, y0=0
     modalForce.style.visibility = "hidden";
 
     forceMovement(group, 2 * blockSnapSize, strokeVal, typeForce, listenUpdate)
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
     }
-    
+
     return group;
 }
 
-function forceMovement(group, large, strokeVal, typeForce, listenUpdate=true) {
+function forceMovement(group, large, strokeVal, typeForce, listenUpdate = true) {
     const arrow = group.getChildren()[0];
     const magnitud = group.getChildren()[1];
 
@@ -933,22 +933,22 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate=true) {
             arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)));
             arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)));
 
-        arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
-        arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
+            arrow.setAttr("x", (nodeRadius + strokeVal) * Math.cos(degToRad(newAngle)))
+            arrow.setAttr("y", -(nodeRadius + strokeVal) * Math.sin(degToRad(newAngle)))
 
-        newAngle = prettyDeg(newAngle);
+            newAngle = prettyDeg(newAngle);
 
-        let txt = magnitudVal + " " +typeForce+ ", " + newAngle  + " °";
-        magnitud.setAttr("text", txt)
-        magnitud.setAttr("x", a*x+10)
-        magnitud.setAttr("y", a*y+10)
+            let txt = magnitudVal + " " + typeForce + ", " + newAngle + " °";
+            magnitud.setAttr("text", txt)
+            magnitud.setAttr("x", a * x + 10)
+            magnitud.setAttr("y", a * y + 10)
 
         }
     })
 
     arrow.on("dragend", () => {
         if (!turnToRealDCLFlag) {
-            group.setAttr("tension", [magnitudVal, newAngle,typeForce]);
+            group.setAttr("tension", [magnitudVal, newAngle, typeForce]);
 
             const node = dcl.findNodeById(group.getAttr("id"));
 
@@ -958,7 +958,7 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate=true) {
 
             angleVal = newAngle;
             force[1] = newAngle;
-            if (listenUpdate){
+            if (listenUpdate) {
                 updateEquations();
                 updateDificulty();
                 updateClassification();
@@ -967,16 +967,17 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate=true) {
     })
 }
 
-function createMoment(val, color = "black", typeMoment, x0=0, y0=0, listenUpdate=true) {
-    let x0lastPos = lastBeamNodeClick.x
-    let y0lastPos = lastBeamNodeClick.y
+function createMoment(val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0) {
+    console.log(val)
+    console.log()
+    let [x0, y0] = node.coordinate
 
     let magnitud = val;
-    let txt = magnitud + " " +typeMoment;
+    let txt = magnitud + " " + typeMoment;
 
     if (color != "black") {
-        x0lastPos = x0;
-        y0lastPos = y0;
+        x0 = X;
+        y0 = Y;
     }
 
     let listOfPoints;
@@ -992,11 +993,7 @@ function createMoment(val, color = "black", typeMoment, x0=0, y0=0, listenUpdate
         // txt += " Nm";
 
     } else {
-
         if (color != "black") {
-
-            x0lastPos = x0;
-            y0lastPos = y0;
             listOfPoints = positiveList;
             txt = magnitud;
         } else {
@@ -1004,8 +1001,7 @@ function createMoment(val, color = "black", typeMoment, x0=0, y0=0, listenUpdate
         }
     }
 
-
-    const group = new Konva.Group({ name: "moment", tension: magnitud, x: x0lastPos, y: y0lastPos });
+    const group = new Konva.Group({ name: "moment", tension: magnitud, x: x0, y: y0 });
     const arrow = new Konva.Arrow({
         x: 0,
         y: 0,
@@ -1033,20 +1029,17 @@ function createMoment(val, color = "black", typeMoment, x0=0, y0=0, listenUpdate
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
     if (color == "black") {
-        const konvaElement = lastNodeClick;
-        const nodeParent = dcl.findNodeById(konvaElement.getAttr("id"));
-        nodeParent.addMoment(parseFloat(magnitud));
-        nodeParent.addTypeMoment(typeMoment);
-        nodeParent.addKonvaMoment(group);
-        group.setAttr("id", konvaElement.getAttr("id"));
+        node.addMoment(parseFloat(magnitud), typeMoment);
+        node.addKonvaMoment(group);
+        group.setAttr("id", node.id);
     }
-
+    console.log(group)
     layer.add(group);
 
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     modalMoment.style.visibility = "hidden";
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
@@ -1092,29 +1085,22 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
     btn.addEventListener("dblclick", () => {
 
         if (idNameText == "beamBtn") {
-            console.log(1, idNameText)
             efunction(listenUpdate);
         } else if (idNameText == "forceBtn") {
-            console.log(2, idNameText)
-            efunction(inputMagnitud.value, inputAngle.value,"black", selectType.value, 0, 0, listenUpdate);
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            efunction(inputMagnitud.value, inputAngle.value, selectType.value, node, "black", listenUpdate);
         } else if (idNameText == "momentBtn") {
-            console.log(3, idNameText)
-            efunction(inputMagnitud.value,"black", selectType.value, 0, 0, listenUpdate)
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            efunction(inputMagnitud.value, selectType.value, node, "black", listenUpdate)
         } else if (idNameText == "deleteElementBtn") {
-            console.log(4, idNameText)
             efunction(element, listenUpdate);
         } else if (idNameText == "modalRotationBtn") {
-            console.log(5, idNameText)
-            efunction(null, rotation=selectObj.value, listenUpdate);
+            efunction(null, rotation = selectObj.value, listenUpdate);
         } else if (idNameText == "modalBtn") {
-            console.log(6, idNameText)
             efunction(modal, listenUpdate);
         } else if (idNameText == "AngleBtn") {
-            console.log(7, idNameText)
             efunction(listenUpdate);
         } else {
-            console.log(8, idNameText)
-            console.log(listenUpdate)
             efunction(null, null, listenUpdate);
         }
 
@@ -1126,32 +1112,32 @@ function createSelectTypeForce(idParam, widthPanel, heightPanel) {
     const select = document.createElement("select");
     select.className = "form-select"
     select.style.fontSize = "14px";
-    select.style.width = widthPanel/3 + "px";
+    select.style.width = widthPanel / 3 + "px";
     select.style.height = heightPanel + "px";
     select.setAttribute("id", idParam);
 
     const optionNewtons = document.createElement("option");
     const optionKips = document.createElement("option");
     const optionKiloNewtons = document.createElement("option");
-    
+
     optionNewtons.value = "N";
     optionKips.value = "kip";
     optionKiloNewtons.value = "kN";
-    
+
     optionNewtons.innerText = "Newtons (N)";
-    optionKips.innerText ="KIPS (kip)" ;
+    optionKips.innerText = "KIPS (kip)";
     optionKiloNewtons.innerText = "Kilo Newtons (kN)";
-    
+
     select.appendChild(optionKips);
     select.appendChild(optionKiloNewtons);
     select.appendChild(optionNewtons);
     return select;
 }
 
-function createSelectTypeMoment(idParam, widthPanel, heightPanel){
+function createSelectTypeMoment(idParam, widthPanel, heightPanel) {
 
     const select = document.createElement("select");
-    select.style.width = widthPanel/1.5 + "px";
+    select.style.width = widthPanel / 1.5 + "px";
     select.style.height = heightPanel + "px";
     select.className = "form-select"
     select.style.fontSize = "14px";
@@ -1160,15 +1146,15 @@ function createSelectTypeMoment(idParam, widthPanel, heightPanel){
     const optionNewtons = document.createElement("option");
     const optionKips = document.createElement("option");
     const optionKiloNewtons = document.createElement("option");
-    
-    optionNewtons.value = "N-m";
-    optionKips.value = "kip-ft";
-    optionKiloNewtons.value = "kN-m";
-    
-    optionNewtons.innerText = "Newtons-meters (N-m)";
-    optionKips.innerText ="KIPS-feet (kip-ft)" ;
-    optionKiloNewtons.innerText = "Kilo Newtons-meters (kN-m)";
-    
+
+    optionNewtons.value = "N*m";
+    optionKips.value = "kip*ft";
+    optionKiloNewtons.value = "kN*m";
+
+    optionNewtons.innerText = "Newtons-meters (N*m)";
+    optionKips.innerText = "KIPS-feet (kip*ft)";
+    optionKiloNewtons.innerText = "Kilo Newtons-meters (kN*m)";
+
     select.appendChild(optionKips);
     select.appendChild(optionKiloNewtons);
     select.appendChild(optionNewtons);
@@ -1212,15 +1198,15 @@ function createContainer(list) {
     return container;
 }
 
-function createPanel(listenUpdate=true) {
+function createPanel(listenUpdate = true) {
     const widthPanel = WIDTHPANEL;
     const heightPanel = HEIGHTPANEL;
-    
+
     const heightPanelElement = heightPanel / 4;
 
     const panel = document.createElement("div");
     panel.style.position = "absolute";
-    panel.style.left = divKonvaContainer.getBoundingClientRect().left  + "px";
+    panel.style.left = divKonvaContainer.getBoundingClientRect().left + "px";
     panel.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     panel.style.width = widthPanel + "px";
     panel.style.height = heightPanel + "px";
@@ -1228,7 +1214,7 @@ function createPanel(listenUpdate=true) {
     panel.style.border = "10px outset rgb(128, 70, 16)";
     panel.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
     panel.style.borderRadius = "10px";
-    
+
     const headerPanel = document.createElement("div");
     headerPanel.style.width = "100%";
     headerPanel.style.height = "15%";
@@ -1241,7 +1227,7 @@ function createPanel(listenUpdate=true) {
     headerPanel.style.color = "white";
 
     const bodyPanel = document.createElement("div");
-    
+
     bodyPanel.style.width = "100%";
     bodyPanel.style.height = "75%";
     bodyPanel.style.padding = "7px";
@@ -1249,7 +1235,7 @@ function createPanel(listenUpdate=true) {
     bodyPanel.style.display = "grid";
     bodyPanel.style.gridTemplateColumns = "1fr 1fr";
     bodyPanel.style.gridTemplateRows = "1fr 1fr 1fr 1fr";
-    
+
     const baseUrl = window.location.origin;
     const imgRollerSupport = `url(${imagesFolder}/rollerSupport.png)`;
     const imgPinnedSupport = `url(${imagesFolder}/pinnedSupport.png)`;
@@ -1290,7 +1276,7 @@ function createPanel(listenUpdate=true) {
     bodyPanel.appendChild(btnForce);
     bodyPanel.appendChild(btnMoment);
     bodyPanel.appendChild(btnChangeOrigin)
-    
+
     panel.appendChild(headerPanel);
     panel.appendChild(bodyPanel);
 
@@ -1435,8 +1421,7 @@ function listenCreateElement() {
             lastNodeClick = e.target;
             const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
             console.log(nodeParent)
-            console.log(e.target.getParent())
-
+    
             if (e.target.name() == "subElementBeamCircle1") {
                 panel.style.visibility = "visible";
                 movePanelTo(panel, mouseXY.x, mouseXY.y);
@@ -1469,7 +1454,7 @@ function destroyAttachedKonvaElements(node) {
     })
 }
 
-function deleteElement(element, listenUpdate=true) {
+function deleteElement(element, listenUpdate = true) {
     if (element.name() === "beam2") {
         const node = dcl.findNodeById(element.getAttr("id") + 2) //element es el group del objeto, 
         const parentNode = node.parent
@@ -1515,7 +1500,7 @@ function deleteElement(element, listenUpdate=true) {
     delete element;
 
     recalculateNodeNames();
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
@@ -1524,17 +1509,17 @@ function deleteElement(element, listenUpdate=true) {
 
 
 
-function listenAngleReference(){
+function listenAngleReference() {
     stage.on("dblclick", (e) => {
         if (e.target && e.target.getParent()) {
             const element = e.target.getParent();
             const name = element.name();
-            if (name == "force" ) {
-                
+            if (name == "force") {
+
                 const mouseXY = roundXY(getXY());
                 lastElementClick = element;
                 anglePanel.style.visibility = "visible";
-                movePanelTo(anglePanel, mouseXY.x-240, mouseXY.y+15);
+                movePanelTo(anglePanel, mouseXY.x - 240, mouseXY.y + 15);
 
             }
         }
@@ -1563,7 +1548,7 @@ function listenDeleteElement() {
                 const mouseXY = roundXY(getXY());
                 lastElementClick = element;
                 delPanel.style.visibility = "visible";
-                movePanelTo(delPanel, mouseXY.x, mouseXY.y+15);
+                movePanelTo(delPanel, mouseXY.x, mouseXY.y + 15);
             }
         }
     });
@@ -1599,27 +1584,27 @@ function delElement(listenUpdate=true) {
     deleteElement(lastElementClick, listenUpdate);
     hideAllPanels();
 }
-function listenAngleCreated(konvaArc){
+function listenAngleCreated(konvaArc) {
     stage.on("click", () => {
         if (konvaArc) {
             konvaArc.destroy();
         }
-      });
+    });
 
-    }
+}
 
-function listenArrowRotation(konvaArc,arrow){
+function listenArrowRotation(konvaArc, arrow) {
     arrow.on("dragend", () => {
         konvaArc.clockwise(true);
         if (arrow.getAttr("tension")[1] > 180 && arrow.getAttr("tension")[1]) {
             konvaArc.clockwise(false);
-          }
-        konvaArc.angle(360-arrow.getAttr("tension")[1]);
-        
-      });
+        }
+        konvaArc.angle(360 - arrow.getAttr("tension")[1]);
+
+    });
 }
-function createAngleReference(){
-    
+function createAngleReference() {
+
     console.log(lastElementClick.getAttr("tension")[1]);
     const forceObject = lastElementClick
     angle = forceObject.getAttr("tension")[1];
@@ -1635,21 +1620,21 @@ function createAngleReference(){
         fill: 'red',
         stroke: 'black',
         strokeWidth: 2,
-        angle: 360-angle,
+        angle: 360 - angle,
         rotation: 0,
         clockwise: true
-      });
-      if (angle > 180) {
+    });
+    if (angle > 180) {
         arc.clockwise(false);
-      }
+    }
 
 
 
-      layer.add(arc);
-      
+    layer.add(arc);
+
     anglePanel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
-    listenArrowRotation(arc,forceObject);
+    listenArrowRotation(arc, forceObject);
     listenAngleCreated(arc);
 }
 
@@ -1673,14 +1658,14 @@ function createDelPanel(listenUpdate) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image=imgDelete, null, null, null, null, null, null, listenUpdate);
+    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image = imgDelete, null, null, null, null, null, null, listenUpdate);
 
     panel.appendChild(deleteElementBtn);
 
     return panel;
 }
 
-function createAngleReferencePanel(){
+function createAngleReferencePanel() {
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
@@ -1699,7 +1684,7 @@ function createAngleReferencePanel(){
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const angleElementBtn = createButton(widthPanel, heightPanel, "AngleBtn", "AngleReference", createAngleReference, image=imgDelete);
+    const angleElementBtn = createButton(widthPanel, heightPanel, "AngleBtn", "AngleReference", createAngleReference, image = imgDelete);
 
     panel.appendChild(angleElementBtn);
 
@@ -1917,7 +1902,7 @@ function generateGrid(layer) {
     }
 }
 
-function createBelementForGrid(text, row, col){
+function createBelementForGrid(text, row, col) {
     const element = document.createElement("b");
     element.innerText = text;
     element.style.gridRow = row;
@@ -1929,16 +1914,16 @@ function createBelementForGrid(text, row, col){
     return element;
 }
 
-function createContainerForElementGrid(){
+function createContainerForElementGrid() {
     const container = document.createElement("div");
     container.style.display = "flex";
     container.style.alignItems = "center";
     container.style.justifyContent = "center";
-    
+
     return container;
 }
 
-function styleForElementGrid(element, row, col){
+function styleForElementGrid(element, row, col) {
     element.style.position = "relative";
     element.style.gridRow = row;
     element.style.gridColumn = col;
@@ -1948,27 +1933,27 @@ function styleForElementGrid(element, row, col){
 
 }
 
-function styleForElementGridPanel(element, row, col){
+function styleForElementGridPanel(element, row, col) {
     element.style.position = "relative";
     element.style.gridRow = row;
     element.style.gridColumn = col;
     element.style.borderRadius = "5px";
-    element.style.width = WIDTHPANEL/2 - 20 + "px";
+    element.style.width = WIDTHPANEL / 2 - 20 + "px";
     element.style.height = 50 + "px";
     element.style.margin = "2px";
 }
 
-function createModalForce(listenUpdate=true) {
+function createModalForce(listenUpdate = true) {
     const widthModal = 400;
     const heightModal = 180;
-    
+
     const heightModalElement = heightModal / 3;
 
     const modal = document.createElement("div");
     modal.id = "modalForce";
     modal.className = "modal";
     modal.style.position = "absolute";
-    modal.style.left = divKonvaContainer.getBoundingClientRect().left  + "px";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.width = widthModal + "px";
     modal.style.height = heightModal + "px";
@@ -1988,13 +1973,13 @@ function createModalForce(listenUpdate=true) {
     const inputCreateForceMagnitud = createInputMagnitud("input-create-force", widthModal, heightModalElement);
     styleForElementGrid(inputCreateForceMagnitud, "2", "1");
 
-    const selectTypeForce = createSelectTypeForce("select-type-force",widthModal, heightModalElement);
+    const selectTypeForce = createSelectTypeForce("select-type-force", widthModal, heightModalElement);
     styleForElementGrid(selectTypeForce, "2", "2");
-    
+
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
     styleForElementGrid(inputCreateForceAngle, "2", "3");
-    
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Crear", createForce, null, inputMagnitud=inputCreateForceMagnitud, inputAngle=inputCreateForceAngle,null,null,null, selectTypeForce, listenUpdate);
+
+    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Crear", createForce, null, inputMagnitud = inputCreateForceMagnitud, inputAngle = inputCreateForceAngle, null, null, null, selectTypeForce, listenUpdate);
     btnForce.style.backgroundColor = "rgb(128, 70, 16)"
     btnForce.style.border = "2px outset rgb(128, 70, 16)";
     btnForce.style.borderRadius = "5px";
@@ -2007,7 +1992,7 @@ function createModalForce(listenUpdate=true) {
     btnForce.style.height = "40px";
     btnForce.style.margin = "10px"
     btnForce.innerText = "Crear";
-    
+
     const inputCreateForceMagnitudContainer = createContainerForElementGrid();
     const selectTypeForceContainer = createContainerForElementGrid();
     const inputCreateForceAngleContainer = createContainerForElementGrid();
@@ -2030,7 +2015,7 @@ function createModalForce(listenUpdate=true) {
     return modal;
 }
 
-function createModalMoment(listenUpdate=true) {
+function createModalMoment(listenUpdate = true) {
     const widthModal = 380;
     const heightModal = 180;
 
@@ -2040,7 +2025,7 @@ function createModalMoment(listenUpdate=true) {
     modal.id = "modalMoment";
     modal.className = "modal";
     modal.style.position = "absolute";
-    modal.style.left = divKonvaContainer.getBoundingClientRect().left  + "px";
+    modal.style.left = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
     modal.style.width = widthModal + "px";
     modal.style.height = heightModal + "px";
@@ -2059,7 +2044,7 @@ function createModalMoment(listenUpdate=true) {
     const textMagnitudeUnit = createBelementForGrid("Unidad", "1", "2");
     styleForElementGrid(textMagnitudeUnit, "1", "2");
 
-    
+
     const inputCreateMoment = createInputMagnitud("input-create-moment", widthModal * 2, heightModalElement); // width panel*2
     inputCreateMoment.style.margin = "10px";
 
@@ -2067,7 +2052,7 @@ function createModalMoment(listenUpdate=true) {
     selectTypeMoment.style.width = "200px";
     selectTypeMoment.style.margin = "5px";
 
-    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment,null, inputMagnitude=inputCreateMoment,null,null,null,null,selectTypeMoment, listenUpdate);
+    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment, null, inputMagnitude = inputCreateMoment, null, null, null, null, selectTypeMoment, listenUpdate);
     btnMoment.style.backgroundColor = "rgb(128, 70, 16)"
     btnMoment.style.border = "2px outset rgb(128, 70, 16)";
     btnMoment.style.borderRadius = "5px";
@@ -2082,13 +2067,13 @@ function createModalMoment(listenUpdate=true) {
 
     const inputCreateMomentContainer = createContainerForElementGrid();
     const selectTypeMomentContainer = createContainerForElementGrid();
-    
+
 
     inputCreateMomentContainer.appendChild(inputCreateMoment);
     inputCreateMomentContainer.style.width = "100px"
     selectTypeMomentContainer.appendChild(selectTypeMoment);
-    
-   
+
+
     modal.appendChild(textMagnitude);
     modal.appendChild(textMagnitudeUnit);
     modal.appendChild(inputCreateMomentContainer);
@@ -2134,51 +2119,53 @@ function getDate() {
     return date;
 }
 
-function drawLink(node) {
+function drawLink(node, listenUpdate=true) {
     const rotation = parseInt(node.linkRotation);
     if (node.link === "rollerSupport") {
-        createRollerSupport(node, rotation);
+        createRollerSupport(node, rotation, listenUpdate);
     } else if (node.link === "pinnedSupport") {
-        createPinnedSupport(node, rotation);
+        createPinnedSupport(node, rotation, listenUpdate);
     } else if (node.link === "fixedSupport") {
-        createFixedSupport(node, rotation);
+        createFixedSupport(node, rotation, listenUpdate);
     } else if (node.link === "ballJoint") {
-        createBallJoint(node), rotation;
+        createBallJoint(node), rotation, listenUpdate;
     } else if (node.link === "connectingRod") {
-        createConnectingRod(node, rotation);
+        createConnectingRod(node, rotation, listenUpdate);
     }
 }
 
-function drawForces(node) {
-    node.forces.forEach(force=>{
-        if (force !=null){
-        createForceEditTask(force[0],force[1],"black",0,0,node,layer,"aux",force[2]);
+function drawForces(node, listenUpdate=true) {
+    node.forces.forEach(force => {
+        if (force != null) {
+            createForce(force[0], force[1], force[2], node, "black", listenUpdate)
         }
     })
 
 }
 
-function drawMoments(node) {
+// create dfs   
 
+function drawMoments(node, listenUpdate) {
     node.moments.forEach(moment => {
         if (moment != null) {
-            createMomentEditTask(moment, "black", node.coordinate[0], node.coordinate[1], node);
+            console.log(moment)
+            createMoment(moment[0], moment[1], node, "black", listenUpdate);
         }
     })
 
 }
 
 
-function calculateDificulty(force,moment,reactions) {
+function calculateDificulty(force, moment, reactions) {
     // .getAttr("tension")[1] angulo de la fuerza
     // se le pasa la fuerza ya calculada con su tipo de fuerza
-    return force + 0.05*moment + 3*reactions;
+    return force + 0.05 * moment + 3 * reactions;
 }
 
 
 
 
-function updateClassification(){
+function updateClassification() {
     // tags: fuerza perpendicular, fuerza angulo, vinculo simples, empotrado, momento, superficie con inclinacion
     let tags = [];
 
@@ -2191,106 +2178,106 @@ function updateClassification(){
 
     nodesInitialBeam.forEach(node => {
 
-        node.forces.forEach(force=>{
-            if ((force[1]%90) !=0){
-                if (tags.includes("fuerza con angulo") == false){
+        node.forces.forEach(force => {
+            if ((force[1] % 90) != 0) {
+                if (tags.includes("fuerza con angulo") == false) {
                     tags.push("fuerza con angulo");
                 }
-                
+
             }
-            else{
-                if (tags.includes("fuerza perpendicular") == false){
+            else {
+                if (tags.includes("fuerza perpendicular") == false) {
                     tags.push("fuerza perpendicular");
                 }
 
             }
-            if(originNodeY-node.coordinate[1]!=0){
-                
-                if (tags.includes("desnivel") == false){
+            if (originNodeY - node.coordinate[1] != 0) {
+
+                if (tags.includes("desnivel") == false) {
                     tags.push("desnivel");
                 }
             }
         })
 
-         node.moments.forEach(force=>{
-            if (tags.includes("momento") == false){
+        node.moments.forEach(force => {
+            if (tags.includes("momento") == false) {
                 tags.push("momento");
             }
         })
 
-        if(node.link){
+        if (node.link) {
             if (node.link === "pinnedSupport" || node.link === "rollerSuport") {
-                if (tags.includes("apoyos simples") == false){
+                if (tags.includes("apoyos simples") == false) {
                     tags.push("apoyos simples");
                 }
             }
             if (node.link === "fixedSupport") {
-                if (tags.includes("empotrado") == false){
+                if (tags.includes("empotrado") == false) {
                     tags.push("empotrado");
                 }
             }
         }
     })
-    
+
 
     otherNodes.forEach(node => {
         // contando fuerzas, apoyos y momentos
-        node.forces.forEach(force=>{
-            
-            if ((force[1]%90) !=0){
-                if (tags.includes("fuerza con angulo") == false){
+        node.forces.forEach(force => {
+
+            if ((force[1] % 90) != 0) {
+                if (tags.includes("fuerza con angulo") == false) {
                     tags.push("fuerza con angulo");
                 }
             }
-            else{
-                if (tags.includes("fuerza perpendicular") == false){
+            else {
+                if (tags.includes("fuerza perpendicular") == false) {
                     tags.push("fuerza perpendicular");
                 }
 
             }
-            if(originNodeY-node.coordinate[1]!=0){
-                
-                if (tags.includes("desnivel") == false){
+            if (originNodeY - node.coordinate[1] != 0) {
+
+                if (tags.includes("desnivel") == false) {
                     tags.push("desnivel");
                 }
             }
         })
 
-         node.moments.forEach(moment=>{
-           
-            if (tags.includes("momento") == false){
+        node.moments.forEach(moment => {
+
+            if (tags.includes("momento") == false) {
                 tags.push("momento");
             }
         })
 
-        if(node.link){
+        if (node.link) {
             if (node.link === "pinnedSupport" || node.link === "rollerSuport") {
-                if (tags.includes("apoyos simples") == false){
+                if (tags.includes("apoyos simples") == false) {
                     tags.push("apoyos simples");
                 }
             }
             if (node.link === "fixedSupport") {
-                if (tags.includes("empotrado") == false){
+                if (tags.includes("empotrado") == false) {
                     tags.push("empotrado");
                 }
             }
-          
-            
+
+
         }
     })
 
     const pClassification = document.querySelector("#classification");
- 
+
     pClassification.innerText = "Tags: " + tags;
-    
-   
+
+
 }
 
 
 
 
 
-function updateDificulty(){
+function updateDificulty() {
     let forcesSum = 0;
     let momentsSum = 0;
     let linkSum = 0;
@@ -2301,78 +2288,78 @@ function updateDificulty(){
 
     originNodeY = nodesInitialBeam[0].coordinate[1];
     nodesInitialBeam.forEach(node => {
-        
+
         // contando fuerzas, apoyos y momentos
-        node.forces.forEach(force=>{
-            if ((force[1]%90) !=0){
+        node.forces.forEach(force => {
+            if ((force[1] % 90) != 0) {
                 forcesSum += 0.3;
-                
-                
-            }
-            else{
-                forcesSum +=0.1;
+
 
             }
-            if(originNodeY-node.coordinate[1]!=0){
+            else {
+                forcesSum += 0.1;
+
+            }
+            if (originNodeY - node.coordinate[1] != 0) {
                 forcesSum += 0.3;
             }
         })
 
-        node.moments.forEach(force=>{ 
+        node.moments.forEach(force => {
             momentsSum += 1;
         })
 
-        if(node.konvaObjects.link){
+        if (node.konvaObjects.link) {
             if (node.link === "pinnedSupport") {
-                linkSum+=2
+                linkSum += 2
             }
             if (node.link === "fixedSupport") {
-                linkSum+=3
+                linkSum += 3
             }
             if (node.link === "rollerSupport") {
-                linkSum+=1
+                linkSum += 1
             }
         }
     })
-    
+
 
     otherNodes.forEach(node => {
         // contando fuerzas, apoyos y momentos
-        node.forces.forEach(force=>{
-            
-            if ((force[1]%90) !=0){
+        node.forces.forEach(force => {
+
+            if ((force[1] % 90) != 0) {
                 forcesSum += 0.3;
             }
-            else{
-                forcesSum +=0.1
+            else {
+                forcesSum += 0.1
             }
-            if(originNodeY-node.coordinate[1]!=0){
+            if (originNodeY - node.coordinate[1] != 0) {
                 forcesSum += 0.3;
             }
         })
 
-        node.moments.forEach(moment=>{
+        node.moments.forEach(moment => {
             momentsSum += 1;
         })
 
-        if(node.konvaObjects.link){
+        if (node.konvaObjects.link) {
             if (node.link === "pinnedSupport") {
-                linkSum+=2
+                linkSum += 2
             }
             if (node.link === "fixedSupport") {
-                linkSum+=3
+                linkSum += 3
             }
             if (node.link === "rollerSupport") {
-                linkSum+=1
+                linkSum += 1
             }
         }
     })
-    const dificulty =  calculateDificulty(forcesSum,momentsSum,linkSum);
+    const dificulty = calculateDificulty(forcesSum, momentsSum, linkSum);
     const pDificulty = document.querySelector("#difficultyValue");
-    pDificulty.innerText =  dificulty;
+    pDificulty.innerText = dificulty;
 }
 
-function drawDCL(listenUpdate=true) {
+function drawDCL(listenUpdate = true) {
     const allNodes = [dcl, ...dcl.getAllDecendents()]
 
     const nodesInitialBeam = allNodes.slice(0, 2)
@@ -2382,7 +2369,7 @@ function drawDCL(listenUpdate=true) {
     let [x1, y1] = nodesInitialBeam[1].coordinate;
 
     const initialBeam = createBeam(
-        nameBeam = "initialBeam",
+        nameBeam="initialBeam",
         _id = nodesInitialBeam[1].id,
         coordinates = [
             [x0, y0],
@@ -2391,31 +2378,28 @@ function drawDCL(listenUpdate=true) {
         _node = nodesInitialBeam[1]
     )[1];
 
-    
     initialBeam.getChildren()[1].setAttr("fill", nodeColor);
-    
+
     const shadowBeam = createShadowBeam(x0, y0, x1 - x0, y1 - y0);
     shadowBeam.hide();
-    if(listenUpdate){
+
+    if (listenUpdate) {
         listenNodeMovement(initialBeam, shadowBeam, "initialBeam", listenUpdate);
     }
-    
+
     drawLink(nodesInitialBeam[0]);
     drawLink(nodesInitialBeam[1]);
 
-
     nodesInitialBeam.forEach(node => {
-        drawForces(node);
-        drawMoments(node);
-
+        drawForces(node, listenUpdate);
+        drawMoments(node, listenUpdate);
     })
-
 
     otherNodes.forEach(node => {
         createBeam2(node, node.parent)
-        drawLink(node);
-        drawForces(node);
-        drawMoments(node);
+        drawLink(node, listenUpdate);
+        drawForces(node, listenUpdate);
+        drawMoments(node, listenUpdate);
     })
 
     standarizedDCL= standarizeDCL(nodesInitialBeam,otherNodes);
@@ -2426,151 +2410,9 @@ function drawDCL(listenUpdate=true) {
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
-   
-
 }
 
-
-function createForceEditTask(valMagnitud, valAngle, color = "black", x0 = 0, y0 = 0,nodeId, layerForPaint = layer, aux = "aux",typeForce) {
-    let x0lastPos = nodeId.coordinate[0];
-    let y0lasPos = nodeId.coordinate[1];
-
-
-
-    let magnitud = valMagnitud;
-    let angle = valAngle;
-    let txt = magnitud + " " + typeForce + ", " + angle + " °";
-
-    const large = blockSnapSize * 2;
-    const strokeVal = 4;
-
-    const lx = large * Math.cos(angle * Math.PI / 180)
-    const ly = large * Math.sin(degToRad(angle))
-
-    if (color != "black") {
-        x0lastPos = x0;
-        y0lasPos = y0;
-        txt = valMagnitud
-    }
-
-    const group = new Konva.Group({ tension: [magnitud, angle], name: "force", x: x0lastPos, y: y0lasPos });
-    const arrow = new Konva.Arrow({
-        x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
-        y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
-        points: [lx, -ly, 0, 0],
-        pointerLength: 15,
-        pointerWidth: 15,
-        fill: color,
-        stroke: color,
-        strokeWidth: strokeVal,
-        draggable: true
-    });
-
-    const magnitudValue = new Konva.Text({
-        x: lx + 4,
-        y: -ly,
-        text: txt,
-        fontSize: 15,
-        fontFamily: "Impact",
-        fill: color
-    });
-
-    group.add(arrow, magnitudValue);
-    layerForPaint.add(group);
-
-    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
-
-    if (color == "black") {
-        const nodeParent = dcl.findNodeById(nodeId.id);
-        nodeParent.addKonvaForce(group);
-        nodeParent.addTypeForce(typeForce);
-
-        group.setAttr("id", nodeId.id)
-    }
-
-    hideAllPanels()
-
-    forceMovement(group, 2 * blockSnapSize, strokeVal,typeForce)
-
-    return group;
-}
-
-function createMomentEditTask(val, color = "black", x0 = 0, y0 = 0, nodeId, layerForPaint = layer, forFixedSupport = false) {
-    let x0lastPos = nodeId.coordinate[0];
-    let y0lastPos = nodeId.coordinate[1];
-
-    console.log("Node typemomment: ",nodeId.typeMoment)
-    let magnitud = val;
-    let txt = magnitud + " " + nodeId.typeMoment;
-
-    if (color != "black") {
-        x0lastPos = x0;
-        y0lastPos = y0;
-    }
-
-    let listOfPoints;
-    const positiveList = [17.68, 17.68, 18.63, 16.67, 19.53, 15.61, 20.36, 14.5, 21.14, 13.35, 21.85, 12.15, 22.49, 10.92, 23.06, 9.66, 23.56, 8.36, 23.99, 7.04, 24.34, 5.7, 24.62, 4.34, 24.82, 2.97, 24.95, 1.59, 25.0, 0.2, 24.97, -1.19, 24.87, -2.57, 24.69, -3.95, 24.43, -5.31, 24.1, -6.66, 23.69, -7.99, 23.21, -9.29, 22.66, -10.57, 22.04, -11.81, 21.35, -13.01, 20.59, -14.18, 19.77, -15.3, 18.89, -16.37, 17.96, -17.39, 16.96, -18.36, 15.92, -19.28, 14.82, -20.13, 13.68, -20.92, 12.5, -21.65, 11.28, -22.31, 10.02, -22.9, 8.74, -23.42, 7.42, -23.87, 6.09, -24.25, 4.73, -24.55, 3.36, -24.77, 1.98, -24.92, 0.59, -24.99, -0.79, -24.99, -2.18, -24.9, -3.56, -24.75, -4.93, -24.51, -6.28, -24.2, -7.61, -23.81, -8.92, -23.35, -10.2, -22.82, -11.46, -22.22, -12.67, -21.55, -13.85, -20.81, -14.98, -20.01, -16.07, -19.15, -17.11, -18.23, -18.09, -17.25, -19.02, -16.22, -19.89, -15.14, -20.7, -14.01, -21.45, -12.84, -22.13, -11.63, -22.74, -10.39, -23.28, -9.11, -23.75, -7.8, -24.15, -6.47, -24.47, -5.12, -24.72, -3.75, -24.89, -2.38, -24.98, -0.99, -25.0, 0.4, -24.94, 1.78, -24.8, 3.16, -24.58, 4.54, -24.3, 5.89, -23.93, 7.23, -23.49, 8.55, -22.98, 9.84, -22.4, 11.1, -21.75, 12.33, -21.03, 13.52, -20.25, 14.66, -19.4, 15.76, -18.5, 16.82, -17.54, 17.82, -16.52, 18.76, -15.45, 19.65, -14.34, 20.48, -13.18, 21.24, -11.98, 21.94, -10.74, 22.57, -9.48, 23.13, -8.18, 23.63, -6.85, 24.04, -5.51, 24.39, -4.15, 24.65, -2.77, 24.85, -1.39, 24.96, -0.0, 25.0]
-    const negativeList = [-17.68, 17.68, -18.63, 16.67, -19.53, 15.61, -20.36, 14.5, -21.14, 13.35, -21.85, 12.15, -22.49, 10.92, -23.06, 9.66, -23.56, 8.36, -23.99, 7.04, -24.34, 5.7, -24.62, 4.34, -24.82, 2.97, -24.95, 1.59, -25.0, 0.2, -24.97, -1.19, -24.87, -2.57, -24.69, -3.95, -24.43, -5.31, -24.1, -6.66, -23.69, -7.99, -23.21, -9.29, -22.66, -10.57, -22.04, -11.81, -21.35, -13.01, -20.59, -14.18, -19.77, -15.3, -18.89, -16.37, -17.96, -17.39, -16.96, -18.36, -15.92, -19.28, -14.82, -20.13, -13.68, -20.92, -12.5, -21.65, -11.28, -22.31, -10.02, -22.9, -8.74, -23.42, -7.42, -23.87, -6.09, -24.25, -4.73, -24.55, -3.36, -24.77, -1.98, -24.92, -0.59, -24.99, 0.79, -24.99, 2.18, -24.9, 3.56, -24.75, 4.93, -24.51, 6.28, -24.2, 7.61, -23.81, 8.92, -23.35, 10.2, -22.82, 11.46, -22.22, 12.67, -21.55, 13.85, -20.81, 14.98, -20.01, 16.07, -19.15, 17.11, -18.23, 18.09, -17.25, 19.02, -16.22, 19.89, -15.14, 20.7, -14.01, 21.45, -12.84, 22.13, -11.63, 22.74, -10.39, 23.28, -9.11, 23.75, -7.8, 24.15, -6.47, 24.47, -5.12, 24.72, -3.75, 24.89, -2.38, 24.98, -0.99, 25.0, 0.4, 24.94, 1.78, 24.8, 3.16, 24.58, 4.54, 24.3, 5.89, 23.93, 7.23, 23.49, 8.55, 22.98, 9.84, 22.4, 11.1, 21.75, 12.33, 21.03, 13.52, 20.25, 14.66, 19.4, 15.76, 18.5, 16.82, 17.54, 17.82, 16.52, 18.76, 15.45, 19.65, 14.34, 20.48, 13.18, 21.24, 11.98, 21.94, 10.74, 22.57, 9.48, 23.13, 8.18, 23.63, 6.85, 24.04, 5.51, 24.39, 4.15, 24.65, 2.77, 24.85, 1.39, 24.96, 0.0, 25.0]
-
-    if (magnitud < 0) {
-        listOfPoints = negativeList;
-
-    } else if (magnitud > 0) {
-        listOfPoints = positiveList;
-
-    } else {
-        if (color != "black") {
-            x0lastPos = x0;
-            y0lastPos = y0;
-            listOfPoints = positiveList;
-        }
-        return;
-    }
-
-
-    const group = new Konva.Group({ name: "moment", tension: magnitud, x: x0lastPos, y: y0lastPos });
-    const arrow = new Konva.Arrow({
-        x: 0,
-        y: 0,
-        points: listOfPoints,
-        pointerLength: 10,
-        pointerWidth: 10,
-        fill: color,
-        stroke: color,
-        strokeWidth: 4,
-        name: "subelement",
-    });
-
-    const magnitudValue = new Konva.Text({
-        x: 0 - blockSnapSize,
-        y: 0 - blockSnapSize,
-        text: txt,
-        fontSize: 15,
-        fontFamily: "Impact",
-        fill: color,
-    });
-
-    group.add(arrow, magnitudValue)
-
-    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
-
-    if (color == "black") {
-        const nodeParent = dcl.findNodeById(nodeId.id);
-        nodeParent.addKonvaMoment(group);
-        group.setAttr("id", nodeId.id);
-    }
-
-    layerForPaint.add(group);
-
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-
-    return group;
-}
-
-function changeOrigin(listenUpdate=true) {
+function changeOrigin(listenUpdate = true) {
     const newOriginNode = dcl.findNodeById(lastNodeClick.getAttr("id"));
     const oldOriginNode = dcl.findOriginNode();
     oldOriginNode.setIsOrigin(false);
@@ -2581,7 +2423,7 @@ function changeOrigin(listenUpdate=true) {
 
     hideAllPanels();
 
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
         updateDificulty();
         updateClassification();
@@ -2615,7 +2457,7 @@ function usefullAngle(angle) {
     } return angle
 }
 
-function tryPushLinkMoments(linkMoments, name, proyection, dist){
+function tryPushLinkMoments(linkMoments, name, proyection, dist) {
     let sign;
     if (dist > 0) {
         if (proyection == 1) sign = "positive";
@@ -2636,13 +2478,13 @@ function tryPushLinkMoments(linkMoments, name, proyection, dist){
 
 }
 
-function tryPushLinkForces(linkForces, name, proyection){
-    if (proyection == 1){
+function tryPushLinkForces(linkForces, name, proyection) {
+    if (proyection == 1) {
         linkForces.push([name, "positive"]);
         return true;
 
     } else if (proyection == -1) {
-        linkForces.push([name, "negative"]);  
+        linkForces.push([name, "negative"]);
         return true;
     }
 
@@ -2652,7 +2494,7 @@ function tryPushLinkForces(linkForces, name, proyection){
 }
 
 
-function calculateEquations(distanceMultiplier,dimensionValue) {
+function calculateEquations(distanceMultiplier, dimensionValue) {
     const origin = dcl.findOriginNode()
 
     const moments = [];
@@ -2669,125 +2511,125 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
 
     allNodes.forEach(node => {
         const diff = distanceXYnodes(node, origin);
-        const distX = Math.abs(diff.x / blockSnapSize)*distanceMultiplier;
-        const distY = Math.abs(diff.y / blockSnapSize)*distanceMultiplier;
+        const distX = Math.abs(diff.x / blockSnapSize) * distanceMultiplier;
+        const distY = Math.abs(diff.y / blockSnapSize) * distanceMultiplier;
 
         node.moments.forEach(moment => {
-            moments.push(moment);
-            typeOfMoments.push(node.typeMoment);
+            moments.push(moment[0]);
+            typeOfMoments.push(moment[1]);
         })
 
         node.forces.forEach(force => {
             const typeForce = force[2]
 
             const [magnitud, angle] = force;
-            if(0 == angle){
+            if (0 == angle) {
                 forcesX.push([-magnitud, typeForce]);
-                if (diff.y > 0){
+                if (diff.y > 0) {
                     moments.push([[-magnitud, typeForce], [distY, `${dimensionValue}`]]);
-                } else if (diff.y < 0){
-                    moments.push([[magnitud, typeForce], [distY,  `${dimensionValue}`]]);
+                } else if (diff.y < 0) {
+                    moments.push([[magnitud, typeForce], [distY, `${dimensionValue}`]]);
                 }
-            } else if (0 < angle && angle < 90){
+            } else if (0 < angle && angle < 90) {
                 forcesX.push([-magnitud, `cos(${angle})${typeForce}`]);
                 forcesY.push([-magnitud, `sin(${angle})${typeForce}`]);
-                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
                     // Same  Slope
                 } else {
-                    if (diff.x > 0){
-                        moments.push([[-magnitud, `sin(${angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
-                    } else if (diff.x < 0){
-                        moments.push([[magnitud, `sin(${angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
+                    if (diff.x > 0) {
+                        moments.push([[-magnitud, `sin(${angle})${typeForce}`], [distX, `${dimensionValue}`]]);
+                    } else if (diff.x < 0) {
+                        moments.push([[magnitud, `sin(${angle})${typeForce}`], [distX, `${dimensionValue}`]]);
                     }
-                    if (diff.y > 0){
-                        moments.push([[-magnitud, `cos(${angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } else if (diff.y < 0){
-                        moments.push([[magnitud, `cos(${angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } 
-                }
-        
-            } else if (90 == angle){
-                forcesY.push([-magnitud, typeForce]);
-                if (diff.x > 0){
-                    moments.push([[-magnitud, typeForce], [distX,  `${dimensionValue}`]]);
-                } else if (diff.x < 0){
-                    moments.push([[magnitud, typeForce], [distX,  `${dimensionValue}`]]);
+                    if (diff.y > 0) {
+                        moments.push([[-magnitud, `cos(${angle})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    } else if (diff.y < 0) {
+                        moments.push([[magnitud, `cos(${angle})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    }
                 }
 
-            } else if (90 < angle && angle < 180){
+            } else if (90 == angle) {
+                forcesY.push([-magnitud, typeForce]);
+                if (diff.x > 0) {
+                    moments.push([[-magnitud, typeForce], [distX, `${dimensionValue}`]]);
+                } else if (diff.x < 0) {
+                    moments.push([[magnitud, typeForce], [distX, `${dimensionValue}`]]);
+                }
+
+            } else if (90 < angle && angle < 180) {
                 forcesX.push([magnitud, `cos(${180 - angle})${typeForce}`]);
                 forcesY.push([-magnitud, `sin(${180 - angle})${typeForce}`]);
-                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
                     // Same  Slope
                 } else {
-                    if (diff.x > 0){
-                        moments.push([[-magnitud, `sin(${angle - 90})${typeForce}`], [distX,  `${dimensionValue}`]]);
-                    } else if (diff.x < 0){
-                        moments.push([[magnitud, `sin(${angle - 90})${typeForce}`], [distX,  `${dimensionValue}`]]);
+                    if (diff.x > 0) {
+                        moments.push([[-magnitud, `sin(${angle - 90})${typeForce}`], [distX, `${dimensionValue}`]]);
+                    } else if (diff.x < 0) {
+                        moments.push([[magnitud, `sin(${angle - 90})${typeForce}`], [distX, `${dimensionValue}`]]);
                     }
-                    if (diff.y > 0){
-                        moments.push([[magnitud, `cos(${angle - 90})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } else if (diff.y < 0){
-                        moments.push([[-magnitud, `cos(${angle - 90})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } 
+                    if (diff.y > 0) {
+                        moments.push([[magnitud, `cos(${angle - 90})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    } else if (diff.y < 0) {
+                        moments.push([[-magnitud, `cos(${angle - 90})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    }
                 }
-                
-            } else if (180 == angle){
+
+            } else if (180 == angle) {
                 forcesX.push([magnitud, typeForce]);
-                if (diff.y > 0){
-                    moments.push([[magnitud, typeForce], [distY,  `${dimensionValue}`]]);
-                } else if (diff.y < 0){
-                    moments.push([[-magnitud, typeForce], [distY,  `${dimensionValue}`]]);
+                if (diff.y > 0) {
+                    moments.push([[magnitud, typeForce], [distY, `${dimensionValue}`]]);
+                } else if (diff.y < 0) {
+                    moments.push([[-magnitud, typeForce], [distY, `${dimensionValue}`]]);
                 }
-            } else if (180 < angle && angle < 270){
+            } else if (180 < angle && angle < 270) {
                 forcesX.push([magnitud, `cos(${angle - 180})${typeForce}`]);
                 forcesY.push([magnitud, `sin(${angle - 180})${typeForce}`]);
-                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
                     // Same  Slope
                 } else {
-                    if (diff.x > 0){
-                        moments.push([[magnitud, `sin(${angle - 180})${typeForce}`], [distX,  `${dimensionValue}`]]);
-                    } else if (diff.x < 0){
-                        moments.push([[-magnitud, `sin(${angle - 180})${typeForce}`], [distX,  `${dimensionValue}`]]);
+                    if (diff.x > 0) {
+                        moments.push([[magnitud, `sin(${angle - 180})${typeForce}`], [distX, `${dimensionValue}`]]);
+                    } else if (diff.x < 0) {
+                        moments.push([[-magnitud, `sin(${angle - 180})${typeForce}`], [distX, `${dimensionValue}`]]);
                     }
-                    if (diff.y > 0){
-                        moments.push([[magnitud, `cos(${angle - 180})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } else if (diff.y < 0){
-                        moments.push([[-magnitud, `cos(${angle - 180})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } 
+                    if (diff.y > 0) {
+                        moments.push([[magnitud, `cos(${angle - 180})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    } else if (diff.y < 0) {
+                        moments.push([[-magnitud, `cos(${angle - 180})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    }
                 }
-                
-            } else if (270 == angle){
+
+            } else if (270 == angle) {
                 forcesY.push([magnitud, typeForce]);
-                if (diff.x > 0){
-                    moments.push([[magnitud, typeForce], [distX,  `${dimensionValue}`]]);
-                } else if (diff.x < 0){
-                    moments.push([[-magnitud, typeForce], [distX,  `${dimensionValue}`]]);
+                if (diff.x > 0) {
+                    moments.push([[magnitud, typeForce], [distX, `${dimensionValue}`]]);
+                } else if (diff.x < 0) {
+                    moments.push([[-magnitud, typeForce], [distX, `${dimensionValue}`]]);
                 }
-            } else if (270 < angle && angle < 360){
+            } else if (270 < angle && angle < 360) {
                 forcesX.push([-magnitud, `cos(${360 - angle})${typeForce}`]);
                 forcesY.push([magnitud, `sin(${360 - angle})${typeForce}`]);
-                if ((-diff.y/diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)){
+                if ((-diff.y / diff.x).toFixed(4) == Math.tan(degToRad(angle)).toFixed(4)) {
                     // Same  Slope
                 } else {
-                    if (diff.x > 0){
-                        moments.push([[magnitud, `sin(${360 - angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
-                    } else if (diff.x < 0){
-                        moments.push([[-magnitud, `sin(${360 - angle})${typeForce}`], [distX,  `${dimensionValue}`]]);
+                    if (diff.x > 0) {
+                        moments.push([[magnitud, `sin(${360 - angle})${typeForce}`], [distX, `${dimensionValue}`]]);
+                    } else if (diff.x < 0) {
+                        moments.push([[-magnitud, `sin(${360 - angle})${typeForce}`], [distX, `${dimensionValue}`]]);
                     }
-                    if (diff.y > 0){
-                        moments.push([[-magnitud, `cos(${360 - angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } else if (diff.y < 0){
-                        moments.push([[magnitud, `cos(${360 - angle})${typeForce}`], [distY,  `${dimensionValue}`]]);
-                    } 
+                    if (diff.y > 0) {
+                        moments.push([[-magnitud, `cos(${360 - angle})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    } else if (diff.y < 0) {
+                        moments.push([[magnitud, `cos(${360 - angle})${typeForce}`], [distY, `${dimensionValue}`]]);
+                    }
                 }
 
             }
         })
 
-        
+
         if (node.link === "fixedSupport" || node.link === "pinnedSupport") {
-            if (node.link === "fixedSupport"){
+            if (node.link === "fixedSupport") {
                 linkMoments.push([`${node.name}m`, "positive"])
             }
 
@@ -2795,10 +2637,10 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
             const dy = (node.coordinate[1] - origin.coordinate[1]) / blockSnapSize;
 
             const supportAngle = parseFloat(node.linkRotation);
-        
+
             const angleForceX = angleFx(supportAngle);
             const angleForceY = angleFy(supportAngle);
-            
+
             const prettyAngleFx = prettyAngle(angleForceX);
             const prettyAngleFy = prettyAngle(angleForceY);
 
@@ -2809,18 +2651,18 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
             let coeffxy = ""
             let coeffyx = ""
             let coeffyy = ""
-        
-            if (prettyAngleFx != 0 && prettyAngleFx != 90){
-                coeffxx = `*cos(${prettyAngleFx})`;  
-                coeffxy = `*sin(${prettyAngleFx})`;
-            } 
 
-            if (prettyAngleFy != 0 && prettyAngleFy != 90){
+            if (prettyAngleFx != 0 && prettyAngleFx != 90) {
+                coeffxx = `*cos(${prettyAngleFx})`;
+                coeffxy = `*sin(${prettyAngleFx})`;
+            }
+
+            if (prettyAngleFy != 0 && prettyAngleFy != 90) {
                 coeffyx = `*cos(${prettyAngleFy})`;
                 coeffyy = `*sin(${prettyAngleFy})`;
-            } 
+            }
 
-            
+
             tryPushLinkForces(linkForcesX, `${node.name}x${coeffxx}`, proyectionFx.x);
             tryPushLinkForces(linkForcesY, `${node.name}x${coeffxy}`, proyectionFx.y);
             tryPushLinkForces(linkForcesX, `${node.name}y${coeffyx}`, proyectionFy.x);
@@ -2831,7 +2673,7 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
             tryPushLinkMoments(linkMoments, `${node.name}y*${distY}${coeffyx}`, proyectionFy.x, dy);
             tryPushLinkMoments(linkMoments, `${node.name}y*${distX}${coeffyy}`, proyectionFy.y, dx);
 
-            
+
         } else if (node.link === "rollerSupport") {
             const dx = (node.coordinate[0] - origin.coordinate[0]) / blockSnapSize;
             const dy = (node.coordinate[1] - origin.coordinate[1]) / blockSnapSize;
@@ -2840,17 +2682,17 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
             let coeffyy = ""
 
             const supportAngle = parseFloat(node.linkRotation);
-            
+
             const angleForceY = angleFy(supportAngle);
-            
+
             const prettyAngleFy = prettyAngle(angleForceY);
-            
+
             const proyectionFy = proyection(angleForceY);
-            
-            if (prettyAngleFy != 0 && prettyAngleFy != 90){
+
+            if (prettyAngleFy != 0 && prettyAngleFy != 90) {
                 coeffyx = `*cos(${prettyAngleFy})`;
                 coeffyy = `*sin(${prettyAngleFy})`;
-            } 
+            }
 
             tryPushLinkForces(linkForcesX, `${node.name}y${coeffyx}`, proyectionFy.x);
             tryPushLinkForces(linkForcesY, `${node.name}y${coeffyy}`, proyectionFy.y);
@@ -2875,7 +2717,7 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
         textForcesY += `${force[0]}${force[1]} `;
     })
 
-    let i =0;
+    let i = 0;
     moments.forEach(moment => {
         if (typeof moment === "number") {
             if (moment > 0) textMoments += "+";
@@ -2917,7 +2759,7 @@ function calculateEquations(distanceMultiplier,dimensionValue) {
 
 
 function updateEquations() {
-    const [Fx, Fy, M] = calculateEquations(distanceMultiplier,dimensionValue);
+    const [Fx, Fy, M] = calculateEquations(distanceMultiplier, dimensionValue);
 
     const pFx = document.querySelector("#forcesX");
     const pFy = document.querySelector("#forcesY");
@@ -2982,11 +2824,11 @@ function createGenericModalRotation(Idname) {
     return modal;
 }
 
-function createModalFixedSupport(listenUpdate=true) {
+function createModalFixedSupport(listenUpdate = true) {
     const modal = createGenericModalRotation("modalFixedSupport");
     const select = modal.children[1].children[0];
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj=select, null, null, listenUpdate);
-    
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
+
     button.style.gridRow = "3";
     button.style.width = "120px";
     button.style.height = "40px";
@@ -2995,22 +2837,22 @@ function createModalFixedSupport(listenUpdate=true) {
 
     const buttonContainer = createContainerForElementGrid("3", "1");
     buttonContainer.appendChild(button);
-    
+
     modal.appendChild(buttonContainer);
     return modal;
 }
 
-function createModalRollerSupport(listenUpdate=true) {
+function createModalRollerSupport(listenUpdate = true) {
     const modal = createGenericModalRotation("modalRollerSupport");
     const select = modal.children[1].children[0];
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj=select, null, null, listenUpdate);
-    
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
+
     button.style.gridRow = "3";
     button.style.width = "120px";
     button.style.height = "40px";
     button.style.margin = "5px";
     button.style.color = "white";
-    
+
     const buttonContainer = createContainerForElementGrid("3", "1");
     buttonContainer.appendChild(button);
 
@@ -3018,17 +2860,17 @@ function createModalRollerSupport(listenUpdate=true) {
     return modal;
 }
 
-function createModalPinnedSupport(listenUpdate=true) {
+function createModalPinnedSupport(listenUpdate = true) {
     const modal = createGenericModalRotation("modalPinnedSupport");
     const select = modal.children[1].children[0];
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj=select, null, null, listenUpdate);
-    
+    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
+
     button.style.gridRow = "3";
     button.style.width = "120px";
     button.style.height = "40px";
     button.style.margin = "5px";
     button.style.color = "white";
-    
+
     const buttonContainer = createContainerForElementGrid("3", "1");
     buttonContainer.appendChild(button);
 
@@ -3076,12 +2918,12 @@ function addDraggableToAllNodes() {
     })
 }
 
-function visibilityLines(lineType, viewType){
+function visibilityLines(lineType, viewType) {
     const lines = layer.find(node => node.name() === lineType);
     lines.forEach(line => {
-        if(viewType === "hide"){
+        if (viewType === "hide") {
             line.hide();
-        }else if(viewType === "show"){
+        } else if (viewType === "show") {
             line.show();
         }
     });
@@ -3145,7 +2987,7 @@ function addDraggableToAllNodes() {
     })
 }
 
-function turnToRealDCL(listenUpdate=true) {
+function turnToRealDCL(listenUpdate = true) {
     const check = document.querySelector("#turnToRealDCL");
 
     check.addEventListener("change", () => {
@@ -3157,33 +2999,33 @@ function turnToRealDCL(listenUpdate=true) {
 
             allNodes.forEach(node => {
                 const [x, y] = node.coordinate;
-                    if (node.konvaObjects.link) {
-                        node.konvaObjects.link.hide();
-                        
-                        const supportAngle = parseFloat(node.linkRotation);
+                if (node.konvaObjects.link) {
+                    node.konvaObjects.link.hide();
 
-                        const forceAngleX = angleFx(supportAngle);
-                        const Xx = x - lasForce*Math.cos(degToRad(forceAngleX));
-                        const Yx = y + lasForce*Math.sin(degToRad(forceAngleX));
+                    const supportAngle = parseFloat(node.linkRotation);
 
-                        const forceAngleY = angleFy(supportAngle);
-                        const Xy = x - lasForce*Math.cos(degToRad(forceAngleY));
-                        const Yy = y + lasForce*Math.sin(degToRad(forceAngleY));
+                    const forceAngleX = angleFx(supportAngle);
+                    const Xx = x - lasForce * Math.cos(degToRad(forceAngleX));
+                    const Yx = y + lasForce * Math.sin(degToRad(forceAngleX));
 
-                        if (node.link === "fixedSupport" || node.link === "pinnedSupport"){
-                            const forceX = createForce(`${node.name}x`, forceAngleX, "green", "realDCL", Xx, Yx, listenUpdate);
-                            node.setKonvaForceXsupport(forceX);
-                        }
-                        if (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport"){
-                            const forceY = createForce(`${node.name}y`, forceAngleY, "green", "realDCL", Xy, Yy, listenUpdate);
-                            node.setKonvaForceYsupport(forceY);   
-                        }
-                        if (node.link === "fixedSupport"){
-                            const moment = createMoment(`${node.name}m`, "green", "realDcl", x, y, listenUpdate)
-                            node.setKonvaMomentSupport(moment);
-                        }
-                        node.setTurnedToRealDCL(true);
+                    const forceAngleY = angleFy(supportAngle);
+                    const Xy = x - lasForce * Math.cos(degToRad(forceAngleY));
+                    const Yy = y + lasForce * Math.sin(degToRad(forceAngleY));
+
+                    if (node.link === "fixedSupport" || node.link === "pinnedSupport") {
+                        const forceX = createForce(`${node.name}x`, forceAngleX, "Reaction", node, "green", listenUpdate, Xx, Yx);
+                        node.setKonvaForceXsupport(forceX);
                     }
+                    if (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport") {
+                        const forceY = createForce(`${node.name}y`, forceAngleY, "Reaction", node, "green", listenUpdate, Xy, Yy);
+                        node.setKonvaForceYsupport(forceY);
+                    }
+                    if (node.link === "fixedSupport") {
+                        const moment = createMoment(`${node.name}m`, "Reaction", node, "green", listenUpdate, x, y)
+                        node.setKonvaMomentSupport(moment);
+                    }
+                    node.setTurnedToRealDCL(true);
+                }
             });
 
             visibilityLines("horizontalLine", "hide");
@@ -3210,59 +3052,59 @@ function turnToRealDCL(listenUpdate=true) {
 
 }
 
-function angleFx(angle){
-    if (angle >= 0 && angle <= 180){
+function angleFx(angle) {
+    if (angle >= 0 && angle <= 180) {
         return 180 - angle
-    } else if (angle > 180 && angle < 360){
+    } else if (angle > 180 && angle < 360) {
         return 540 - angle
     }
 }
 
-function angleFy(angle){
-    if (angle >= 0 && angle <= 270){
+function angleFy(angle) {
+    if (angle >= 0 && angle <= 270) {
         return 270 - angle
-    } else if (angle > 270 && angle < 360){
+    } else if (angle > 270 && angle < 360) {
         return 630 - angle
     }
 }
 
 
-function proyection(angle){
-    function change(r, vx, vy){
+function proyection(angle) {
+    function change(r, vx, vy) {
         r.x = vx;
         r.y = vy;
     }
 
-    const r = {x: null, y: null}
-    if (angle == 0){
+    const r = { x: null, y: null }
+    if (angle == 0) {
         change(r, -1, 0);
-    } else if (angle > 0 && angle < 90){
+    } else if (angle > 0 && angle < 90) {
         change(r, -1, -1);
-    } else if (angle == 90){
+    } else if (angle == 90) {
         change(r, 0, -1);
-    } else if (angle > 90 && angle < 180){ 
+    } else if (angle > 90 && angle < 180) {
         change(r, 1, -1);
-    } else if (angle == 180){ 
+    } else if (angle == 180) {
         change(r, 1, 0);
-    } else if (angle > 180 && angle < 270){ 
+    } else if (angle > 180 && angle < 270) {
         change(r, 1, 1);
-    } else if (angle == 270){ 
+    } else if (angle == 270) {
         change(r, 0, 1);
-    } else if (angle > 270 && angle < 360){ 
+    } else if (angle > 270 && angle < 360) {
         change(r, -1, 1);
     }
 
-    return r;  
+    return r;
 }
 
-function prettyAngle(angle){
-    if (0 <= angle && angle < 90){
+function prettyAngle(angle) {
+    if (0 <= angle && angle < 90) {
         return angle
-    } else if (90 <= angle && angle < 180){
+    } else if (90 <= angle && angle < 180) {
         return 180 - angle
-    } else if (180 <= angle && angle < 270){
+    } else if (180 <= angle && angle < 270) {
         return angle - 180
-    } else if (270 <= angle && angle < 360){
+    } else if (270 <= angle && angle < 360) {
         return 360 - angle;
     }
 
@@ -3270,12 +3112,12 @@ function prettyAngle(angle){
 
 }
 
-function changeDimensions(listenUpdate=true){
+function changeDimensions(listenUpdate = true) {
     const algo = document.querySelector("#dim");
     x_reference.newUnitSize(algo.value);
     y_reference.newUnitSize(algo.value);
 
-    
+
     x_reference.buildLine();
     x_reference.drawIndexes();
     x_reference.updateSegmentedLines();
@@ -3283,24 +3125,24 @@ function changeDimensions(listenUpdate=true){
     y_reference.drawIndexes();
     y_reference.updateSegmentedLines();
 
-    if (algo.value < 1){       
-        unitSize = algo.value*100; // ahora esta en cm
+    if (algo.value < 1) {
+        unitSize = algo.value * 100; // ahora esta en cm
         dimensionValue = "cm";
         distanceMultiplier = unitSize;
-        
+
     }
-    else{
+    else {
         dimensionValue = "m";
         distanceMultiplier = algo.value;
     }
-    if (listenUpdate){
+    if (listenUpdate) {
         updateEquations();
     }
 
 }
 
 
-function helloWorld(){
+function helloWorld() {
     console.log("hello world");
 }
 function findMinCoordinate(coordinates){

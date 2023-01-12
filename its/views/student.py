@@ -17,8 +17,6 @@ def student_home(request):
 
 def firstStep(request, id=None):
     task = Task.objects.get(id = id)
-
-    print(task.__dict__)
     context = {
         'statement': task.statement,
         'correctDcl': task.dcl,
