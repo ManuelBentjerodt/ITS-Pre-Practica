@@ -36,7 +36,7 @@ class EditTaskView(View):
         task = Task.objects.get(id = id)
 
         if task.image:
-            taskImageUrl = task.image
+            taskImageUrl = task.image.url
         else:
             taskImageUrl = None
         context = {
