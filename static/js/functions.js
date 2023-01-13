@@ -2402,7 +2402,7 @@ function drawDCL(listenUpdate = true) {
         drawMoments(node, listenUpdate);
     })
 
-    standarizedDCL= standarizeDCL(nodesInitialBeam,otherNodes);
+    
 
 
 
@@ -3162,30 +3162,125 @@ function findMinCoordinate(coordinates){
     return minCoordinate;
 
 }
-function standarizeDCL(nodesInitialBeam,otherNodes){
+function standarizeDCL(DCL){
 
     let coordinates = [];
+    // const copyDCL = Object.assign({}, DCL);
+   
+  
+
+    const allNodes = [DCL, ...DCL.getAllDecendents()]
+    allNodes.forEach(node => {
+        
+    })
     
+    const nodesInitialBeam = allNodes.slice(0, 2)
+    const otherNodes = allNodes.slice(2)
+    
+
     nodesInitialBeam.forEach(node => {
         coordinates.push(node.coordinate);
     })
-    
-    
-
     otherNodes.forEach(node => {
         coordinates.push(node.coordinate);
     })
 
     const minCoordinate = findMinCoordinate(coordinates);
     
-    console.log(JSON.parse(JSON.stringify(coordinates)))
+   // console.log(JSON.parse(JSON.stringify(coordinates)))
     
     for (let i = 0; i < coordinates.length; i++){
         coordinates[i][0] -= minCoordinate[0];
         coordinates[i][1] -= minCoordinate[1];
     }
 
-    console.log(coordinates);
+    //console.log(coordinates);
+    return DCL
+}
+
+function areDclEqual(dcl1,dcl2) {
+
+    const coordinates = [];
+    const forces = [];
+    const moments = [];
+    const link = []; // recibe un una lista con el link y el angulo (link y linkRotation)
+
+
+
+
+
+    const allNodes = [dcl1, ...dcl1.getAllDecendents()]
+        allNodes.forEach(node => {
+        delete node.id;
+        delete node.konvaObjects;
+        delete node.parent;
+        delete node.name;
+        delete node.turnedToRealDCL;
+
+        console.log("EDIT ASK node: ", node);
+    })
+    
+    const nodesInitialBeam = allNodes.slice(0, 2)
+    const otherNodes = allNodes.slice(2)
+    
+
+    nodesInitialBeam.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+    otherNodes.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+
+///
+
+    const allNodes2 = [dcl2, ...dcl2.getAllDecendents()]
+        allNodes2.forEach(node => {
+        delete node.id;
+        delete node.konvaObjects;
+        delete node.parent;
+        delete node.name;
+        delete node.turnedToRealDCL;
+
+        // console.log("EDIT ASK node 2: ", node);
+    })
+
+    const nodesInitialBeam2 = allNodes2.slice(0, 2)
+    const otherNodes2 = allNodes2.slice(2)
+
+
+    nodesInitialBeam2.forEach(node => {
+        // coordinates.push(node.coordinate);
+    })
+    otherNodes2.forEach(node => {
+        // coordinates.push(node.coordinate);
+    })
+
+    stringifyDcl1 = JSON.stringify(dcl1);
+    stringifyDcl2 = JSON.stringify(dcl2);
+
+    if (stringifyDcl1 == stringifyDcl2){
+        console.log("SON IGUALES");
+        console.log("dcl1: ", stringifyDcl1);
+        console.log("dcl2: ", stringifyDcl2);
+        return true;
+    }
+    else{
+        console.log("dcl1: ", stringifyDcl1);
+        console.log("dcl2: ", stringifyDcl2);
+
+        console.log("NO SON IGUALES");
+        return false;
+    }
+
+
+
+
+
+
+
+
+
+    return true;
 }
 
 

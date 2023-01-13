@@ -19,9 +19,7 @@ class Node {
 
             forceXsupport: null,
             forceYsupport: null,
-            momentSupport: null,
-            segmentedLineX: null,
-            segmentedLineY: null
+            momentSupport: null
             
         }
 
@@ -135,14 +133,7 @@ class Node {
     addKonvaMoment(object) {
         this.konvaObjects.forces.push(object);
     }
-
-    addKonvaSegmentedLineX(object) {
-        this.konvaObjects.segmentedLineX = object;
-    }
-
-    addKonvaSegmentedLineY(object) {
-        this.konvaObjects.segmentedLineY = object;
-    }
+ 
 
     setKonvaShadowBeam(object) {
         this.konvaObjects.shadowBeam = object;
