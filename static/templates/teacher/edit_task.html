@@ -18,7 +18,7 @@
     <script src="{% static 'js/functions.js' %}" defer></script>
     <script src="{% static 'js/templates/edit_task.js' %}" defer></script>
     <script src="{% static 'js/save_task.js' %}" defer></script>
-    <script src="{% static 'js/preview_image.js' %}" defer></script>
+    <script src="{% static 'js/send_image.js' %}" defer></script>
     <title>ITS ESTATICA</title>
 </head>
 <body>
@@ -44,7 +44,7 @@
                 <button id="clearImage" class="btn btn-primary" style="margin-left: 8px;">Limpiar</button>
             </div>
             <div id="imagePreviewContainer" style="display: flex; align-items: center; justify-content: center;">
-                <img id="imagePreview" src="{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
+                <img id="imagePreview" data-image= "{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
             </div>
             <p style="margin-top: 8px;">
                 Reemplazar viculos por fuerzas

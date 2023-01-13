@@ -20,6 +20,7 @@ def firstStep(request, id=None):
     context = {
         'statement': task.statement,
         'correctDcl': task.dcl,
+        'imageUrl': task.image.url,
     }
     return render(request, 'student/steps/firstStep.html', context)
 

@@ -16,6 +16,7 @@
     <script src="{% static 'js/models/x_reference.js' %}" defer></script>
     <script src="{% static 'js/functions.js' %}" defer></script>
     <script src="{% static 'js/templates/step1.js' %}" defer></script>
+    <script src="{% static 'js/preview_image.js'%}" defer></script>
     <title>ITS ESTATICA</title>
 </head>
 <body>
@@ -39,7 +40,9 @@
             <input type="hidden" id="taskInfo" data-statement="{{statement}}" data-correctdcl="{{correctDcl}}">
             <p>Enunciado</p>
             <div id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></div>
-            <img src="" alt="Imagen del enunciado" style="width: 1440px; height: 10px; background-color: rgb(168, 168, 168);">
+            <div id="imagePreviewContainer" style="display: flex; align-items: center; justify-content: center;">
+                <img id="imagePreview" data-image= "{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
+            </div>
             <p>
                 Reemplazar viculos por fuerzas
                 (Vista no editable)
