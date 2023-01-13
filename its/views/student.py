@@ -17,10 +17,18 @@ def student_home(request):
 
 def firstStep(request, id=None):
     task = Task.objects.get(id = id)
+
+    try: 
+        taskImageUrl = task.image.url
+
+    except:
+        taskImageUrl = None
+
     context = {
+        'taskId': task.id,
         'statement': task.statement,
         'correctDcl': task.dcl,
-        'imageUrl': task.image.url,
+        'imageUrl': taskImageUrl,
     }
     return render(request, 'student/steps/firstStep.html', context)
 

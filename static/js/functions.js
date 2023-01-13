@@ -837,7 +837,7 @@ function createConnectingRod(_node = null, listenUpdate = true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null,newForce=true) {
+function createForce(valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null) {
     let [x0, y0] = node.coordinate;
 
     let magnitud = valMagnitud;
@@ -889,12 +889,12 @@ function createForce(valMagnitud, valAngle, typeForce, node, color="black", list
     paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
-    if (color == "black" && newForce) {
+    if (color == "black") {
         node.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
+        node.addKonvaForce(group);
+        group.setAttr("id", node.id);
     }
-    node.addKonvaForce(group);
-    group.setAttr("id", node.id);
-    
+
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     modalForce.style.visibility = "hidden";
@@ -967,7 +967,7 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate = true) 
     })
 }
 
-function createMoment(val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0,newMoment=true) {
+function createMoment(val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0) {
     console.log(val)
     console.log()
     let [x0, y0] = node.coordinate
@@ -1028,11 +1028,11 @@ function createMoment(val, typeMoment, node, color = "black", listenUpdate=true,
     paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
-    if (color == "black" && newMoment) {
+    if (color == "black") {
         node.addMoment(parseFloat(magnitud), typeMoment);
+        node.addKonvaMoment(group);
+        group.setAttr("id", node.id);
     }
-    node.addKonvaMoment(group);
-    group.setAttr("id", node.id);
     console.log(group)
     layer.add(group);
 
@@ -1069,7 +1069,7 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
 
     btn.style.width = widthPanel + "px";
     btn.style.height = heightPanel + "px";
-    btn.style.backgroundSize = "contain"; // todo en button
+    btn.style.backgroundSize = "cover"; // todo en button
     btn.style.backgroundColor = "rgb(128, 70, 16)"
     btn.style.border = "2px outset rgb(128, 70, 16)";
     btn.style.borderRadius = "5px";
@@ -1246,26 +1246,26 @@ function createPanel(listenUpdate = true) {
     const imgFixedSupport = `url(${imagesFolder}/fixedSupport.png)`;
     const imgBeam = `url(${imagesFolder}/beam.png)`;
 
-    const btnBeam2 = createButton(widthPanel/2.3, heightPanelElement/2.8, "beam2btn", "Beam", createBeam2, image=imgBeam, null, null, null, null, null, null, listenUpdate=listenUpdate);
-    const btnRollerSupport = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Roller support ", showModal, image=imgRollerSupport, null, null, null, null, modal=modalRollerSupport, listenUpdate=listenUpdate);
-    const btnPinnedSupport = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Pinned support", showModal, image=imgPinnedSupport, null, null, null, null, modal=modalPinnedSupport, listenUpdate=listenUpdate);
-    const btnFixedSupport = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Fixed support", showModal, image=image=imgFixedSupport, null, null, null, null, modal=modalFixedSupport, listenUpdate=listenUpdate);
-    const btnBallJoint = createButton(widthPanel/2.3, heightPanelElement/2.8, "ballJointBtn", "Ball joint", createBallJoint, image=imgBallJoint, null, null, null, null, null, null,  listenUpdate=listenUpdate);
-    const btnConnectingRod = createButton(widthPanel/2.3, heightPanelElement/2.8, "connectingRodBtn", "Connecting rod", createConnectingRod, image=imgConnectingRod, null, null, null, null, null, null, listenUpdate=listenUpdate);
-    const btnForce = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Force", showModal, image=imgForce, null, null, null, null, modalForce, null, listenUpdate=listenUpdate);
-    const btnMoment = createButton(widthPanel/2.3, heightPanelElement/2.8, "modalBtn", "Moment", showModal, image=imgMoment, null, null, null, null, modalMoment, null, listenUpdate=listenUpdate);
-    const btnChangeOrigin = createButton(widthPanel/2.3, heightPanelElement/2.8, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate=listenUpdate);
+    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam, null, null, null, null, null, null, listenUpdate = listenUpdate);
+    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport, listenUpdate = listenUpdate);
+    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport, listenUpdate = listenUpdate);
+    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport, listenUpdate = listenUpdate);
+    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image = imgBallJoint, null, null, null, null, null, null, listenUpdate = listenUpdate);
+    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image = imgConnectingRod, null, null, null, null, null, null, listenUpdate = listenUpdate);
+    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, modalForce, null, listenUpdate = listenUpdate);
+    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, modalMoment, null, listenUpdate = listenUpdate);
+    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate = listenUpdate);
     btnChangeOrigin.style.color = "white";
 
-    // styleForElementGridPanel(btnBeam2, "1", "1");
-    // styleForElementGridPanel(btnRollerSupport, "1", "2");
-    // styleForElementGridPanel(btnPinnedSupport, "2", "1");
-    // styleForElementGridPanel(btnFixedSupport, "2", "2");
-    // styleForElementGridPanel(btnBallJoint, "3", "1");
-    // styleForElementGridPanel(btnConnectingRod, "3", "2");
-    // styleForElementGridPanel(btnForce, "4", "1");
-    // styleForElementGridPanel(btnMoment, "4", "2");
-    // styleForElementGridPanel(btnChangeOrigin, "5", "1");
+    styleForElementGridPanel(btnBeam2, "1", "1");
+    styleForElementGridPanel(btnRollerSupport, "1", "2");
+    styleForElementGridPanel(btnPinnedSupport, "2", "1");
+    styleForElementGridPanel(btnFixedSupport, "2", "2");
+    styleForElementGridPanel(btnBallJoint, "3", "1");
+    styleForElementGridPanel(btnConnectingRod, "3", "2");
+    styleForElementGridPanel(btnForce, "4", "1");
+    styleForElementGridPanel(btnMoment, "4", "2");
+    styleForElementGridPanel(btnChangeOrigin, "5", "1");
 
     bodyPanel.appendChild(btnBeam2)
     bodyPanel.appendChild(btnRollerSupport);
@@ -1581,7 +1581,6 @@ function updateCounts() {
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
 function delElement(listenUpdate=true) {
-   
     deleteElement(lastElementClick, listenUpdate);
     hideAllPanels();
 }
@@ -2101,24 +2100,6 @@ function recreateDcl(json) {
     return newDCL;
 }
 
-function getDate() {
-    const d = new Date;
-    const dmy = [
-        d.getDate(),
-        d.getMonth() + 1,
-        d.getFullYear()
-    ];
-
-    const hms = [
-        d.getHours(),
-        d.getMinutes(),
-        d.getSeconds()
-    ]
-
-    const date = dmy.join('/') + ' ' + hms.join(':');
-    return date;
-}
-
 function drawLink(node, listenUpdate=true) {
     const rotation = parseInt(node.linkRotation);
     if (node.link === "rollerSupport") {
@@ -2137,19 +2118,18 @@ function drawLink(node, listenUpdate=true) {
 function drawForces(node, listenUpdate=true) {
     node.forces.forEach(force => {
         if (force != null) {
-            createForce(force[0], force[1], force[2], node, "black", listenUpdate,null,null,false);
+            createForce(force[0], force[1], force[2], node, "black", listenUpdate)
         }
     })
 
 }
 
-// create dfs   
 
 function drawMoments(node, listenUpdate) {
     node.moments.forEach(moment => {
         if (moment != null) {
             console.log(moment)
-            createMoment(moment[0], moment[1], node, "black", listenUpdate,null,null,false);
+            createMoment(moment[0], moment[1], node, "black", listenUpdate);
         }
     })
 
@@ -2391,7 +2371,6 @@ function drawDCL(listenUpdate = true) {
     drawLink(nodesInitialBeam[1]);
 
     nodesInitialBeam.forEach(node => {
-        console.log("DCL ES;",dcl)
         drawForces(node, listenUpdate);
         drawMoments(node, listenUpdate);
     })
@@ -2402,12 +2381,6 @@ function drawDCL(listenUpdate = true) {
         drawForces(node, listenUpdate);
         drawMoments(node, listenUpdate);
     })
-
-    
-
-
-
-    
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
 
@@ -3146,128 +3119,3 @@ function changeDimensions(listenUpdate = true) {
 function helloWorld() {
     console.log("hello world");
 }
-function findMinCoordinate(coordinates){
-    //en esta funcion se encuentra la coordenada mas a la izquierda y mas arriba para setear el marco de referencia
-    let minXCoordoinates = [];
-    
-    const minX = Math.min(...coordinates.map(coord => coord[0]));
-    
-    for (let i = 0; i < coordinates.length; i++){
-        if (coordinates[i][0] == minX){
-            minXCoordoinates.push(coordinates[i]);
-
-        }
-    }
-    const minY = Math.min(...minXCoordoinates.map(coord => coord[1]));
-    const  minCoordinate = [minX, minY];
-    return minCoordinate;
-
-}
-function standarizeDCL(DCL){
-
-    let coordinates = [];
-    // const copyDCL = Object.assign({}, DCL);
-   
-  
-
-    const allNodes = [DCL, ...DCL.getAllDecendents()]
-    allNodes.forEach(node => {
-        
-    })
-    
-    const nodesInitialBeam = allNodes.slice(0, 2)
-    const otherNodes = allNodes.slice(2)
-    
-
-    nodesInitialBeam.forEach(node => {
-        coordinates.push(node.coordinate);
-    })
-    otherNodes.forEach(node => {
-        coordinates.push(node.coordinate);
-    })
-
-    const minCoordinate = findMinCoordinate(coordinates);
-    
-   // console.log(JSON.parse(JSON.stringify(coordinates)))
-    
-    for (let i = 0; i < coordinates.length; i++){
-        coordinates[i][0] -= minCoordinate[0];
-        coordinates[i][1] -= minCoordinate[1];
-    }
-
-    //console.log(coordinates);
-    return DCL
-}
-
-function areDclEqual(dcl1,dcl2) {
-
-    const coordinates = [];
-
-
-    const allNodes = [dcl1, ...dcl1.getAllDecendents()]
-        allNodes.forEach(node => {
-        delete node.id;
-        delete node.konvaObjects;
-        delete node.parent;
-        delete node.name;
-        delete node.turnedToRealDCL;
-
-        console.log("EDIT ASK node: ", node);
-    })
-    
-    const nodesInitialBeam = allNodes.slice(0, 2)
-    const otherNodes = allNodes.slice(2)
-    
-
-    nodesInitialBeam.forEach(node => {
-        coordinates.push(node.coordinate);
-    })
-    otherNodes.forEach(node => {
-        coordinates.push(node.coordinate);
-    })
-
-///
-
-    const allNodes2 = [dcl2, ...dcl2.getAllDecendents()]
-        allNodes2.forEach(node => {
-        delete node.id;
-        delete node.konvaObjects;
-        delete node.parent;
-        delete node.name;
-        delete node.turnedToRealDCL;
-
-        // console.log("EDIT ASK node 2: ", node);
-    })
-
-    const nodesInitialBeam2 = allNodes2.slice(0, 2)
-    const otherNodes2 = allNodes2.slice(2)
-
-
-    nodesInitialBeam2.forEach(node => {
-        // coordinates.push(node.coordinate);
-    })
-    otherNodes2.forEach(node => {
-        // coordinates.push(node.coordinate);
-    })
-
-    stringifyDcl1 = JSON.stringify(dcl1);
-    stringifyDcl2 = JSON.stringify(dcl2);
-
-    if (stringifyDcl1 == stringifyDcl2){
-        console.log("SON IGUALES");
-        console.log("dcl1: ", stringifyDcl1);
-        console.log("dcl2: ", stringifyDcl2);
-        return true;
-    }
-    else{
-        console.log("dcl1: ", stringifyDcl1);
-        console.log("dcl2: ", stringifyDcl2);
-
-        console.log("NO SON IGUALES");
-        return false;
-    }
-
- 
-}
-
-
