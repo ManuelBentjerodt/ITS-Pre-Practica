@@ -10,7 +10,7 @@ class yReference {
         this.indexes = [],
         this.segmentedLines = [],
         this.segmented = [],
-        this.yPosition = widthStage-blockSnapSize,
+        this.yPosition = widthStage-2*blockSnapSize,
         this.visible = false,
         this.unitMeasure = "m",
         this.unitSize = 40

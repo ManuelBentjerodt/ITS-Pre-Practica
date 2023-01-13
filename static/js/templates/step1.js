@@ -71,7 +71,7 @@ const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSn
 shadowLine.hide();
 
 dcl.setIsOrigin(true);
-
+console.log("dcl",dcl);
 listenNodeMovement(group, shadowLine, "initialBeam", listenUpdate=false);
 listenCreateElement();
 listenDeleteElement();
@@ -87,4 +87,4 @@ document.querySelector("#statement").innerHTML = statement;
 
 const correctJson = document.getElementById('correctDcl').textContent;
 const correctDcl = recreateDcl(correctJson);
-console.log(correctDcl);
+console.log("correct Dcl: ",correctDcl);
