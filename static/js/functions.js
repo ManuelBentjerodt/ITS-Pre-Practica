@@ -891,8 +891,8 @@ function createForce(valMagnitud, valAngle, typeForce, node, color="black", list
 
     if (color == "black" && newForce) {
         node.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
-        node.addKonvaForce(group);
     }
+    node.addKonvaForce(group);
     group.setAttr("id", node.id);
     
     panel.style.visibility = "hidden";
@@ -967,7 +967,7 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate = true) 
     })
 }
 
-function createMoment(val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0) {
+function createMoment(val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0,newMoment=true) {
     console.log(val)
     console.log()
     let [x0, y0] = node.coordinate
@@ -1028,11 +1028,11 @@ function createMoment(val, typeMoment, node, color = "black", listenUpdate=true,
     paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
-    if (color == "black") {
+    if (color == "black" && newMoment) {
         node.addMoment(parseFloat(magnitud), typeMoment);
-        node.addKonvaMoment(group);
-        group.setAttr("id", node.id);
     }
+    node.addKonvaMoment(group);
+    group.setAttr("id", node.id);
     console.log(group)
     layer.add(group);
 
@@ -1581,6 +1581,7 @@ function updateCounts() {
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
 function delElement(listenUpdate=true) {
+   
     deleteElement(lastElementClick, listenUpdate);
     hideAllPanels();
 }
@@ -2148,7 +2149,7 @@ function drawMoments(node, listenUpdate) {
     node.moments.forEach(moment => {
         if (moment != null) {
             console.log(moment)
-            createMoment(moment[0], moment[1], node, "black", listenUpdate);
+            createMoment(moment[0], moment[1], node, "black", listenUpdate,null,null,false);
         }
     })
 
@@ -2390,6 +2391,7 @@ function drawDCL(listenUpdate = true) {
     drawLink(nodesInitialBeam[1]);
 
     nodesInitialBeam.forEach(node => {
+        console.log("DCL ES;",dcl)
         drawForces(node, listenUpdate);
         drawMoments(node, listenUpdate);
     })
@@ -3200,12 +3202,6 @@ function standarizeDCL(DCL){
 function areDclEqual(dcl1,dcl2) {
 
     const coordinates = [];
-    const forces = [];
-    const moments = [];
-    const link = []; // recibe un una lista con el link y el angulo (link y linkRotation)
-
-
-
 
 
     const allNodes = [dcl1, ...dcl1.getAllDecendents()]
@@ -3271,15 +3267,7 @@ function areDclEqual(dcl1,dcl2) {
         return false;
     }
 
-
-
-
-
-
-
-
-
-    return true;
+ 
 }
 
 
