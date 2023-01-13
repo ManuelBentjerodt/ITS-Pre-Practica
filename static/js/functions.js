@@ -837,7 +837,7 @@ function createConnectingRod(_node = null, listenUpdate = true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null) {
+function createForce(valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null,newForce=true) {
     let [x0, y0] = node.coordinate;
 
     let magnitud = valMagnitud;
@@ -889,12 +889,12 @@ function createForce(valMagnitud, valAngle, typeForce, node, color="black", list
     paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
-    if (color == "black") {
+    if (color == "black" && newForce) {
         node.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
         node.addKonvaForce(group);
-        group.setAttr("id", node.id);
     }
-
+    group.setAttr("id", node.id);
+    
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     modalForce.style.visibility = "hidden";
@@ -2097,7 +2097,6 @@ function createNodeWithObject(object, _id) {
 function recreateDcl(json) {
     const object = jsonToObject(json);
     const newDCL = createNodeWithObject(object, object.id);
-    
     return newDCL;
 }
 
@@ -2137,7 +2136,7 @@ function drawLink(node, listenUpdate=true) {
 function drawForces(node, listenUpdate=true) {
     node.forces.forEach(force => {
         if (force != null) {
-            createForce(force[0], force[1], force[2], node, "black", listenUpdate)
+            createForce(force[0], force[1], force[2], node, "black", listenUpdate,null,null,false);
         }
     })
 

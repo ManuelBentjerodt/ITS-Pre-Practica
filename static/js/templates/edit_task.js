@@ -67,13 +67,14 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
-const dclCOPY = document.querySelector("#dclJSON").textContent;
+console.log("dclJSON: ", dclJSON);
 
 
 let dcl;
 let initialBeam;
 
 const DCL = {}
+
 
 if (dclJSON == "null") {
     [dcl, initialBeam] = createBeam(nameBeam="initialBeam");
@@ -84,8 +85,9 @@ if (dclJSON == "null") {
     console.log("primera vez editando");
     
 } else {
-  
     dcl = recreateDcl(dclJSON);
+    console.log("dcl", dcl);
+    
 
     // const otherCopy = recreateDcl(dclJSON); 
     // const otherCopy2 = recreateDcl(dclJSON);
@@ -99,7 +101,6 @@ if (dclJSON == "null") {
 
     // const ejemDCL = areDclEqual(standarizedDCL1, standarizeDCL2); 
     
-
     drawDCL(dcl);
     initialBeam = dcl.childNodes[0].konvaObjects.beam
     console.log("ya has editado otras veces")
@@ -156,5 +157,3 @@ else{
     distanceMultiplier = sizeFactor;
 }
 updateEquations();
-
-console.log("DCL ES: ",dcl);
