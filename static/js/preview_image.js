@@ -1,10 +1,17 @@
-// const imageInput = document.querySelector("#imageInput");
-// const imagePreview = document.querySelector("#imagePreview");
-// const clearImage = document.querySelector("#clearImage");
-
-
 const imageInput = document.getElementById("imageInput");
 const imagePreview = document.getElementById("imagePreview");
+const clearImage = document.getElementById("clearImage");
+
+if (imagePreview.dataset.image == "None") {
+    imagePreview.style.display = "none"
+
+} else {
+    imagePreview.style.display = "block";
+    console.log("en el esle");
+    imagePreview.src = imagePreview.dataset.image;
+
+}
+
 
 imageInput.addEventListener("change", function() {
     const file = this.files[0];
@@ -18,7 +25,6 @@ imageInput.addEventListener("change", function() {
 
         const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
         const href = window.location.href;
-        console.log(csrfToken)
 
         const formData = new FormData();
         formData.append("image", file);
@@ -39,48 +45,26 @@ imageInput.addEventListener("change", function() {
 
 });
 
+clearImage.addEventListener("click", function() {
+    imagePreview.style.display = "none";
+    imageInput.value = "";
 
+    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    const href = window.location.href;
 
+    fetch(`${href}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({
+            csrfmiddlewaretoken: csrfToken,
+            image: imageInput.value
+        })
+    })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error(error))
 
-
-
-
-
-
-
-// imageInput.addEventListener("change", function () {
-
-//     const file = this.files[0];
-
-//     if (file) {
-//         const reader = new FileReader()
-    
-//         reader.onload =  () => {
-//             imagePreview.src = this.result;
-//             imagePreview.style.display = "block";
-//         }
-        
-//     //     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-//     //     const href = window.location.href;
-        
-//     //     const data = new FormData();
-//     //     data.append("image", file);
-
-//         // fetch(`${href}`, {
-//         //     method: "PATCH",
-//         //     headers: {
-//         //         "Content-Type": "Multipart/form-data",
-//         //         "X-CSRFToken": csfrToken,
-//         //     },
-//         //     body: data
-//         // })
-//         // .then((response) => response)
-//         // .catch((error) => console.log(error))
-//     }
-// }.bind(imageInput));
-
-// clearImage.addEventListener("click", function () {
-//     imagePreview.src = "";
-//     imagePreview.style.display = "none";
-//     imageInput.value = "";
-// });
+});
