@@ -139,5 +139,5 @@ GitHub.sublime-settings
 db.sqlite3
 
 probando.js
-images/tasksImages/*
-!images/tasksImages/
+static/images/tasksImages/*
+!static/images/tasksImages/
