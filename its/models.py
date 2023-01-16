@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-
+import json
 
 
 User = get_user_model()
@@ -16,6 +16,15 @@ class Task(models.Model):
     image = models.ImageField(null=True,blank = True, upload_to = "static/images/taskImages/")
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
+    
+    def compareTo(self,jsonAnswer):
+        #otherDcl = json.loads(jsonAnswer)
+        print("Esto es la funcion compareTo del TASK")
+        print("Esto es el json del estudiante: ",jsonAnswer)
+        print("Esto es el dcl del task: ",self.dcl)
+        #hardcoding f
+        pass
+
     
 class Account(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
@@ -35,3 +44,9 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
+
+
+

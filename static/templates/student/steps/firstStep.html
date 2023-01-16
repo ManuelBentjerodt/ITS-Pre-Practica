@@ -61,7 +61,7 @@
             <div id="containerKonva" id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);"></div>
             </div>
             <button id="verifyButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">VERIFICAR</button>
-
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>
         </div> 
     </main>
 </body>
