@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-import json
+
+def upload_image(instance, file_name):
+    extension = file_name.split('.')[-1]
+    return f"static/images/taskImages/{instance.id}.{extension}"
 
 
 User = get_user_model()
@@ -13,7 +16,7 @@ class Task(models.Model):
     dcl = models.JSONField(null=True, blank=True)
     created = models.DateTimeField( auto_now_add=True, blank=True, null=True)
     statement = models.TextField(null=True)
-    image = models.ImageField(null=True,blank = True, upload_to = "static/images/taskImages/")
+    image = models.ImageField(null=True,blank = True, upload_to = upload_image)
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
     

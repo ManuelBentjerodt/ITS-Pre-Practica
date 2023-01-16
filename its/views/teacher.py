@@ -1,20 +1,23 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from ..models import Task
+from django.conf import settings
 import json
+import os
 
 
 
-def teacher_home(request):
-    tasks = Task.objects.all()
-    context = {
-        'tasks': tasks,
-        'user': request.user
-    }
-    return render(request, 'teacher/teacher_home.html', context)
-
+class TeacherHomeView(View):
+    def get(self, request):
+        tasks = Task.objects.all()
+        context = {
+            'tasks': tasks,
+            'user': request.user
+        }
+        return render(request, 'teacher/teacher_home.html', context)
+    
 
 @login_required(login_url="sign_in")
 def delete_task(request, id=None):
@@ -35,10 +38,12 @@ class EditTaskView(View):
     def get(self, request, id):
         task = Task.objects.get(id = id)
 
-        if task.image:
-            taskImageUrl = task.image
-        else:
+        try: 
+            taskImageUrl = task.image.url
+
+        except:
             taskImageUrl = None
+
         context = {
             'taskid': task.id,
             'dclJSON': task.dcl,
@@ -48,9 +53,7 @@ class EditTaskView(View):
             'imageUrl': taskImageUrl
             
         }
-        print()
-        print(task.image)
-        print()
+
         return render (request, 'teacher/edit_task.html', context)
 
 
@@ -63,14 +66,31 @@ class EditTaskView(View):
             task.sizeFactor = float(jsondata['sizeFactor'])
             task.difficulty = float(jsondata['difficulty'])
             task.statement = jsondata['statement']
+            task.save()
+
+            return JsonResponse({'success': True, 'redirect': '/teacher_home'})
 
         else:
             task.image = request.FILES['image']
+            task.save()
+            
+            return JsonResponse({'success': True})
 
+
+    def delete(self, request, id): # delete image
+        task = Task.objects.get(id = id)
+
+        try:
+            image_path = os.path.join(settings.MEDIA_ROOT, task.image.path)
+            os.remove(image_path)
+            task.image = None
+
+        except:
+            pass
+        
         task.save()
 
-        return JsonResponse({'success': True, 'redirect': '/teacher_home'})
-        # return redirect('teacher_home')
+        return JsonResponse({'success': True})
 
 
 

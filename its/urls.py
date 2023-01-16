@@ -9,7 +9,7 @@ urlpatterns = [
     path('sign_in',sign_in,name='sign_in'),
     path('sign_out',sign_out,name='sign_out'),
     
-    path('teacher_home',teacher_home,name='teacher_home'),
+    path('teacher_home',TeacherHomeView.as_view(),name='teacher_home'),
     path('student_home',student_home,name='student_home'),
     
     path('create_task',CreateTaskView.as_view(),name='create_task'),
