@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.views import View
 import json
+from django.http import JsonResponse
 
 @login_required(login_url="sign_in")
 def student_home(request):
@@ -42,14 +43,11 @@ class FirstStepView(View):
             jsondata = json.loads(request.body)
             task.compareTo(jsondata['studentDcl'])
 
-        else:
-            task.image = request.FILES['image']
-
-        # task.save()
-        return None
-        # return JsonResponse({'success': True, 'redirect': '/teacher_home'})
+        
+        
+        return JsonResponse({'success': True, 'redirect': '/teacher_home'})
         # return redirect('teacher_home')
-
+   
 
 
 

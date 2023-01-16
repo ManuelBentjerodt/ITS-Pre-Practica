@@ -20,4 +20,11 @@ function verifyTask() {
     })
 
 
+    .then((response) => {
+        return response.json()
+        
+    })
+    .then((data) => {
+        //window.location.href = data.redirect
+    })
 }   
