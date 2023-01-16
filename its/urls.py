@@ -16,7 +16,7 @@ urlpatterns = [
     path('edit_task/<int:id>',EditTaskView.as_view(), name='edit_task'),
     path('delete_task/<int:id>',delete_task, name='delete_task'),
 
-    path('first_step/<int:id>',firstStep, name='first_step'),
+    path('first_step/<int:id>',FirstStepView.as_view(), name='first_step'),
     path('second_step/<int:id>',secondStep, name='second_step'),
     path('third_step/<int:id>',thirdStep, name='third_step'),
     path('fourth_step/<int:id>',fourthStep, name='fourth_step'),

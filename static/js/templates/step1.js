@@ -82,9 +82,10 @@ turnToRealDCL(listenUpdate=false);
 
 const taskInfo = document.querySelector("#taskInfo").dataset;
 const statement = taskInfo.statement;
+console.log("statement",statement);
 document.querySelector("#statement").innerHTML = statement;
 
 
-const correctJson = document.getElementById('correctDcl').textContent;
-const correctDcl = recreateDcl(correctJson);
-console.log("correct Dcl: ",correctDcl);
+// const correctJson = document.getElementById('correctDcl').textContent;
+// const correctDcl = recreateDcl(correctJson);
+// console.log("correct Dcl: ",correctDcl);

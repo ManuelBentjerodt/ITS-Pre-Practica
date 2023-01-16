@@ -248,7 +248,64 @@ class Node {
         return discovered;
     }
 
-    
-    
+    getCopy(root=this) {
+        const queue = [];
+        let copy = Object.assign(Object.create(Object.getPrototypeOf(root)), root)
+        queue.push(copy);
+
+
+        const discovered = [];
+
+        while (queue.length) {
+            let actual = queue.shift();
+
+            
+            actual.childNodes.forEach( child => {
+                if (!(discovered.includes(child))) {
+                    discovered.push(child);
+                    queue.push(child);
+                    actual.childNodes[actual.childNodes.indexOf(child)] = Object.assign(Object.create(Object.getPrototypeOf(child)), child);
+                    delete actual.parent;
+                    delete actual.konvaObjects;
+                    delete actual.turnedToRealDCL;
+                    delete actual.id;
+                    delete actual.name;
+                }
+            });
+        }
+
+        return copy;
+    }
+
+    algo(node){
+        for (let i = 0; i < node.childNodes.length; i++) {
+            const inside_copy = Object.assign(Object.create(Object.getPrototypeOf(node.childNodes[i])), node.childNodes[i]);
+            console.log("inside_copy", inside_copy);
+            delete inside_copy.parent;
+            delete inside_copy.konvaObjects;
+            delete inside_copy.turnedToRealDCL;
+            delete inside_copy.id;
+            delete inside_copy.name;
+            node.childNodes[i] = inside_copy;
+            console.log("hijos:: ",node.childNodes);
+            this.algo(inside_copy);
+     }
+    }
+
+    getCopy2(root=this) {
+        let copy = Object.assign(Object.create(Object.getPrototypeOf(root)), root);
+        delete copy.parent;
+        delete copy.konvaObjects;
+        delete copy.turnedToRealDCL;
+        delete copy.id;
+        delete copy.name;
+        this.algo(copy);
+        
+        return copy;
+    }
+
+
+
+
 }
 

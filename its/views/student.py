@@ -4,8 +4,9 @@ from ..models import Task, Account, TaskPerAccount
 from ..forms import TaskForm, TaskFormDraw
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
-
-
+from django.views import View
+import json
+from django.http import JsonResponse
 
 @login_required(login_url="sign_in")
 def student_home(request):
@@ -19,10 +20,45 @@ def firstStep(request, id=None):
     task = Task.objects.get(id = id)
     context = {
         'statement': task.statement,
-        'correctDcl': task.dcl,
-        'imageUrl': task.image.url,
+        'studentDcl': "",
     }
     return render(request, 'student/steps/firstStep.html', context)
+
+
+class FirstStepView(View):
+    def get(self, request, id):
+        task = Task.objects.get(id = id)
+
+        context = {
+            'statement': task.statement,
+            'studentDcl':"",
+            }
+        return render(request, 'student/steps/firstStep.html', context)
+
+
+    def post(self, request, id):
+        task = Task.objects.get(id = id)
+
+        if request.content_type == "verify/json":
+            jsondata = json.loads(request.body)
+            task.compareTo(jsondata['studentDcl'])
+
+        
+        
+        return JsonResponse({'success': True, 'redirect': '/teacher_home'})
+        # return redirect('teacher_home')
+   
+
+
+
+
+
+
+
+
+
+
+
 
 def secondStep(request, id=None):
     task = Task.objects.get(id = id)

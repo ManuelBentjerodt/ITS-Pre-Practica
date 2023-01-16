@@ -1,36 +1,35 @@
-const button = document.querySelector("#saveButton")
-button.addEventListener("click", saveTask);
-
-function verifyTas(e) {
-    const taskId = this.dataset.taskid;
-    const dclJSON = dcl.generateCopy();
-    const sizeFactor = document.querySelector("#dim").value;
-    const difficulty = document.querySelector("#difficultyValue").innerText;
-    const statement = document.querySelector("#statement").value;
-
-    const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+const button = document.querySelector("#verifyButton")
+button.addEventListener("click", verifyTask);
+function verifyTask() {
+    // const taskId = this.dataset.taskid;
+    //const studentJSON = dcl.generateCopy();
     const href = window.location.href;
+    const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    const copyDCL = getCopyDcl(dcl).generateCopy();
+    console.log("Dcl de funcion nueva: ", copyDCL);
+
+
 
     const data = JSON.stringify({
-        "difficulty": difficulty,
-        "sizeFactor": sizeFactor,
-        "statement": statement,
-        "dclJSON": dclJSON,
+        "studentDcl": copyDCL,
     })
     
     fetch(`${href}`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csfrToken,
+            "Content-Type": "verify/json",
+            "X-CSRFToken": csfrToken
         },
         body: data
     })
+
+
     .then((response) => {
         return response.json()
         
     })
     .then((data) => {
-        window.location.href = data.redirect
+        //window.location.href = data.redirect
     })
 }   
