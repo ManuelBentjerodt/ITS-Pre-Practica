@@ -2391,7 +2391,6 @@ function drawDCL(listenUpdate = true) {
     drawLink(nodesInitialBeam[1]);
 
     nodesInitialBeam.forEach(node => {
-        console.log("DCL ES;",dcl)
         drawForces(node, listenUpdate);
         drawMoments(node, listenUpdate);
     })
@@ -3167,8 +3166,6 @@ function standarizeDCL(DCL){
 
     let coordinates = [];
     // const copyDCL = Object.assign({}, DCL);
-   
-  
 
     const allNodes = [DCL, ...DCL.getAllDecendents()]
     allNodes.forEach(node => {
@@ -3211,8 +3208,6 @@ function areDclEqual(dcl1,dcl2) {
         delete node.parent;
         delete node.name;
         delete node.turnedToRealDCL;
-
-        console.log("EDIT ASK node: ", node);
     })
     
     const nodesInitialBeam = allNodes.slice(0, 2)
@@ -3254,20 +3249,53 @@ function areDclEqual(dcl1,dcl2) {
     stringifyDcl2 = JSON.stringify(dcl2);
 
     if (stringifyDcl1 == stringifyDcl2){
-        console.log("SON IGUALES");
-        console.log("dcl1: ", stringifyDcl1);
-        console.log("dcl2: ", stringifyDcl2);
         return true;
-    }
-    else{
-        console.log("dcl1: ", stringifyDcl1);
-        console.log("dcl2: ", stringifyDcl2);
-
-        console.log("NO SON IGUALES");
+    } else {
         return false;
     }
 
- 
+}
+
+function getCopyDcl(dcl){
+
+    const info = {}
+    nodesHash = {}
+
+    const allNodes = [dcl, ...dcl.getAllDecendents()];
+    const allNodesCopy = allNodes.map(node => {
+        const newCopyNode = new Node();
+        
+        newCopyNode.setId(node.id);
+        newCopyNode.setCoordinate(node.coordinate);
+        newCopyNode.setIsOrigin(node.isOrigin);
+        newCopyNode.setLink(node.link);
+        newCopyNode.setLinkRotation(node.linkRotation);
+        newCopyNode.setName(node.name);
+
+        if (node.forces) node.forces.forEach(force => {
+            newCopyNode.addForce(force);
+        });
+
+        if (node.moment) node.moment.forEach(moment => {
+            newCopyNode.addMoment(moment);
+        });
+        const nodeInfo = {}
+        nodeInfo.parentId = node.parent ? node.parent.id : undefined
+        nodeInfo.childNodes = node.childNodes.map(child => child.id);
+
+        info[`${node.id}`] = nodeInfo;
+        nodesHash[`${node.id}`] = newCopyNode;
+        return newCopyNode;
+    });
+
+    allNodesCopy.forEach(node => {
+        const nodeInfo = info[`${node.id}`];
+        node.parent = nodeInfo.parentId ? nodesHash[`${nodeInfo.parentId}`] : undefined;
+        node.childNodes = nodeInfo.childNodes.map(childId => nodesHash[`${childId}`]);
+    });
+    
+    return allNodesCopy[0];
+    
 }
 
 

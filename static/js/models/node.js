@@ -41,7 +41,7 @@ class Node {
         moments,
         isOrigin,
         linkRotation,
-        }, _id=this.id) {
+        }, _id=this.id, setChilds=true) {
 
         
         this.setCoordinate(coordinate);
@@ -58,11 +58,13 @@ class Node {
             this.addMoment(moment[0], moment[1])
         })
 
-        childNodes.forEach(child => {
-            let node = createNodeWithObject(child, id=child.id)
-        
-            joinNodes(this, node)
-        })
+            if (setChilds) {
+            childNodes.forEach(child => {
+                let node = createNodeWithObject(child, id=child.id)
+            
+                joinNodes(this, node)
+            })
+        }
         
     }
 
@@ -133,7 +135,6 @@ class Node {
     addKonvaMoment(object) {
         this.konvaObjects.forces.push(object);
     }
- 
 
     setKonvaShadowBeam(object) {
         this.konvaObjects.shadowBeam = object;

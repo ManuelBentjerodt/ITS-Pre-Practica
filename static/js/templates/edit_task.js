@@ -67,7 +67,6 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
-console.log("dclJSON: ", dclJSON);
 
 
 let dcl;
@@ -86,9 +85,8 @@ if (dclJSON == "null") {
     
 } else {
     dcl = recreateDcl(dclJSON);
-    console.log("dcl", dcl);
-    
 
+    
     const otherCopy = recreateDcl(dclJSON); 
     const otherCopy2 = recreateDcl(dclJSON);
 
@@ -105,8 +103,6 @@ if (dclJSON == "null") {
     initialBeam = dcl.childNodes[0].konvaObjects.beam
     console.log("ya has editado otras veces")
 }
-
-
 
 
 x_reference.hideAll();
