@@ -33,7 +33,6 @@ layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
 
 const dclJSON = document.querySelector("#dclJSON").textContent;
-console.log("dclJSON: ", dclJSON);
 
 
 let dcl;
@@ -54,15 +53,8 @@ if (dclJSON == "null") {
     
 } else {
     dcl = recreateDcl(dclJSON);
-    console.log("dcl", dcl);
-    
-    initialBeam = dcl.childNodes[0].konvaObjects.beam
-    drawDcl(dcl, layer);
 
-    console.log("ya has editado otras veces")
 }
-const panel = createPanel(divKonvaContainer, layer, dcl);
-
 
 const modalForce = createModalForce(divKonvaContainer, layer, dcl); 
 const modalMoment = createModalMoment(divKonvaContainer, layer, dcl); 
@@ -71,6 +63,7 @@ const modalRollerSupport = createModalRollerSupport(divKonvaContainer, layer, dc
 const modalPinnedSupport = createModalPinnedSupport(divKonvaContainer, layer, dcl);
 const delPanel = createDelPanel(divKonvaContainer, layer, dcl);
 const anglePanel = createAngleReferencePanel(divKonvaContainer, layer, dcl); //new
+const panel = createPanel(divKonvaContainer, layer, dcl);
 
 divKonvaContainer.appendChild(modalForce);
 divKonvaContainer.appendChild(modalMoment);
@@ -98,19 +91,12 @@ listenHiddePanels();
 hideAllPanels();
 
 
-
-
 x_reference.hideAll();
 y_reference.hideAll();
 
-const initialBeamSubElements = initialBeam.getChildren();
 
 showReferences();
 
-
-paintIfMouseOver(initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElements[0].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
-paintIfMouseOver(initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[1].getAttr("stroke"));
-paintIfMouseOver(initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));
 
 
 updateDificulty();
@@ -148,3 +134,10 @@ else{
     distanceMultiplier = sizeFactor;
 }
 updateEquations();
+
+dclJSON == "null" ?  null : drawDcl(dcl, layer), initialBeam = dcl.childNodes[0].konvaObjects.beam 
+
+const initialBeamSubElements = initialBeam.getChildren();
+paintIfMouseOver(initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElements[0].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
+paintIfMouseOver(initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[1].getAttr("stroke"));
+paintIfMouseOver(initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));

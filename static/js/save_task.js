@@ -31,7 +31,7 @@ function saveTask(e) {
         
     })
     .then((data) => {
-        // window.location.href = data.redirect
+        window.location.href = data.redirect
     })
 }   
 

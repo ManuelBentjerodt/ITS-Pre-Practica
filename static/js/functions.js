@@ -2132,7 +2132,7 @@ function drawLink(node, layer, listenUpdate=true) {
 function drawForces(node, layer, listenUpdate=true) {
     node.forces.forEach(force => {
         if (force != null) {
-            createForce(layer, force[0], force[1], force[2], node, layer, "black", listenUpdate)
+            createForce(layer, force[0], force[1], force[2], node, "black", listenUpdate)
         }
     })
 
@@ -3135,3 +3135,158 @@ function changeDimensions(listenUpdate = true) {
 function helloWorld() {
     console.log("hello world");
 }
+
+function findMinCoordinate(coordinates){
+    //en esta funcion se encuentra la coordenada mas a la izquierda y mas arriba para setear el marco de referencia
+    let minXCoordoinates = [];
+    
+    const minX = Math.min(...coordinates.map(coord => coord[0]));
+    
+    for (let i = 0; i < coordinates.length; i++){
+        if (coordinates[i][0] == minX){
+            minXCoordoinates.push(coordinates[i]);
+
+        }
+    }
+    const minY = Math.min(...minXCoordoinates.map(coord => coord[1]));
+    const  minCoordinate = [minX, minY];
+    return minCoordinate;
+
+}
+function standarizeDCL(DCL){
+
+    let coordinates = [];
+    // const copyDCL = Object.assign({}, DCL);
+
+    const allNodes = [DCL, ...DCL.getAllDecendents()]
+    allNodes.forEach(node => {
+        
+    })
+    
+    const nodesInitialBeam = allNodes.slice(0, 2)
+    const otherNodes = allNodes.slice(2)
+    
+
+    nodesInitialBeam.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+    otherNodes.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+
+    const minCoordinate = findMinCoordinate(coordinates);
+    
+   // console.log(JSON.parse(JSON.stringify(coordinates)))
+    
+    for (let i = 0; i < coordinates.length; i++){
+        coordinates[i][0] -= minCoordinate[0];
+        coordinates[i][1] -= minCoordinate[1];
+    }
+
+    //console.log(coordinates);
+    return DCL
+}
+
+function areDclEqual(dcl1,dcl2) {
+
+    const coordinates = [];
+
+
+    const allNodes = [dcl1, ...dcl1.getAllDecendents()]
+        allNodes.forEach(node => {
+        delete node.id;
+        delete node.konvaObjects;
+        delete node.parent;
+        delete node.name;
+        delete node.turnedToRealDCL;
+    })
+    
+    const nodesInitialBeam = allNodes.slice(0, 2)
+    const otherNodes = allNodes.slice(2)
+    
+
+    nodesInitialBeam.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+    otherNodes.forEach(node => {
+        coordinates.push(node.coordinate);
+    })
+
+///
+
+    const allNodes2 = [dcl2, ...dcl2.getAllDecendents()]
+        allNodes2.forEach(node => {
+        delete node.id;
+        delete node.konvaObjects;
+        delete node.parent;
+        delete node.name;
+        delete node.turnedToRealDCL;
+
+        // console.log("EDIT ASK node 2: ", node);
+    })
+
+    const nodesInitialBeam2 = allNodes2.slice(0, 2)
+    const otherNodes2 = allNodes2.slice(2)
+
+
+    nodesInitialBeam2.forEach(node => {
+        // coordinates.push(node.coordinate);
+    })
+    otherNodes2.forEach(node => {
+        // coordinates.push(node.coordinate);
+    })
+
+    stringifyDcl1 = JSON.stringify(dcl1);
+    stringifyDcl2 = JSON.stringify(dcl2);
+
+    if (stringifyDcl1 == stringifyDcl2){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function getCopyDcl(dcl){
+
+    const info = {}
+    nodesHash = {}
+
+    const allNodes = [dcl, ...dcl.getAllDecendents()];
+    const allNodesCopy = allNodes.map(node => {
+        const newCopyNode = new Node();
+        
+        newCopyNode.setId(node.id);
+        newCopyNode.setCoordinate(node.coordinate);
+        newCopyNode.setIsOrigin(node.isOrigin);
+        newCopyNode.setLink(node.link);
+        newCopyNode.setLinkRotation(node.linkRotation);
+        newCopyNode.setName(node.name);
+
+        if (node.forces) node.forces.forEach(force => {
+            newCopyNode.addForce(force);
+        });
+
+        if (node.moment) node.moment.forEach(moment => {
+            newCopyNode.addMoment(moment);
+        });
+        const nodeInfo = {}
+        nodeInfo.parentId = node.parent ? node.parent.id : undefined
+        nodeInfo.childNodes = node.childNodes.map(child => child.id);
+
+        info[`${node.id}`] = nodeInfo;
+        nodesHash[`${node.id}`] = newCopyNode;
+        return newCopyNode;
+    });
+
+    allNodesCopy.forEach(node => {
+        const nodeInfo = info[`${node.id}`];
+        node.parent = nodeInfo.parentId ? nodesHash[`${nodeInfo.parentId}`] : undefined;
+        node.childNodes = nodeInfo.childNodes.map(childId => nodesHash[`${childId}`]);
+    });
+    
+    return allNodesCopy[0];
+    
+}
+
+
