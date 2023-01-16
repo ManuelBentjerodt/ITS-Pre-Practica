@@ -2,12 +2,17 @@ const button = document.querySelector("#verifyButton")
 button.addEventListener("click", verifyTask);
 function verifyTask() {
     // const taskId = this.dataset.taskid;
-    const studentJSON = dcl.generateCopy();
+    //const studentJSON = dcl.generateCopy();
     const href = window.location.href;
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
+    const copyDCL = getCopyDcl(dcl).generateCopy();
+    console.log("Dcl de funcion nueva: ", copyDCL);
+
+
+
     const data = JSON.stringify({
-        "studentDcl": studentJSON,
+        "studentDcl": copyDCL,
     })
     
     fetch(`${href}`, {
