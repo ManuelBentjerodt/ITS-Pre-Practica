@@ -41,8 +41,18 @@ def secondStep(request, id=None):
 
 def thirdStep(request, id=None):
     task = Task.objects.get(id = id)
+
+    try: 
+        taskImageUrl = task.image.url
+
+    except:
+        taskImageUrl = None
+
     context = {
-        'task': task
+        'taskId': task.id,
+        'statement': task.statement,
+        'correctDcl': task.dcl,
+        'imageUrl': taskImageUrl,
     }
     return render(request, 'student/steps/thirdStep.html', context)
     

@@ -8,7 +8,7 @@ function createStage(containerId, stageWidth = widthStage, stageHeight = heightS
     return stage;
 }
 
-function createShadowBeam(x0, y0, x1, y1, nameShadow = "shadow-beam") {
+function createShadowBeam(layer, x0, y0, x1, y1, nameShadow = "shadow-beam") {
     const group = new Konva.Group({ name: nameShadow });
     const line = new Konva.Line({
         name: "subelementBeam",
@@ -95,7 +95,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     return group;
 }
 
-function createBeam(nameBeam="beam", _id = null, coordinates = null, _node = null) {
+function createBeam(layer, nameBeam="beam", _id = null, coordinates = null, _node = null) {
     let x0 = lastBeamNodeClick.x
     let y0 = lastBeamNodeClick.y
     let x1 = blockSnapSize * 3;
@@ -138,12 +138,10 @@ function createBeam(nameBeam="beam", _id = null, coordinates = null, _node = nul
     y_reference.addPoint(line.getChildren()[1]);
     y_reference.addPoint(line.getChildren()[2]);
 
-    hideAllPanels();
-
     return [originNode, line];
 }
 
-function createBeam2(_node = null, _parent = null, listenUpdate = true) {
+function createBeam2(layer, dcl, _node = null, _parent = null, listenUpdate = true) {
     const konvaElement = lastNodeClick;
     let [x0, y0] = [];
     let idByDate;
@@ -211,7 +209,7 @@ function createBeam2(_node = null, _parent = null, listenUpdate = true) {
     paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
     paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
 
-    const shadowLine = createShadowBeam(x0shadow, y0shadow, x1shadow, y1shadow, "shadowBeam2");
+    const shadowLine = createShadowBeam(layer, x0shadow, y0shadow, x1shadow, y1shadow, "shadowBeam2");
     shadowLine.hide();
 
     layer.add(group, shadowLine);
@@ -237,7 +235,7 @@ function createBeam2(_node = null, _parent = null, listenUpdate = true) {
 
     hideAllPanels();
 
-    listenNodeMovement(group, shadowLine, "beam2", listenUpdate);
+    listenNodeMovement(dcl, group, shadowLine, "beam2", listenUpdate);
     if (listenUpdate) {
         calculateEquations();
     }
@@ -277,7 +275,7 @@ function moveElementsAttached(element, newPosition, distanceToY, distanceToX) {
     }
 }
 
-function listenNodeMovement(konvaBeam, shadow, typeOfBeam, listenUpdate = true) {
+function listenNodeMovement(dcl, konvaBeam, shadow, typeOfBeam, listenUpdate = true) {
     let shadowList;
     let beamLine;
     let beamCircle;
@@ -455,7 +453,11 @@ function listenNodeMovement(konvaBeam, shadow, typeOfBeam, listenUpdate = true) 
 
 //------------------------------------------------------Links externos-----------------------------------------------//
 
-function createFixedSupport(_node = null, rotation, listenUpdate = true) {
+function createFixedSupport(layer, _node = null, rotation, listenUpdate = true) {
+    console.log(layer)
+    console.log(_node)
+    console.log(rotation)
+    console.log(listenUpdate)
     const colorStroke = "black"
 
     let x0;
@@ -531,7 +533,7 @@ function createFixedSupport(_node = null, rotation, listenUpdate = true) {
     return group;
 }
 
-function createRollerSupport(_node = null, rotation, listenUpdate) {
+function createRollerSupport(layer, _node = null, rotation, listenUpdate) {
     let ID;
     let nodeParent;
     let x0;
@@ -611,7 +613,7 @@ function createRollerSupport(_node = null, rotation, listenUpdate) {
     return group;
 }
 
-function createPinnedSupport(_node = null, rotation, listenUpdate = true) {
+function createPinnedSupport(layer, _node = null, rotation, listenUpdate = true) {
     let ID;
     let nodeParent;
     let x0;
@@ -837,7 +839,7 @@ function createConnectingRod(_node = null, listenUpdate = true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null) {
+function createForce(layer, valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null) {
     let [x0, y0] = node.coordinate;
 
     let magnitud = valMagnitud;
@@ -967,7 +969,7 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate = true) 
     })
 }
 
-function createMoment(val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0) {
+function createMoment(layer, val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0) {
     console.log(val)
     console.log()
     let [x0, y0] = node.coordinate
@@ -1059,7 +1061,7 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal, selectType, listenUpdate) {
+function createButton(container, layer, dcl, widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal, selectType, listenUpdate) {
     const btn = document.createElement("button");
     btn.type = "button";
 
@@ -1084,24 +1086,36 @@ function createButton(widthPanel, heightPanel, idNameText, btnText, efunction, i
     }
     btn.addEventListener("dblclick", () => {
 
-        if (idNameText == "beamBtn") {
-            efunction(listenUpdate);
+        if (idNameText == "beamBtn") { 
+            efunction(layer, dcl, listenUpdate);
+
         } else if (idNameText == "forceBtn") {
             const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
-            efunction(inputMagnitud.value, inputAngle.value, selectType.value, node, "black", listenUpdate);
+            efunction(layer, inputMagnitud.value, inputAngle.value, selectType.value, node, "black", listenUpdate);
+        
         } else if (idNameText == "momentBtn") {
             const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
-            efunction(inputMagnitud.value, selectType.value, node, "black", listenUpdate)
+            efunction(layer, inputMagnitud.value, selectType.value, node, "black", listenUpdate)
+        
         } else if (idNameText == "deleteElementBtn") {
-            efunction(element, listenUpdate);
-        } else if (idNameText == "modalRotationBtn") {
-            efunction(null, rotation = selectObj.value, listenUpdate);
-        } else if (idNameText == "modalBtn") {
-            efunction(modal, listenUpdate);
+            efunction(layer, element, listenUpdate);
+        
+        } else if (idNameText == "modalRotationBtn") { // boton para creare vinculos
+            efunction(layer, null, rotation = selectObj.value, listenUpdate);
+        
+        } else if (idNameText == "modalBtn") { // mostrar modal
+            console.log(container)
+            console.log(layer)
+            console.log(modal)
+
+            efunction(container, modal, listenUpdate);
+        
         } else if (idNameText == "AngleBtn") {
-            efunction(listenUpdate);
+            efunction(layer, dcl, listenUpdate);
+        
         } else {
-            efunction(null, null, listenUpdate);
+            console.log("viga?")
+            efunction(layer, dcl, null, null, listenUpdate);
         }
 
     });
@@ -1198,7 +1212,7 @@ function createContainer(list) {
     return container;
 }
 
-function createPanel(listenUpdate = true) {
+function createPanel(container, layer, dcl, listenUpdate = true) {
     const widthPanel = WIDTHPANEL;
     const heightPanel = HEIGHTPANEL;
 
@@ -1246,15 +1260,15 @@ function createPanel(listenUpdate = true) {
     const imgFixedSupport = `url(${imagesFolder}/fixedSupport.png)`;
     const imgBeam = `url(${imagesFolder}/beam.png)`;
 
-    const btnBeam2 = createButton(widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam, null, null, null, null, null, null, listenUpdate = listenUpdate);
-    const btnRollerSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport, listenUpdate = listenUpdate);
-    const btnPinnedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport, listenUpdate = listenUpdate);
-    const btnFixedSupport = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport, listenUpdate = listenUpdate);
-    const btnBallJoint = createButton(widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image = imgBallJoint, null, null, null, null, null, null, listenUpdate = listenUpdate);
-    const btnConnectingRod = createButton(widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image = imgConnectingRod, null, null, null, null, null, null, listenUpdate = listenUpdate);
-    const btnForce = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, modalForce, null, listenUpdate = listenUpdate);
-    const btnMoment = createButton(widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, modalMoment, null, listenUpdate = listenUpdate);
-    const btnChangeOrigin = createButton(widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate = listenUpdate);
+    const btnBeam2 = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam, null, null, null, null, null, null, listenUpdate = listenUpdate);
+    const btnRollerSupport = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport, listenUpdate = listenUpdate);
+    const btnPinnedSupport = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport, listenUpdate = listenUpdate);
+    const btnFixedSupport = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport, listenUpdate = listenUpdate);
+    const btnBallJoint = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "ballJointBtn", "Ball joint", createBallJoint, image = imgBallJoint, null, null, null, null, null, null, listenUpdate = listenUpdate);
+    const btnConnectingRod = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "connectingRodBtn", "Connecting rod", createConnectingRod, image = imgConnectingRod, null, null, null, null, null, null, listenUpdate = listenUpdate);
+    const btnForce = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, modalForce, null, listenUpdate = listenUpdate);
+    const btnMoment = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, modalMoment, null, listenUpdate = listenUpdate);
+    const btnChangeOrigin = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "changeOriginBtn", "Nuevo origen", changeOrigin, listenUpdate = listenUpdate);
     btnChangeOrigin.style.color = "white";
 
     styleForElementGridPanel(btnBeam2, "1", "1");
@@ -1315,14 +1329,14 @@ function listenPanelMovement(panel) {
     return mousePosition;
 }
 
-function movePanelTo(panelParam, x, y) {
+function movePanelTo(container, panelParam, x, y) {
     if (panelParam != delPanel) {
-        panelParam.style.left = getOffset(divKonvaContainer).left + x + "px";
-        panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
+        panelParam.style.left = getOffset(container).left + x + "px";
+        panelParam.style.top = getOffset(container).top + y + "px";
 
     } else {
-        panelParam.style.left = getOffset(divKonvaContainer).left + x - panelParam.offsetWidth + "px";
-        panelParam.style.top = getOffset(divKonvaContainer).top + y + "px";
+        panelParam.style.left = getOffset(container).left + x - panelParam.offsetWidth + "px";
+        panelParam.style.top = getOffset(container).top + y + "px";
 
     }
 
@@ -1412,7 +1426,7 @@ function prettyDeg(deg) {
     return deg;
 }
 
-function listenCreateElement() {
+function listenCreateElement(container) {
     stage.on("dblclick", (e) => {
         if (e.target != stage && e.target && !turnToRealDCLFlag) {
             const mouseXY = roundXY(getXY());
@@ -1424,15 +1438,15 @@ function listenCreateElement() {
     
             if (e.target.name() == "subElementBeamCircle1") {
                 panel.style.visibility = "visible";
-                movePanelTo(panel, mouseXY.x, mouseXY.y);
+                movePanelTo(container, panel, mouseXY.x, mouseXY.y);
 
             } else if (e.target.name() == "subElementBeamCircle2") {
                 panel.style.visibility = "visible";
-                movePanelTo(panel, mouseXY.x, mouseXY.y);
+                movePanelTo(container, panel, mouseXY.x, mouseXY.y);
 
             } else if (e.target.name() == "subElementBeamCircle") {
                 panel.style.visibility = "visible";
-                movePanelTo(panel, mouseXY.x, mouseXY.y);
+                movePanelTo(container, panel, mouseXY.x, mouseXY.y);
 
             }
 
@@ -1509,7 +1523,7 @@ function deleteElement(element, listenUpdate = true) {
 
 
 
-function listenAngleReference() {
+function listenAngleReference(container) {
     stage.on("dblclick", (e) => {
         if (e.target && e.target.getParent()) {
             const element = e.target.getParent();
@@ -1519,7 +1533,7 @@ function listenAngleReference() {
                 const mouseXY = roundXY(getXY());
                 lastElementClick = element;
                 anglePanel.style.visibility = "visible";
-                movePanelTo(anglePanel, mouseXY.x - 240, mouseXY.y + 15);
+                movePanelTo(container, anglePanel, mouseXY.x - 240, mouseXY.y + 15);
 
             }
         }
@@ -1530,7 +1544,7 @@ function listenAngleReference() {
 
 
 
-function listenDeleteElement() {
+function listenDeleteElement(container) {
     stage.on("dblclick", (e) => {
         if (e.target && e.target.getParent() && !turnToRealDCLFlag) {
             const element = e.target.getParent();
@@ -1548,7 +1562,7 @@ function listenDeleteElement() {
                 const mouseXY = roundXY(getXY());
                 lastElementClick = element;
                 delPanel.style.visibility = "visible";
-                movePanelTo(delPanel, mouseXY.x, mouseXY.y + 15);
+                movePanelTo(container, delPanel, mouseXY.x, mouseXY.y + 15);
             }
         }
     });
@@ -1640,7 +1654,7 @@ function createAngleReference() {
 
 
 
-function createDelPanel(listenUpdate) {
+function createDelPanel(container, layer, dcl, listenUpdate=true) {
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
@@ -1658,14 +1672,14 @@ function createDelPanel(listenUpdate) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const deleteElementBtn = createButton(widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image = imgDelete, null, null, null, null, null, null, listenUpdate);
+    const deleteElementBtn = createButton(container, layer, dcl, widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image = imgDelete, null, null, null, null, null, null, listenUpdate);
 
     panel.appendChild(deleteElementBtn);
 
     return panel;
 }
 
-function createAngleReferencePanel() {
+function createAngleReferencePanel(container, layer, dcl) {
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
@@ -1684,7 +1698,7 @@ function createAngleReferencePanel() {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const angleElementBtn = createButton(widthPanel, heightPanel, "AngleBtn", "AngleReference", createAngleReference, image = imgDelete);
+    const angleElementBtn = createButton(container, layer, dcl, widthPanel, heightPanel, "AngleBtn", "AngleReference", createAngleReference, image = imgDelete);
 
     panel.appendChild(angleElementBtn);
 
@@ -1943,7 +1957,7 @@ function styleForElementGridPanel(element, row, col) {
     element.style.margin = "2px";
 }
 
-function createModalForce(listenUpdate = true) {
+function createModalForce(container, layer, dcl,listenUpdate = true) {
     const widthModal = 400;
     const heightModal = 180;
 
@@ -1979,7 +1993,7 @@ function createModalForce(listenUpdate = true) {
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
     styleForElementGrid(inputCreateForceAngle, "2", "3");
 
-    const btnForce = createButton(widthModal / 2, heightModalElement, "forceBtn", "Crear", createForce, null, inputMagnitud = inputCreateForceMagnitud, inputAngle = inputCreateForceAngle, null, null, null, selectTypeForce, listenUpdate);
+    const btnForce = createButton(container, layer, dcl, widthModal / 2, heightModalElement, "forceBtn", "Crear", createForce, null, inputMagnitud = inputCreateForceMagnitud, inputAngle = inputCreateForceAngle, null, null, null, selectTypeForce, listenUpdate);
     btnForce.style.backgroundColor = "rgb(128, 70, 16)"
     btnForce.style.border = "2px outset rgb(128, 70, 16)";
     btnForce.style.borderRadius = "5px";
@@ -2015,7 +2029,7 @@ function createModalForce(listenUpdate = true) {
     return modal;
 }
 
-function createModalMoment(listenUpdate = true) {
+function createModalMoment(container, layer, dcl, listenUpdate = true) {
     const widthModal = 380;
     const heightModal = 180;
 
@@ -2052,7 +2066,7 @@ function createModalMoment(listenUpdate = true) {
     selectTypeMoment.style.width = "200px";
     selectTypeMoment.style.margin = "5px";
 
-    const btnMoment = createButton(widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment, null, inputMagnitude = inputCreateMoment, null, null, null, null, selectTypeMoment, listenUpdate);
+    const btnMoment = createButton(container, layer, dcl, widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment, null, inputMagnitude = inputCreateMoment, null, null, null, null, selectTypeMoment, listenUpdate);
     btnMoment.style.backgroundColor = "rgb(128, 70, 16)"
     btnMoment.style.border = "2px outset rgb(128, 70, 16)";
     btnMoment.style.borderRadius = "5px";
@@ -2100,36 +2114,36 @@ function recreateDcl(json) {
     return newDCL;
 }
 
-function drawLink(node, listenUpdate=true) {
+function drawLink(node, layer, listenUpdate=true) {
     const rotation = parseInt(node.linkRotation);
     if (node.link === "rollerSupport") {
-        createRollerSupport(node, rotation, listenUpdate);
+        createRollerSupport(layer, node, rotation, listenUpdate);
     } else if (node.link === "pinnedSupport") {
-        createPinnedSupport(node, rotation, listenUpdate);
+        createPinnedSupport(layer, node, rotation, listenUpdate);
     } else if (node.link === "fixedSupport") {
-        createFixedSupport(node, rotation, listenUpdate);
+        createFixedSupport(layer, node, rotation, listenUpdate);
     } else if (node.link === "ballJoint") {
-        createBallJoint(node), rotation, listenUpdate;
+        createBallJoint(layer, node, rotation, listenUpdate);
     } else if (node.link === "connectingRod") {
-        createConnectingRod(node, rotation, listenUpdate);
+        createConnectingRod(layer, node, rotation, listenUpdate);
     }
 }
 
-function drawForces(node, listenUpdate=true) {
+function drawForces(node, layer, listenUpdate=true) {
     node.forces.forEach(force => {
         if (force != null) {
-            createForce(force[0], force[1], force[2], node, "black", listenUpdate)
+            createForce(layer, force[0], force[1], force[2], node, layer, "black", listenUpdate)
         }
     })
 
 }
 
 
-function drawMoments(node, listenUpdate) {
+function drawMoments(node, layer, listenUpdate) {
     node.moments.forEach(moment => {
         if (moment != null) {
             console.log(moment)
-            createMoment(moment[0], moment[1], node, "black", listenUpdate);
+            createMoment(layer, moment[0], moment[1], node, layer, "black", listenUpdate);
         }
     })
 
@@ -2339,7 +2353,7 @@ function updateDificulty() {
     pDificulty.innerText = dificulty;
 }
 
-function drawDCL(listenUpdate = true) {
+function drawDcl(dcl, layer, xRef, yRef, listenUpdate=true) {
     const allNodes = [dcl, ...dcl.getAllDecendents()]
 
     const nodesInitialBeam = allNodes.slice(0, 2)
@@ -2349,6 +2363,7 @@ function drawDCL(listenUpdate = true) {
     let [x1, y1] = nodesInitialBeam[1].coordinate;
 
     const initialBeam = createBeam(
+        layer, 
         nameBeam="initialBeam",
         _id = nodesInitialBeam[1].id,
         coordinates = [
@@ -2360,25 +2375,25 @@ function drawDCL(listenUpdate = true) {
 
     initialBeam.getChildren()[1].setAttr("fill", nodeColor);
 
-    const shadowBeam = createShadowBeam(x0, y0, x1 - x0, y1 - y0);
+    const shadowBeam = createShadowBeam(layer, x0, y0, x1 - x0, y1 - y0);
     shadowBeam.hide();
 
     if (listenUpdate) {
-        listenNodeMovement(initialBeam, shadowBeam, "initialBeam", listenUpdate);
+        listenNodeMovement(dcl, initialBeam, shadowBeam, "initialBeam", listenUpdate);
     }
 
-    drawLink(nodesInitialBeam[0]);
-    drawLink(nodesInitialBeam[1]);
+    drawLink(nodesInitialBeam[0], layer, listenUpdate);
+    drawLink(nodesInitialBeam[1], layer, listenUpdate);
 
     nodesInitialBeam.forEach(node => {
-        drawForces(node, listenUpdate);
-        drawMoments(node, listenUpdate);
+        drawForces(node, layer, listenUpdate);
+        drawMoments(node, layer, listenUpdate);
     })
 
     otherNodes.forEach(node => {
-        createBeam2(node, node.parent)
-        drawLink(node, listenUpdate);
-        drawForces(node, listenUpdate);
+        createBeam2(layer, dcl, node, node.parent)
+        drawLink(node, layer, listenUpdate);
+        drawForces(node, layer, listenUpdate);
         drawMoments(node, listenUpdate);
     })
 
@@ -2749,10 +2764,11 @@ function rotateKonvaObject(object, angle = 90) {
     object.getLayer().draw();
 }
 
-function showModal(modal) {
+function showModal(container, modal) {
+    
     hideAllPanels();
 
-    movePanelTo(modal, lastBeamNodeClick.x, lastBeamNodeClick.y);
+    movePanelTo(container, modal, lastBeamNodeClick.x, lastBeamNodeClick.y);
     modal.style.visibility = "visible";
 
 }
@@ -2798,10 +2814,10 @@ function createGenericModalRotation(Idname) {
     return modal;
 }
 
-function createModalFixedSupport(listenUpdate = true) {
+function createModalFixedSupport(container, layer, dcl, listenUpdate = true) {
     const modal = createGenericModalRotation("modalFixedSupport");
     const select = modal.children[1].children[0];
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
+    const button = createButton(container, layer, dcl, modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createFixedSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
 
     button.style.gridRow = "3";
     button.style.width = "120px";
@@ -2816,10 +2832,10 @@ function createModalFixedSupport(listenUpdate = true) {
     return modal;
 }
 
-function createModalRollerSupport(listenUpdate = true) {
+function createModalRollerSupport(container, layer, dcl, listenUpdate = true) {
     const modal = createGenericModalRotation("modalRollerSupport");
     const select = modal.children[1].children[0];
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
+    const button = createButton(container, layer, dcl, modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createRollerSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
 
     button.style.gridRow = "3";
     button.style.width = "120px";
@@ -2834,10 +2850,10 @@ function createModalRollerSupport(listenUpdate = true) {
     return modal;
 }
 
-function createModalPinnedSupport(listenUpdate = true) {
+function createModalPinnedSupport(container, layer, dcl, listenUpdate = true) {
     const modal = createGenericModalRotation("modalPinnedSupport");
     const select = modal.children[1].children[0];
-    const button = createButton(modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
+    const button = createButton(container, layer, dcl, modal.style.width, modal.style.height, "modalRotationBtn", "Crear", createPinnedSupport, null, null, null, null, selectObj = select, null, null, listenUpdate);
 
     button.style.gridRow = "3";
     button.style.width = "120px";
@@ -2892,7 +2908,7 @@ function addDraggableToAllNodes() {
     })
 }
 
-function visibilityLines(lineType, viewType) {
+function visibilityLines(layer, lineType, viewType) {
     const lines = layer.find(node => node.name() === lineType);
     lines.forEach(line => {
         if (viewType === "hide") {
@@ -2961,7 +2977,7 @@ function addDraggableToAllNodes() {
     })
 }
 
-function turnToRealDCL(listenUpdate = true) {
+function turnToRealDCL(layer, listenUpdate = true) {
     const check = document.querySelector("#turnToRealDCL");
 
     check.addEventListener("change", () => {
@@ -2987,23 +3003,23 @@ function turnToRealDCL(listenUpdate = true) {
                     const Yy = y + lasForce * Math.sin(degToRad(forceAngleY));
 
                     if (node.link === "fixedSupport" || node.link === "pinnedSupport") {
-                        const forceX = createForce(`${node.name}x`, forceAngleX, "Reaction", node, "green", listenUpdate, Xx, Yx);
+                        const forceX = createForce(layer, `${node.name}x`, forceAngleX, "Reaction", node, "green", listenUpdate, Xx, Yx);
                         node.setKonvaForceXsupport(forceX);
                     }
                     if (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport") {
-                        const forceY = createForce(`${node.name}y`, forceAngleY, "Reaction", node, "green", listenUpdate, Xy, Yy);
+                        const forceY = createForce(layer, `${node.name}y`, forceAngleY, "Reaction", node, "green", listenUpdate, Xy, Yy);
                         node.setKonvaForceYsupport(forceY);
                     }
                     if (node.link === "fixedSupport") {
-                        const moment = createMoment(`${node.name}m`, "Reaction", node, "green", listenUpdate, x, y)
+                        const moment = createMoment(layer, `${node.name}m`, "Reaction", node, "green", listenUpdate, x, y)
                         node.setKonvaMomentSupport(moment);
                     }
                     node.setTurnedToRealDCL(true);
                 }
             });
 
-            visibilityLines("horizontalLine", "hide");
-            visibilityLines("verticalLine", "hide");
+            visibilityLines(layer, "horizontalLine", "hide");
+            visibilityLines(layer, "verticalLine", "hide");
 
         } else {
             addDraggableToAllNodes();
@@ -3018,8 +3034,8 @@ function turnToRealDCL(listenUpdate = true) {
                 }
 
             })
-            visibilityLines("horizontalLine", "show");
-            visibilityLines("verticalLine", "show");
+            visibilityLines(layer, "horizontalLine", "show");
+            visibilityLines(layer, "verticalLine", "show");
         }
     })
 

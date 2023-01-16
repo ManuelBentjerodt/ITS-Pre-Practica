@@ -1,4 +1,4 @@
-//const { listen } = require("express/lib/application");
+const divKonvaContainer = document.querySelector("#containerKonva");
 
 const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null;
@@ -16,40 +16,6 @@ stage.add(layer);
 generateGrid(layer);
 
 //------------------------------------------------------Creacion paneles-----------------------------------------------//
-const divKonvaContainer = document.querySelector("#containerKonva");
-
-const modalForce = createModalForce(); 
-const modalMoment = createModalMoment(); 
-const modalFixedSupport = createModalFixedSupport();
-const modalRollerSupport = createModalRollerSupport(); 
-const modalPinnedSupport = createModalPinnedSupport();
-const delPanel = createDelPanel();
-const anglePanel = createAngleReferencePanel(); //new
-const panel = createPanel();
-
-divKonvaContainer.appendChild(modalForce);
-divKonvaContainer.appendChild(modalMoment);
-divKonvaContainer.appendChild(modalFixedSupport);
-divKonvaContainer.appendChild(modalRollerSupport);
-divKonvaContainer.appendChild(modalPinnedSupport);
-divKonvaContainer.appendChild(panel);
-divKonvaContainer.appendChild(delPanel);
-divKonvaContainer.appendChild(anglePanel); //new
-
-listenPanelMovement(panel);
-listenPanelMovement(delPanel);
-listenPanelMovement(modalMoment); 
-listenPanelMovement(modalForce); 
-listenPanelMovement(modalFixedSupport);
-listenPanelMovement(modalRollerSupport); 
-listenPanelMovement(modalPinnedSupport);
-listenPanelMovement(anglePanel); 
-
-listenCreateElement();
-listenDeleteElement();
-listenHiddePanels();
-listenAngleReference(); 
-
 
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
 y_reference = new yReference([widthStage-5*blockSnapSize,0]);
@@ -77,34 +43,59 @@ const DCL = {}
 
 
 if (dclJSON == "null") {
-    [dcl, initialBeam] = createBeam(nameBeam="initialBeam");
+    [dcl, initialBeam] = createBeam(layer, nameBeam="initialBeam");
     dcl.setIsOrigin(true);
-    const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
+
+    const shadowLine = createShadowBeam(layer, 8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
     shadowLine.hide();
-    listenNodeMovement(initialBeam, shadowLine, "initialBeam");
+
+    listenNodeMovement(dcl, initialBeam, shadowLine, "initialBeam");
     console.log("primera vez editando");
     
 } else {
     dcl = recreateDcl(dclJSON);
     console.log("dcl", dcl);
     
-
-    const otherCopy = recreateDcl(dclJSON); 
-    const otherCopy2 = recreateDcl(dclJSON);
-
-    const standarizedDCL1 = standarizeDCL(otherCopy); // dcl con coordenadas en referencia al nodo izquierdo abajo
-    const standarizeDCL2 = standarizeDCL(otherCopy2); 
-    
-    // console.log("standarizedDCL", standarizedDCL1);
-    // console.log("othercopy2 without standarization", otherCopy2);
-
-
-    const ejemDCL = areDclEqual(standarizedDCL1, standarizeDCL2); 
-    
-    drawDCL(dcl);
     initialBeam = dcl.childNodes[0].konvaObjects.beam
+    drawDcl(dcl, layer);
+
     console.log("ya has editado otras veces")
 }
+const panel = createPanel(divKonvaContainer, layer, dcl);
+
+
+const modalForce = createModalForce(divKonvaContainer, layer, dcl); 
+const modalMoment = createModalMoment(divKonvaContainer, layer, dcl); 
+const modalFixedSupport = createModalFixedSupport(divKonvaContainer, layer, dcl);
+const modalRollerSupport = createModalRollerSupport(divKonvaContainer, layer, dcl); 
+const modalPinnedSupport = createModalPinnedSupport(divKonvaContainer, layer, dcl);
+const delPanel = createDelPanel(divKonvaContainer, layer, dcl);
+const anglePanel = createAngleReferencePanel(divKonvaContainer, layer, dcl); //new
+
+divKonvaContainer.appendChild(modalForce);
+divKonvaContainer.appendChild(modalMoment);
+divKonvaContainer.appendChild(modalFixedSupport);
+divKonvaContainer.appendChild(modalRollerSupport);
+divKonvaContainer.appendChild(modalPinnedSupport);
+divKonvaContainer.appendChild(panel);
+divKonvaContainer.appendChild(delPanel);
+divKonvaContainer.appendChild(anglePanel); //new
+
+listenPanelMovement(panel);
+listenPanelMovement(delPanel);
+listenPanelMovement(modalMoment); 
+listenPanelMovement(modalForce); 
+listenPanelMovement(modalFixedSupport);
+listenPanelMovement(modalRollerSupport); 
+listenPanelMovement(modalPinnedSupport);
+listenPanelMovement(anglePanel); 
+
+listenCreateElement(divKonvaContainer);
+listenDeleteElement(divKonvaContainer);
+listenAngleReference(divKonvaContainer); 
+listenHiddePanels();
+
+hideAllPanels();
 
 
 
@@ -124,7 +115,7 @@ paintIfMouseOver(initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElem
 
 updateDificulty();
 updateClassification();
-turnToRealDCL();
+turnToRealDCL(layer);
 
 const taskInfo = document.querySelector("#taskInfo");
 

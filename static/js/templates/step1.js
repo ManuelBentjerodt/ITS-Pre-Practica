@@ -80,9 +80,6 @@ listenHiddePanels();
 showReferences();
 turnToRealDCL(listenUpdate=false);
 
-const taskInfo = document.querySelector("#taskInfo").dataset;
-const statement = taskInfo.statement;
-document.querySelector("#statement").innerHTML = statement;
 
 
 const correctJson = document.getElementById('correctDcl').textContent;
