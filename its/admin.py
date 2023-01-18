@@ -15,3 +15,8 @@ class TaskAdmin(admin.ModelAdmin):
     
 admin.site.register(Tag)
 
+# fuerza_perpendicular = Tag.objects.create(name="fuerza_perpendicular")
+# task1 = Task.objects.create(statement="¿Cuál es la fuerza perpendicular?", difficulty=1, sizeFactor=1)
+# task1.tags.add(fuerza_perpendicular)
+# task1.tags.remove(fuerza_perpendicular)
+

@@ -20,6 +20,23 @@ class Task(models.Model):
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
     
+    def save(self, *args, **kwargs):
+        super(Task, self).save(*args, **kwargs)
+        self.updateTags()
+
+    def updateTags(self):
+        #for tag in self.dcl(): etc
+        #sacar todas las tags al principio
+        #crear lista con los tags presentes y dsp for:
+        self.tags.clear()
+
+        print("dcl en update: ",self.dcl)
+        tag, create = Tag.objects.get_or_create(name="fuerza_perpendicular") 
+        self.tags.add(tag)
+        
+
+
+
     def compareTo(self,jsonAnswer):
         #otherDcl = json.loads(jsonAnswer)
         print("Esto es la funcion compareTo del TASK\n")
@@ -28,17 +45,13 @@ class Task(models.Model):
 
         print("id de dcl correcto: ",self.dcl["id"])
         self.compareNodes(jsonAnswer)
-
+        print("\nQUIERO SABE QUE PASA:\n")
+        print("task objects:",self.tags.all())
     def recursive(self,studentNode,correctNode):
 
         for child in self.dcl["childNodes"]:
             self.recursiveFunction(child)
         pass
-
-
-
-
-
     def compareNodes(self,studentNode):
         #recorrer un nodo y compararlo con el correcto#
         #luego aplicar la recursividad a sus hijos.
@@ -89,7 +102,7 @@ class Task(models.Model):
                     node_in_student = True
                     break
             if (node_in_student == False):
-                print("No se encontro el nodo en el estudiante, esta mal situado"))
+                print("No se encontro el nodo en el estudiante, esta mal situado")
                 pass
            
 
@@ -116,7 +129,7 @@ class TaskPerAccount(models.Model):
     account = models.ForeignKey(Account,on_delete=models.CASCADE)
     
 class Tag(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     tasks = models.ManyToManyField(Task, related_name='tags')
 
     def __str__(self):

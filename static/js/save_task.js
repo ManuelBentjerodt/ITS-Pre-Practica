@@ -8,6 +8,10 @@ function saveTask(e) {
     const difficulty = document.querySelector("#difficultyValue").innerText;
     const statement = document.querySelector("#statement").value;
 
+    const tags = document.querySelectorAll(".tag");
+
+
+
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
     const href = window.location.href;
 
