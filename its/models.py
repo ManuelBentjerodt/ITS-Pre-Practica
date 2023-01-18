@@ -26,19 +26,22 @@ class Task(models.Model):
         self.updateTags()
 
     def updateTags(self):
-        self.tags.clear()
-        print("DLC: ",self.dcl)
-        self.recursive(self.dcl)
+        if (self.dcl):
+            self.tags.clear()
+            print("DLC: ",self.dcl)
+            origin_coords = self.dcl["coordinate"]
+            self.recursive(self.dcl,origin_coords)
+            
+
+    def recursive(self,dcl,coords):
         
-
-    def recursive(self,dcl):
-
         for child in dcl["childNodes"]:
             self.addForceTag(child)
             self.addTag(child,"moments")
             self.addLinkTag(child)
-            self.recursive(child)
-        
+            self.addSlopeTag(child,coords)
+            self.recursive(child,coords)
+    
 
 
     def addTag(self,child,tag):
@@ -66,14 +69,14 @@ class Task(models.Model):
                 tag, create = Tag.objects.get_or_create(name="empotrado")
                 self.tags.add(tag)
 
-            if (child["linkRotation"] != 0):
+            if (child["linkRotation"] != "0"):
                 tag, create = Tag.objects.get_or_create(name="apoyos con angulo")
                 self.tags.add(tag)
 
-    # def addSlopeTag(self,child):
-    #     if (child["coordinate"][1] - self.origin_coords[1] != 0 and (child["moments"] or child["forces"] or child["link"])): 
-    #         tag, create = Tag.objects.get_or_create(name="desnivel")
-    #         self.tags.add(tag)
+    def addSlopeTag(self,child,coords):
+        if (child["coordinate"][1] - coords[1] != 0 and (child["moments"] or child["forces"] or child["link"])): 
+            tag, create = Tag.objects.get_or_create(name="desnivel")
+            self.tags.add(tag)
 
 
 
