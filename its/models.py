@@ -20,20 +20,60 @@ class Task(models.Model):
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
     
+
     def save(self, *args, **kwargs):
         super(Task, self).save(*args, **kwargs)
         self.updateTags()
 
     def updateTags(self):
-        #for tag in self.dcl(): etc
-        #sacar todas las tags al principio
-        #crear lista con los tags presentes y dsp for:
         self.tags.clear()
-
-        print("dcl en update: ",self.dcl)
-        tag, create = Tag.objects.get_or_create(name="fuerza_perpendicular") 
-        self.tags.add(tag)
+        print("DLC: ",self.dcl)
+        self.recursive(self.dcl)
         
+
+    def recursive(self,dcl):
+
+        for child in dcl["childNodes"]:
+            self.addForceTag(child)
+            self.addTag(child,"moments")
+            self.addLinkTag(child)
+            self.recursive(child)
+        
+
+
+    def addTag(self,child,tag):
+        if (child[tag]):
+            tag, create = Tag.objects.get_or_create(name=tag)
+            self.tags.add(tag)
+            
+    
+    def addForceTag(self,child):
+        if (child["forces"]):
+            for force in child["forces"]:
+                if ((force[1] % 90) != 0):
+                    tag, create = Tag.objects.get_or_create(name="fuerza con angulo")
+                    self.tags.add(tag)
+                else:
+                    tag, create = Tag.objects.get_or_create(name="fuerza con angulo recto")
+                    self.tags.add(tag)
+
+    def addLinkTag(self,child):
+        if (child["link"]):
+            if (child["link"] == "pinnedSupport" or child["link"] == "rollerSupport"):
+                tag, create = Tag.objects.get_or_create(name="apoyos simples")
+                self.tags.add(tag)
+            if (child["link"] == "fixedSupport"):
+                tag, create = Tag.objects.get_or_create(name="empotrado")
+                self.tags.add(tag)
+
+            if (child["linkRotation"] != 0):
+                tag, create = Tag.objects.get_or_create(name="apoyos con angulo")
+                self.tags.add(tag)
+
+    # def addSlopeTag(self,child):
+    #     if (child["coordinate"][1] - self.origin_coords[1] != 0 and (child["moments"] or child["forces"] or child["link"])): 
+    #         tag, create = Tag.objects.get_or_create(name="desnivel")
+    #         self.tags.add(tag)
 
 
 
@@ -47,11 +87,9 @@ class Task(models.Model):
         self.compareNodes(jsonAnswer)
         print("\nQUIERO SABE QUE PASA:\n")
         print("task objects:",self.tags.all())
-    def recursive(self,studentNode,correctNode):
 
-        for child in self.dcl["childNodes"]:
-            self.recursiveFunction(child)
-        pass
+
+
     def compareNodes(self,studentNode):
         #recorrer un nodo y compararlo con el correcto#
         #luego aplicar la recursividad a sus hijos.
