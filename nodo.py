@@ -1,4 +1,3 @@
-import time
 from collections import deque
 import uuid
 
@@ -79,8 +78,6 @@ def get_left_top_node(nodes): #busca el X mas bajo, despues el Y mas bajo
     return left_top[0]
 
 
-
-
 def get_transision_vector(correct_graph, test_graph):
     correct_nodes = correct_graph.get_al_decsendents()
     test_nodes = test_graph.get_al_decsendents()
@@ -115,11 +112,6 @@ link(b2, b3)
 print(f"{b1}")
 print(f"{b2}")
 print(f"{b3}\n")
-equally_displaced(a1, b1)
-
-
-
-
 
 
 

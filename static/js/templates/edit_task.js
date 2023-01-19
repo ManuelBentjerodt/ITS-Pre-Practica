@@ -101,7 +101,7 @@ showReferences();
 
 updateDificulty();
 updateClassification();
-turnToRealDCL(layer);
+turnToRealDCL(dcl, layer);
 
 const taskInfo = document.querySelector("#taskInfo");
 
@@ -138,6 +138,6 @@ updateEquations();
 dclJSON == "null" ?  null : drawDcl(dcl, layer), initialBeam = dcl.childNodes[0].konvaObjects.beam 
 
 const initialBeamSubElements = initialBeam.getChildren();
-paintIfMouseOver(initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElements[0].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
-paintIfMouseOver(initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[1].getAttr("stroke"));
-paintIfMouseOver(initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));
+paintIfMouseOver(dcl, initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElements[0].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
+paintIfMouseOver(dcl, initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));
+paintIfMouseOver(dcl, initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[1].getAttr("stroke"));

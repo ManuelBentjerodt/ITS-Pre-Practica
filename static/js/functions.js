@@ -88,9 +88,9 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
 
     group.add(line, circle1, circle2);
 
-    // paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
-    // paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
-    // paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
+    // paintIfMouseOver(dcl, line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    // paintIfMouseOver(dcl, circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"));
+    // paintIfMouseOver(dcl, circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"));
 
     return group;
 }
@@ -206,8 +206,8 @@ function createBeam2(layer, dcl, _node = null, _parent = null, listenUpdate = tr
 
     group.add(line, circle)
 
-    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
-    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
+    paintIfMouseOver(dcl, line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"));
+    paintIfMouseOver(dcl, circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"));
 
     const shadowLine = createShadowBeam(layer, x0shadow, y0shadow, x1shadow, y1shadow, "shadowBeam2");
     shadowLine.hide();
@@ -453,11 +453,7 @@ function listenNodeMovement(dcl, konvaBeam, shadow, typeOfBeam, listenUpdate = t
 
 //------------------------------------------------------Links externos-----------------------------------------------//
 
-function createFixedSupport(layer, _node = null, rotation, listenUpdate = true) {
-    console.log(layer)
-    console.log(_node)
-    console.log(rotation)
-    console.log(listenUpdate)
+function createFixedSupport(dcl, layer, _node = null, rotation, listenUpdate = true) {
     const colorStroke = "black"
 
     let x0;
@@ -495,10 +491,10 @@ function createFixedSupport(layer, _node = null, rotation, listenUpdate = true) 
 
     group.add(base, l1, l2, l3);
 
-    paintIfMouseOver(base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(l1, nfillc, nstrokec, l1.getAttr("fill"), l1.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, base, nfillc, nstrokec, base.getAttr("fill"), base.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, l1, nfillc, nstrokec, l1.getAttr("fill"), l1.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup = true);
 
     hideAllPanels();
 
@@ -533,7 +529,7 @@ function createFixedSupport(layer, _node = null, rotation, listenUpdate = true) 
     return group;
 }
 
-function createRollerSupport(layer, _node = null, rotation, listenUpdate) {
+function createRollerSupport(dcl, layer, _node = null, rotation, listenUpdate) {
     let ID;
     let nodeParent;
     let x0;
@@ -577,8 +573,8 @@ function createRollerSupport(layer, _node = null, rotation, listenUpdate) {
 
     group.add(triangle, base);
 
-    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup = true);
 
     hideAllPanels();
 
@@ -613,7 +609,7 @@ function createRollerSupport(layer, _node = null, rotation, listenUpdate) {
     return group;
 }
 
-function createPinnedSupport(layer, _node = null, rotation, listenUpdate = true) {
+function createPinnedSupport(dcl, layer, _node = null, rotation, listenUpdate = true) {
     let ID;
     let nodeParent;
     let x0;
@@ -650,7 +646,7 @@ function createPinnedSupport(layer, _node = null, rotation, listenUpdate = true)
 
     group.add(triangle);
 
-    paintIfMouseOver(triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = false);
+    paintIfMouseOver(dcl, triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = false);
 
     hideAllPanels();
 
@@ -689,7 +685,7 @@ function createPinnedSupport(layer, _node = null, rotation, listenUpdate = true)
 
 //------------------------------------------------------Links internos-----------------------------------------------//
 
-function createBallJoint(_node = null, listenUpdate = true) {
+function createBallJoint(dcl, _node = null, listenUpdate = true) {
     let ID;
     let nodeParent;
     let x0;
@@ -721,7 +717,7 @@ function createBallJoint(_node = null, listenUpdate = true) {
 
     group.add(circle);
 
-    paintIfMouseOver(circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"), paintGroup = false);
+    paintIfMouseOver(dcl, circle, nfillc, nstrokec, circle.getAttr("fill"), circle.getAttr("stroke"), paintGroup = false);
 
     if (nodeParent.link === null) {
         nodeParent.setLink("ballJoint");
@@ -755,7 +751,7 @@ function createBallJoint(_node = null, listenUpdate = true) {
     return group;
 }
 
-function createConnectingRod(_node = null, listenUpdate = true) {
+function createConnectingRod(dcl, _node = null, listenUpdate = true) {
     let ID;
     let nodeParent;
     let x0;
@@ -799,9 +795,9 @@ function createConnectingRod(_node = null, listenUpdate = true) {
 
     group.add(line, circle1, circle2);
 
-    paintIfMouseOver(line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"), paintGroup = false);
-    paintIfMouseOver(circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, line, nfillc, nstrokec, line.getAttr("fill"), line.getAttr("stroke"), paintGroup = false);
+    paintIfMouseOver(dcl, circle1, nfillc, nstrokec, circle1.getAttr("fill"), circle1.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, circle2, nfillc, nstrokec, circle2.getAttr("fill"), circle2.getAttr("stroke"), paintGroup = true);
 
     if (nodeParent.link === null) {
         nodeParent.setLink("connectingRod");
@@ -839,7 +835,7 @@ function createConnectingRod(_node = null, listenUpdate = true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(layer, valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null) {
+function createForce(dcl, layer, valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null, isNew=true, attachToNode=true) {
     let [x0, y0] = node.coordinate;
 
     let magnitud = valMagnitud;
@@ -856,7 +852,6 @@ function createForce(layer, valMagnitud, valAngle, typeForce, node, color="black
     const ly = large * Math.sin(degToRad(angle))
 
     if (color != "black") {
-        console.log("estoy en true ", X, Y)
         x0 = X;
         y0 = Y;
         txt = valMagnitud;
@@ -888,15 +883,18 @@ function createForce(layer, valMagnitud, valAngle, typeForce, node, color="black
     group.add(arrow, magnitudValue);
     layer.add(group);
 
-    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
-    if (color == "black") {
+    if (isNew) {
         node.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
-        node.addKonvaForce(group);
-        group.setAttr("id", node.id);
     }
 
+    if (attachToNode){
+        node.addKonvaForce(group);
+    }
+    
+    group.setAttr("id", node.id);
     panel.style.visibility = "hidden";
     delPanel.style.visibility = "hidden";
     modalForce.style.visibility = "hidden";
@@ -969,9 +967,7 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate = true) 
     })
 }
 
-function createMoment(layer, val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0) {
-    console.log(val)
-    console.log()
+function createMoment(dcl, layer, val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0, isNew=true, attachToNode=true) {
     let [x0, y0] = node.coordinate
 
     let magnitud = val;
@@ -1027,15 +1023,18 @@ function createMoment(layer, val, typeMoment, node, color = "black", listenUpdat
 
     group.add(arrow, magnitudValue)
 
-    paintIfMouseOver(arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
-    paintIfMouseOver(magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, arrow, nfillc, nstrokec, arrow.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
+    paintIfMouseOver(dcl, magnitudValue, nfillc, nstrokec, magnitudValue.getAttr("fill"), arrow.getAttr("stroke"), paintGroup = true);
 
-    if (color == "black") {
+    if (isNew) {
         node.addMoment(parseFloat(magnitud), typeMoment);
-        node.addKonvaMoment(group);
-        group.setAttr("id", node.id);
     }
-    console.log(group)
+
+    if (attachToNode){
+        node.addKonvaMoment(group);
+    }
+
+    group.setAttr("id", node.id);
     layer.add(group);
 
     panel.style.visibility = "hidden";
@@ -1091,17 +1090,17 @@ function createButton(container, layer, dcl, widthPanel, heightPanel, idNameText
 
         } else if (idNameText == "forceBtn") {
             const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
-            efunction(layer, inputMagnitud.value, inputAngle.value, selectType.value, node, "black", listenUpdate);
+            efunction(dcl, layer, inputMagnitud.value, inputAngle.value, selectType.value, node, "black", listenUpdate);
         
         } else if (idNameText == "momentBtn") {
             const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
-            efunction(layer, inputMagnitud.value, selectType.value, node, "black", listenUpdate)
+            efunction(dcl, layer, inputMagnitud.value, selectType.value, node, "black", listenUpdate)
         
         } else if (idNameText == "deleteElementBtn") {
             efunction(layer, element, listenUpdate);
         
         } else if (idNameText == "modalRotationBtn") { // boton para creare vinculos
-            efunction(layer, null, rotation = selectObj.value, listenUpdate);
+            efunction(dcl, layer, null, rotation = selectObj.value, listenUpdate);
         
         } else if (idNameText == "modalBtn") { // mostrar modal
             console.log(container)
@@ -1852,7 +1851,7 @@ function paintElement(element, fillc, strokec, paintGroup) {
     }
 }
 
-function paintIfMouseOver(element, nfillc, nstrokec, ofillc, ostrokec, paintGroup = false) {
+function paintIfMouseOver(dcl, element, nfillc, nstrokec, ofillc, ostrokec, paintGroup = false) {
 
     element.on("mouseenter", () => {
         let nfillcDef = nfillc;
@@ -2114,36 +2113,35 @@ function recreateDcl(json) {
     return newDCL;
 }
 
-function drawLink(node, layer, listenUpdate=true) {
+function drawLink(dcl, layer, node,  listenUpdate=true) {
     const rotation = parseInt(node.linkRotation);
     if (node.link === "rollerSupport") {
-        createRollerSupport(layer, node, rotation, listenUpdate);
+        createRollerSupport(dcl, layer, node, rotation, listenUpdate);
     } else if (node.link === "pinnedSupport") {
-        createPinnedSupport(layer, node, rotation, listenUpdate);
+        createPinnedSupport(dcl, layer, node, rotation, listenUpdate);
     } else if (node.link === "fixedSupport") {
-        createFixedSupport(layer, node, rotation, listenUpdate);
+        createFixedSupport(dcl, layer, node, rotation, listenUpdate);
     } else if (node.link === "ballJoint") {
-        createBallJoint(layer, node, rotation, listenUpdate);
+        createBallJoint(dcl, layer, node, rotation, listenUpdate);
     } else if (node.link === "connectingRod") {
-        createConnectingRod(layer, node, rotation, listenUpdate);
+        createConnectingRod(dcl, layer, node, rotation, listenUpdate);
     }
 }
 
-function drawForces(node, layer, listenUpdate=true) {
+function drawForces(dcl, layer, node, listenUpdate=true) {
     node.forces.forEach(force => {
         if (force != null) {
-            createForce(layer, force[0], force[1], force[2], node, "black", listenUpdate)
+            createForce(dcl, layer, force[0], force[1], force[2], node, "black", listenUpdate, null, null, false, true);
         }
     })
 
 }
 
 
-function drawMoments(node, layer, listenUpdate) {
+function drawMoments(dcl, layer, node, listenUpdate) {
     node.moments.forEach(moment => {
         if (moment != null) {
-            console.log(moment)
-            createMoment(layer, moment[0], moment[1], node, layer, "black", listenUpdate);
+            createMoment(dcl, layer, moment[0], moment[1], node, "black", listenUpdate, null, null, false, true);
         }
     })
 
@@ -2382,19 +2380,19 @@ function drawDcl(dcl, layer, xRef, yRef, listenUpdate=true) {
         listenNodeMovement(dcl, initialBeam, shadowBeam, "initialBeam", listenUpdate);
     }
 
-    drawLink(nodesInitialBeam[0], layer, listenUpdate);
-    drawLink(nodesInitialBeam[1], layer, listenUpdate);
+    drawLink(dcl, layer, nodesInitialBeam[0], listenUpdate);
+    drawLink(dcl, layer, nodesInitialBeam[1], listenUpdate);
 
     nodesInitialBeam.forEach(node => {
-        drawForces(node, layer, listenUpdate);
-        drawMoments(node, layer, listenUpdate);
+        drawForces(dcl, layer, node, listenUpdate);
+        drawMoments(dcl, layer, node, listenUpdate);
     })
 
     otherNodes.forEach(node => {
-        createBeam2(layer, dcl, node, node.parent)
-        drawLink(node, layer, listenUpdate);
-        drawForces(node, layer, listenUpdate);
-        drawMoments(node, listenUpdate);
+        createBeam2(layer, dcl, node, node.parent, listenUpdate)
+        drawLink(dcl, layer, node, listenUpdate);
+        drawForces(dcl, layer, node, listenUpdate);
+        drawMoments(dcl, layer, node, listenUpdate);
     })
 
     dcl.findOriginNode().konvaObjects.circle.setAttr("fill", originColor);
@@ -2868,7 +2866,7 @@ function createModalPinnedSupport(container, layer, dcl, listenUpdate = true) {
     return modal;
 }
 
-function removeDraggableFromAllNodes() {
+function removeDraggableFromAllNodes(dcl) {
     const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
     const allNodes = [dcl, ...dcl.getAllDecendents()];
     allNodes.forEach(node => {
@@ -2877,9 +2875,8 @@ function removeDraggableFromAllNodes() {
             beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
                 child.setAttr("draggable", false);
             })
-        }
+        }node.coordinate
         const forces = node.konvaObjects.forces;
-        console.log(forces)
         forces.forEach(force => {
 
             force.getChildren()[0].setAttr("draggable", false);
@@ -2888,7 +2885,7 @@ function removeDraggableFromAllNodes() {
     })
 }
 
-function addDraggableToAllNodes() {
+function addDraggableToAllNodes(dcl) {
     const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
     const allNodes = [dcl, ...dcl.getAllDecendents()];
     allNodes.forEach(node => {
@@ -2938,53 +2935,14 @@ function showReferences() {
 
 
 
-function removeDraggableFromAllNodes() {
-    const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
-    const allNodes = [dcl, ...dcl.getAllDecendents()];
-    allNodes.forEach(node => {
-        const beam = node.konvaObjects.beam
-        if (beam) {
-            beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
-                child.setAttr("draggable", false);
-            })
-        }
-        const forces = node.konvaObjects.forces;
-        forces.forEach(force => {
-            console.log(force)
-            force.getChildren()[0].setAttr("draggable", false);
-
-        })
-    })
-}
-
-function addDraggableToAllNodes() {
-    const beamNames = new Set(["subElementBeamCircle", "subElementBeamCircle1", "subElementBeamCircle2"]);
-    const allNodes = [dcl, ...dcl.getAllDecendents()];
-    allNodes.forEach(node => {
-        const beam = node.konvaObjects.beam
-        if (beam) {
-            beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
-                child.setAttr("draggable", true);
-
-            })
-        }
-
-        const forces = node.konvaObjects.forces;
-        forces.forEach(force => {
-            force.setAttr("draggable", true);
-            force.getChildren()[0].setAttr("draggable", true);
-        })
-    })
-}
-
-function turnToRealDCL(layer, listenUpdate = true) {
+function turnToRealDCL(dcl, layer, listenUpdate = true) {
     const check = document.querySelector("#turnToRealDCL");
 
     check.addEventListener("change", () => {
         const allNodes = [dcl, ...dcl.getAllDecendents()];
 
         if (check.checked) {
-            removeDraggableFromAllNodes();
+            removeDraggableFromAllNodes(dcl);
             turnToRealDCLFlag = true;
 
             allNodes.forEach(node => {
@@ -3003,15 +2961,15 @@ function turnToRealDCL(layer, listenUpdate = true) {
                     const Yy = y + lasForce * Math.sin(degToRad(forceAngleY));
 
                     if (node.link === "fixedSupport" || node.link === "pinnedSupport") {
-                        const forceX = createForce(layer, `${node.name}x`, forceAngleX, "Reaction", node, "green", listenUpdate, Xx, Yx);
+                        const forceX = createForce(dcl, layer, `${node.name}x`, forceAngleX, "Reaction", node, "green", listenUpdate, Xx, Yx, false, false);
                         node.setKonvaForceXsupport(forceX);
                     }
                     if (node.link === "fixedSupport" || node.link === "pinnedSupport" || node.link === "rollerSupport") {
-                        const forceY = createForce(layer, `${node.name}y`, forceAngleY, "Reaction", node, "green", listenUpdate, Xy, Yy);
+                        const forceY = createForce(dcl, layer, `${node.name}y`, forceAngleY, "Reaction", node, "green", listenUpdate, Xy, Yy, false, false);
                         node.setKonvaForceYsupport(forceY);
                     }
                     if (node.link === "fixedSupport") {
-                        const moment = createMoment(layer, `${node.name}m`, "Reaction", node, "green", listenUpdate, x, y)
+                        const moment = createMoment(dcl, layer, `${node.name}m`, "Reaction", node, "green", listenUpdate, x, y, false, false)
                         node.setKonvaMomentSupport(moment);
                     }
                     node.setTurnedToRealDCL(true);
@@ -3022,7 +2980,7 @@ function turnToRealDCL(layer, listenUpdate = true) {
             visibilityLines(layer, "verticalLine", "hide");
 
         } else {
-            addDraggableToAllNodes();
+            addDraggableToAllNodes(dcl);
             turnToRealDCLFlag = false;
             allNodes.forEach(node => {
                 const [x, y] = node.coordinate;
@@ -3288,5 +3246,41 @@ function getCopyDcl(dcl){
     return allNodesCopy[0];
     
 }
+
+function removePaintIsMouseOver(node){
+    if (node.konvaObjects.link) {
+        node.konvaObjects.link.getChildren().forEach(child => {
+            child.off("mouseenter");
+            child.off("mouseleave");
+        });  
+    }
+
+    if (node.konvaObjects.circle) {
+        node.konvaObjects.circle.off("mouseleave");
+        node.konvaObjects.circle.off("mouseenter");
+    }
+
+    if (node.konvaObjects.beam) {
+        node.konvaObjects.beam.getChildren().forEach(child => {
+            child.off("mouseenter");
+            child.off("mouseleave");
+        });
+    }
+
+    node.konvaObjects.forces.forEach(force => {
+        force.getChildren().forEach(child => {
+            child.off("mouseenter");
+            child.off("mouseleave");
+        });
+    });
+
+    node.konvaObjects.moments.forEach(moment => {
+        moment.getChildren().forEach(child => {
+            child.off("mouseenter");
+            child.off("mouseleave");
+        });
+    });
+}
+
 
 

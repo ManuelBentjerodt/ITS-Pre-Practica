@@ -62,9 +62,9 @@ y_reference.hideAll();
 
 const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
 
-paintIfMouseOver(group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
-paintIfMouseOver(group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
-paintIfMouseOver(group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2].getAttr("fill"), group.getChildren()[2].getAttr("stroke"));
+paintIfMouseOver(dcl, group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
+paintIfMouseOver(dcl, group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
+paintIfMouseOver(dcl, group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2].getAttr("fill"), group.getChildren()[2].getAttr("stroke"));
 
 
 const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
@@ -78,10 +78,14 @@ listenDeleteElement();
 listenHiddePanels();
 
 showReferences();
-turnToRealDCL(listenUpdate=false);
+turnToRealDCL(dcl, listenUpdate=false);
+
+const taskInfo = document.querySelector("#taskInfo").dataset;
+const statement = taskInfo.statement;
+console.log("statement",statement);
+document.querySelector("#statement").innerHTML = statement;
 
 
-
-const correctJson = document.getElementById('correctDcl').textContent;
-const correctDcl = recreateDcl(correctJson);
-console.log("correct Dcl: ",correctDcl);
+// const correctJson = document.getElementById('correctDcl').textContent;
+// const correctDcl = recreateDcl(correctJson);
+// console.log("correct Dcl: ",correctDcl);
