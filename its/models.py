@@ -30,6 +30,14 @@ class Task(models.Model):
             self.tags.clear()
             print("DLC: ",self.dcl)
             origin_coords = self.dcl["coordinate"]
+
+            ##Tags para el padre##
+            self.addForceTag(self.dcl)
+            self.addMomentTag(self.dcl)
+            self.addLinkTag(self.dcl)
+            
+
+            ##Tags para los hijos##
             self.recursive(self.dcl,origin_coords)
             
 
@@ -37,16 +45,16 @@ class Task(models.Model):
         
         for child in dcl["childNodes"]:
             self.addForceTag(child)
-            self.addTag(child,"moments")
+            self.addMomentTag(child)
             self.addLinkTag(child)
             self.addSlopeTag(child,coords)
             self.recursive(child,coords)
     
 
 
-    def addTag(self,child,tag):
-        if (child[tag]):
-            tag, create = Tag.objects.get_or_create(name=tag)
+    def addMomentTag(self,child):
+        if (child["moments"]):	
+            tag, create = Tag.objects.get_or_create(name="momento")
             self.tags.add(tag)
             
     

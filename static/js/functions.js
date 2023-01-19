@@ -2218,10 +2218,11 @@ function updateClassification() {
             }
         }
     })
-
-
+    
+    
     otherNodes.forEach(node => {
         // contando fuerzas, apoyos y momentos
+        
         node.forces.forEach(force => {
 
             if ((force[1] % 90) != 0) {
@@ -2247,6 +2248,7 @@ function updateClassification() {
 
             if (tags.includes("momento") == false) {
                 tags.push("momento");
+                
             }
         })
 
@@ -2261,6 +2263,11 @@ function updateClassification() {
                     tags.push("empotrado");
                 }
             }
+            if (node.linkRotation != '0'){
+                if (tags.includes("apoyos con angulo") == false) {
+                    tags.push("apoyos con angulo");
+                }
+            }
 
 
         }
@@ -2268,7 +2275,7 @@ function updateClassification() {
 
     const pClassification = document.querySelector("#classification");
 
-    pClassification.innerText = "Tags: " + tags;
+    pClassification.innerText = tags;
 
 
 }

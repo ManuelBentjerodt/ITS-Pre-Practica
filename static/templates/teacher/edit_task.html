@@ -40,6 +40,11 @@
         </nav>
     </header>
     <main>
+        
+        <h3>
+            Tags:
+            <small class="text-muted" id="classification"></small>
+        </h3>
         <div class="container">
             <textarea id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></textarea>
             <div id="containerView" style="width: 1440px; display: flex; margin-top: 8px; ">
@@ -73,7 +78,6 @@
             <p id="forcesY">ΣFy: = 0</p>
             <p id="moments">ΣM: = 0</p>
             <p id="difficulty">Dificultad: = <span id="difficultyValue">0</span></p>
-            <p id="classification">Tags: = []</p>
         </div>
         <button id="saveButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">Guardar</button>
         <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>
