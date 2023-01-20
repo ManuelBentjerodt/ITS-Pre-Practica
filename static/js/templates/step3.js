@@ -1,18 +1,20 @@
-
 const lastBeamNodeClick = {x: 0, y: 0};
 let lastNodeClick = null;
 let lastElementClick = undefined;
 
 const stage = createStage("containerKonva");
+const stageTeacher = createStage("containerKonvaTeacher");
 
 const layer = new Konva.Layer({name: "layer"});
-stage.add(layer);
+const layerTeacher = new Konva.Layer({name: "layerTeacher"});
 
-//------------------------------------------------------Creacion grilla-----------------------------------------------//
+stage.add(layer);
+stageTeacher.add(layerTeacher);
+
 generateGrid(layer);
+generateGrid(layerTeacher);
 
 const divKonvaContainer = document.querySelector("#containerKonva");
-
 
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
 y_reference = new yReference([widthStage-5*blockSnapSize,0]);
@@ -30,20 +32,17 @@ y_reference.updateSegmentedLines();
 
 layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
+
 x_reference.hideAll();
 y_reference.hideAll();
 
-const [dcl, group] = createBeam(layer, nameBeam="initialBeam"); // initialBeam no puede ser destruida
-dcl.setIsOrigin(true);
 
-paintIfMouseOver(dcl, group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
-paintIfMouseOver(dcl, group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
-paintIfMouseOver(dcl, group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2].getAttr("fill"), group.getChildren()[2].getAttr("stroke"));
+const correctDclJson = document.querySelector("#correctDcl").textContent;
+const correctDcl = recreateDcl(correctDclJson);
 
-const shadowLine = createShadowBeam(layer, 8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
-shadowLine.hide();
+const dcl = recreateDcl(correctDclJson);
 
-const modalForce = createModalForce(divKonvaContainer, layer, dcl, false);
+const modalForce = createModalForce(divKonvaContainer, layer, dcl, false); 
 const modalMoment = createModalMoment(divKonvaContainer, layer, dcl, false); 
 const modalFixedSupport = createModalFixedSupport(divKonvaContainer, layer, dcl, false);
 const modalRollerSupport = createModalRollerSupport(divKonvaContainer, layer, dcl, false); 
@@ -61,21 +60,47 @@ divKonvaContainer.appendChild(panel);
 divKonvaContainer.appendChild(delPanel);
 divKonvaContainer.appendChild(anglePanel); //new
 
-// listenPanelMovement(panel);
-listenPanelMovement(anglePanel); //new
+listenPanelMovement(panel);
 listenPanelMovement(delPanel);
 listenPanelMovement(modalMoment); 
 listenPanelMovement(modalForce); 
 listenPanelMovement(modalFixedSupport);
 listenPanelMovement(modalRollerSupport); 
 listenPanelMovement(modalPinnedSupport);
+listenPanelMovement(anglePanel); 
 
-
-listenNodeMovement(dcl, group, shadowLine, "initialBeam", listenUpdate=false);
 listenCreateElement(divKonvaContainer);
 listenDeleteElement(divKonvaContainer);
 listenHiddePanels();
+listenAngleReference(divKonvaContainer); 
 
 
-showReferences();
-turnToRealDCL(dcl, listenUpdate=false);
+drawDcl(correctDcl, layerTeacher, null, null, false);
+removeDraggableFromAllNodes(correctDcl);
+
+const allCorrectNodes = [correctDcl, ...correctDcl.getAllDecendents()];
+allCorrectNodes.forEach(node => {
+    removePaintIsMouseOver(node);
+});
+
+visibilityLines(layerTeacher, "horizontalLine", "hide");
+visibilityLines(layerTeacher, "verticalLine", "hide");
+
+
+
+const allNodes = [dcl, ...dcl.getAllDecendents()]
+allNodes.forEach(node => {
+    node.link = null;
+    node.linkRotarion = null;
+    node.forces = [];
+    node.moments = [];
+});
+
+drawDcl(dcl, layer, null, null, false);
+
+const initialBeam = dcl.childNodes[0].konvaObjects.beam 
+
+const initialBeamSubElements = initialBeam.getChildren()
+paintIfMouseOver(dcl, initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElements[0].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
+paintIfMouseOver(dcl, initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
+paintIfMouseOver(dcl, initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));

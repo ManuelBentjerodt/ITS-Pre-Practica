@@ -9,8 +9,6 @@ function verifyTask() {
     const copyDCL = getCopyDcl(dcl).generateCopy();
     console.log("Dcl de funcion nueva: ", copyDCL);
 
-
-
     const data = JSON.stringify({
         "studentDcl": copyDCL,
     })
@@ -23,8 +21,6 @@ function verifyTask() {
         },
         body: data
     })
-
-
     .then((response) => {
         return response.json()
         
