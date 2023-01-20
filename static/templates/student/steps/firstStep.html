@@ -18,6 +18,7 @@
     <script src="{% static 'js/templates/step1.js' %}" defer></script>
     <script src="{% static 'js/preview_image.js'%}" defer></script>
     <script src="{% static 'js/writeStatement.js'%}" defer></script>
+    <script src="{% static 'js/verify_step1.js'%}" defer></script>
     <title>ITS ESTATICA</title>
 </head>
 <body>
@@ -62,8 +63,8 @@
             </p> 
             <div id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);">
             </div>
-            <button id="saveButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">VERIFICAR</button>
-
+            <button id="verifyButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">VERIFICAR</button>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>
         </div> 
     </main>
 </body>

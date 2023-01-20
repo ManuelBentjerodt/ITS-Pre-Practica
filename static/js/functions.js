@@ -1579,6 +1579,7 @@ function hideAllPanels() {
 }
 
 function listenHiddePanels() {
+    hideAllPanels();
     stage.on("click", () => {
         hideAllPanels();
     });

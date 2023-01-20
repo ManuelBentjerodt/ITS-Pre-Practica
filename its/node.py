@@ -1,15 +1,33 @@
 from collections import deque
-import uuid
 
 
 class Node:
     def __init__(self, coord):
-        self.id = uuid.uuid4()
+        self.id = None
         self.coordinate = coord
         self.parent = None
         self.children = []
-        self.x = coord[0]
-        self.y = coord[1]
+
+        self.link = None
+        self.linkRotation = None
+
+        self.forces = []
+        self.moments = []
+
+        self.isOrigin = False
+
+    def __str__(self, level=0):
+        indent = ' ' * (level * 4)
+        s = '\n'.join([f'{indent}id = {self.id}',
+            f'{indent}coordinate = {self.coordinate}',
+            f'{indent}isOrihin = {self.isOrigin}',
+            f'{indent}link = {self.link}',
+            f'{indent}linkRotation = {self.linkRotation}',
+            f'{indent}forces = {self.forces}',
+            f'{indent}moments = {self.moments}'])
+        for child in self.children:
+            s += child.__str__(level + 1)
+        return '___GRAPH___\n\n' + s
 
     def add_child(self, child):
         self.children.append(child)
@@ -31,6 +49,29 @@ class Node:
 
     def get_connections(self):
         return [self.parent] + self.children
+
+    def set_node_with_dict(self, node_dict):
+        self.coordinate = node_dict["coordinate"]
+        self.link = node_dict["link"]
+        self.linkRotation = node_dict["linkRotation"]
+        self.forces = node_dict["forces"]
+        self.moments = node_dict["moments"]
+        self.isOrigin = node_dict["isOrigin"]
+        self.id = node_dict["id"]
+
+
+def create_node_from_dict(node_dict):
+    node = Node(None)
+    node.set_node_with_dict(node_dict)
+    return node
+
+def recreate_tree(node_dict):
+    node = create_node_from_dict(node_dict)
+    for child in node_dict["childNodes"]:
+        child_node = recreate_tree(child)
+        link(node, child_node)
+    return node
+
 
 
 def link(parent, child):
@@ -56,7 +97,7 @@ def graph_to_dict(a, transition_vector=(0, 0)):
 
 
 def get_left_top_node(nodes):  # busca el X mas bajo, despues el Y mas bajo
-    left_top = sorted(nodes, key=lambda node: (abs(node.x), abs(node.y)))
+    left_top = sorted(nodes, key=lambda node: (abs(node.coordinate[0]), abs(node.coordinate[1])))
     return left_top[0]
 
 
@@ -67,8 +108,8 @@ def get_transition_vector(correct_graph, test_graph):
     correct_left_top_node = get_left_top_node(correct_nodes)
     test_left_top_node = get_left_top_node(test_nodes)
 
-    transition_vector = (correct_left_top_node.x - test_left_top_node.x,
-                        correct_left_top_node.y - test_left_top_node.y)
+    transition_vector = (correct_left_top_node.coordinate[0] - test_left_top_node.coordinate[0],
+                        correct_left_top_node.coordinate[1] - test_left_top_node.coordinate[1])
     return transition_vector
 
 
@@ -80,28 +121,3 @@ def graphs_are_equal(a, b):
         return True
     return False
 
-
-a1 = Node((0, 2))
-a2 = Node((1, 0))
-a3 = Node((5, 2))
-a4 = Node((7, 3))
-a5 = Node((7, 1))
-
-link(a1, a2)
-link(a2, a3)
-link(a3, a4)
-link(a3, a5)
-
-
-b1 = Node((7+20, 3+10))
-b2 = Node((5+20, 2+10))
-b3 = Node((7+20, 1+10))
-b4 = Node((1+20, 0+10))
-b5 = Node((0+20, 2+10))
-
-link(b1, b2)
-link(b2, b3)
-link(b2, b4)
-link(b4, b5)
-
-print(graphs_are_equal(a1, b1))

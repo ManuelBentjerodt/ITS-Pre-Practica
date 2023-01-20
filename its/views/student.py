@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.views import View
 import json
 from django.http import JsonResponse
+from ..node import * 
 
 @login_required(login_url="sign_in")
 def student_home(request):
@@ -14,25 +15,6 @@ def student_home(request):
         'probando':  0
     }
     return render(request, 'student/student_home.html', context)
-
-
-def firstStep(request, id=None):
-    task = Task.objects.get(id = id)
-
-    try: 
-        taskImageUrl = task.image.url
-
-    except:
-        taskImageUrl = None
-
-    context = {
-        'taskId': task.id,
-        'statement': task.statement,
-        'correctDcl': task.dcl,
-        'imageUrl': taskImageUrl,
-        'studentDcl': "",
-    }
-    return render(request, 'student/steps/firstStep.html', context)
 
 
 class FirstStepView(View):
@@ -45,16 +27,19 @@ class FirstStepView(View):
             }
         return render(request, 'student/steps/firstStep.html', context)
 
-
     def post(self, request, id):
         task = Task.objects.get(id = id)
 
         if request.content_type == "verify/json":
-            jsondata = json.loads(request.body)
-            task.compareTo(jsondata['studentDcl'])
+            studentDict = json.loads(request.body)["studentDcl"]
+            teacherDict = task.dcl
 
-        
-        
+            studentdcl = recreate_tree(studentDict)
+            teacherdcl = recreate_tree(teacherDict)
+            
+            print(graphs_are_equal(studentdcl, teacherdcl))
+
+
         return JsonResponse({'success': True, 'redirect': '/teacher_home'})
         # return redirect('teacher_home')
 

@@ -162,7 +162,7 @@ class Node {
 
     generateCopy() {
         const copy = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
-        copy.cendents().forEach(descendent => {
+        copy.getAllDecendents().forEach(descendent => {
             removeAttributesForJSON(descendent);
         });
         removeAttributesForJSON(copy);
