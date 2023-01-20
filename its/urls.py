@@ -19,6 +19,6 @@ urlpatterns = [
     path('first_step/<int:id>',FirstStepView.as_view(), name='first_step'),
     path('second_step/<int:id>',secondStep, name='second_step'),
     path('third_step/<int:id>',thirdStep, name='third_step'),
-    path('fourth_step/<int:id>',fourthStep, name='fourth_step'),
+    path('fourth_step/<int:id>',FourthStepView.as_view(), name='fourth_step'),
     path('fifth_step/<int:id>',fifthStep, name='fifth_step'),
 ]

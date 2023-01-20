@@ -57,22 +57,62 @@ y_reference.updateSegmentedLines();
 
 layer.add(x_reference.getKonvaLine());
 layer.add(y_reference.getKonvaLine());
+
+
+const dclJSON = document.querySelector("#dclJSON").textContent;
+
+let dcl;
+let initialBeam;
+
+const DCL = {}
+
+
+if (dclJSON == "null") {
+    [dcl, initialBeam] = createBeam(nameBeam="initialBeam");
+    dcl.setIsOrigin(true);
+    const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
+    shadowLine.hide();
+    listenNodeMovement(initialBeam, shadowLine, "initialBeam");
+    console.log("primera vez editando");
+    
+} else {
+    dcl = recreateDcl(dclJSON);
+
+    
+    drawDCL(dcl);
+    initialBeam = dcl.childNodes[0].konvaObjects.beam
+    console.log("ya has editado otras veces")
+}
+
+//borrar cosas innesesarias///////////////
+
+const pDificulty = document.querySelector("#difficultyValue");
+pDificulty.innerText = "";
+
+const eq = document.querySelector("#equations");
+const cl = document.querySelector("#classification");
+const removed = el => el.parentElement.removeChild(el);
+removed(eq);
+removed(cl);
+/////////////////////////
+
+
 x_reference.hideAll();
 y_reference.hideAll();
 
-const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
+const initialBeamSubElements = initialBeam.getChildren();
 
-paintIfMouseOver(group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
-paintIfMouseOver(group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
-paintIfMouseOver(group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2].getAttr("fill"), group.getChildren()[2].getAttr("stroke"));
 
+
+
+paintIfMouseOver(initialBeamSubElements[0], nfillc, nstrokec, initialBeamSubElements[0].getAttr("fill"), initialBeamSubElements[0].getAttr("stroke"));
+paintIfMouseOver(initialBeamSubElements[1], nfillc, nstrokec, initialBeamSubElements[1].getAttr("fill"), initialBeamSubElements[1].getAttr("stroke"));
+paintIfMouseOver(initialBeamSubElements[2], nfillc, nstrokec, initialBeamSubElements[2].getAttr("fill"), initialBeamSubElements[2].getAttr("stroke"));
 
 const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
 shadowLine.hide();
 
-dcl.setIsOrigin(true);
-console.log("dcl",dcl);
-listenNodeMovement(group, shadowLine, "initialBeam", listenUpdate=false);
+
 listenCreateElement();
 listenDeleteElement();
 listenHiddePanels();
@@ -84,9 +124,6 @@ const taskInfo = document.querySelector("#taskInfo").dataset;
 const statement = taskInfo.statement;
 console.log("statement",statement);
 document.querySelector("#statement").innerHTML = statement;
-
-console.log("DCL REal?: ",taskInfo.dcl);
-
 
 // const correctJson = document.getElementById('correctDcl').textContent;
 // const correctDcl = recreateDcl(correctJson);

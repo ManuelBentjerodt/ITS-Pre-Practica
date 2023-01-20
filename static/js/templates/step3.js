@@ -60,7 +60,43 @@ layer.add(y_reference.getKonvaLine());
 x_reference.hideAll();
 y_reference.hideAll();
 
-const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
+
+
+const correctJson = document.getElementById('correctDcl').textContent;
+console.log("correct Dcl: ",correctJson);
+const correctDcl = recreateDcl(correctJson);
+
+
+
+let dcl;
+let initialBeam;
+
+const DCL = {}
+
+
+if (dclJSON == "null") {
+    [dcl, initialBeam] = createBeam(nameBeam="initialBeam");
+    dcl.setIsOrigin(true);
+    const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
+    shadowLine.hide();
+    listenNodeMovement(initialBeam, shadowLine, "initialBeam");
+    console.log("primera vez editando");
+    
+} else {
+    dcl = recreateDcl(dclJSON);
+
+    
+    const otherCopy = recreateDcl(dclJSON); 
+    const otherCopy2 = recreateDcl(dclJSON);
+
+    const standarizedDCL1 = standarizeDCL(otherCopy); // dcl con coordenadas en referencia al nodo izquierdo abajo
+    const standarizeDCL2 = standarizeDCL(otherCopy2); 
+    
+    drawDCL(dcl);
+    initialBeam = dcl.childNodes[0].konvaObjects.beam
+    console.log("ya has editado otras veces")
+}
+console.log("correct Dcl: ",correctDcl);
 
 paintIfMouseOver(group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
 paintIfMouseOver(group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
@@ -70,7 +106,7 @@ paintIfMouseOver(group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2
 const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
 shadowLine.hide();
 
-dcl.setIsOrigin(true);
+
 console.log("dcl",dcl);
 listenNodeMovement(group, shadowLine, "initialBeam", listenUpdate=false);
 listenCreateElement();
@@ -84,10 +120,3 @@ const taskInfo = document.querySelector("#taskInfo").dataset;
 const statement = taskInfo.statement;
 console.log("statement",statement);
 document.querySelector("#statement").innerHTML = statement;
-
-console.log("DCL REal?: ",taskInfo.dcl);
-
-
-// const correctJson = document.getElementById('correctDcl').textContent;
-// const correctDcl = recreateDcl(correctJson);
-// console.log("correct Dcl: ",correctDcl);
