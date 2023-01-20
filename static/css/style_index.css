@@ -1,0 +1,36 @@
+
+
+
+#menuLoging {
+    position: absolute; 
+    background-color: white; 
+    width: 400px; 
+    top: 20%; 
+    left: 50%; 
+    border-radius: 30px; 
+    transform: translate(-50%, 0%); 
+    padding: 5%x; 
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+    height: fit-content;
+    text-align: center;
+    font-size:x-large
+    
+}
+
+
+#menuLoging p:first-child {
+    padding: 10px 20px 0px 20px;
+}
+
+#menuButtons {
+    padding: 10px 10px 20px 10px;
+    text-align: center;
+}
+
+#menuLoging button {
+    width: 250px;
+    font-size:x-large;
+    margin-left: 18%;
+    margin-right: 25%;
+    
+}
