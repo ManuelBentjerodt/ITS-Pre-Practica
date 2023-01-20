@@ -65,10 +65,10 @@ def create_node_from_dict(node_dict):
     node.set_node_with_dict(node_dict)
     return node
 
-def recreate_tree(node_dict):
+def recreate_dcl(node_dict):
     node = create_node_from_dict(node_dict)
     for child in node_dict["childNodes"]:
-        child_node = recreate_tree(child)
+        child_node = recreate_dcl(child)
         link(node, child_node)
     return node
 
@@ -113,10 +113,12 @@ def get_transition_vector(correct_graph, test_graph):
     return transition_vector
 
 
-def graphs_are_equal(a, b):
-    transition_vector = get_transition_vector(a, b)
-    correct_dict = graph_to_dict(a)
-    test_dict = graph_to_dict(b, transition_vector)
+def graphs_are_equal(correct, test):
+    transition_vector = get_transition_vector(correct, test)
+    correct_dict = graph_to_dict(correct)
+    test_dict = graph_to_dict(test, transition_vector)
+    # print(correct_dict)
+    # print(test_dict)
     if correct_dict == test_dict:
         return True
     return False

@@ -34,10 +34,10 @@ class FirstStepView(View):
             studentDict = json.loads(request.body)["studentDcl"]
             teacherDict = task.dcl
 
-            studentdcl = recreate_tree(studentDict)
-            teacherdcl = recreate_tree(teacherDict)
+            studentdcl = recreate_dcl(studentDict)
+            teacherdcl = recreate_dcl(teacherDict)
             
-            print(graphs_are_equal(studentdcl, teacherdcl))
+            print(graphs_are_equal(teacherdcl, studentdcl))
 
 
         return JsonResponse({'success': True, 'redirect': '/teacher_home'})
