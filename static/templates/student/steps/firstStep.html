@@ -16,8 +16,9 @@
     <script src="{% static 'js/models/x_reference.js' %}" defer></script>
     <script src="{% static 'js/functions.js' %}" defer></script>
     <script src="{% static 'js/templates/step1.js' %}" defer></script>
-    <script src="{% static 'js/verify_step1.js' %}" defer></script>
     <script src="{% static 'js/preview_image.js'%}" defer></script>
+    <script src="{% static 'js/writeStatement.js'%}" defer></script>
+    <script src="{% static 'js/verify_step1.js'%}" defer></script>
     <title>ITS ESTATICA</title>
 </head>
 <body>
@@ -39,7 +40,6 @@
         <div class="container">
             {{correctDcl|json_script:'correctDcl'}}
             <input type="hidden" id="taskInfo" data-statement="{{statement}}" data-correctdcl="{{correctDcl}}">
-            <p>Enunciado</p>
             <div id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></div>
             <div id="imagePreviewContainer" style="display: flex; align-items: center; justify-content: center;">
                 <img id="imagePreview" data-image= "{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
@@ -61,7 +61,7 @@
                 <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
                 {% include 'modalInfo.html'%}      
             </p> 
-            <div id="containerKonva" id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);"></div>
+            <div id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);">
             </div>
             <button id="verifyButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">VERIFICAR</button>
             <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>

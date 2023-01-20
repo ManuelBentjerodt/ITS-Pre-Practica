@@ -13,33 +13,6 @@ generateGrid(layer);
 
 const divKonvaContainer = document.querySelector("#containerKonva");
 
-const modalForce = createModalForce(listenUpdate=false);
-const modalMoment = createModalMoment(listenUpdate=false); 
-const modalFixedSupport = createModalFixedSupport(listenUpdate=false);
-const modalRollerSupport = createModalRollerSupport(listenUpdate=false); 
-const modalPinnedSupport = createModalPinnedSupport(listenUpdate=false);
-const delPanel = createDelPanel(listenUpdate=false);
-const anglePanel = createAngleReferencePanel(listenUpdate=false); //new
-const panel = createPanel(listenUpdate=false);
-
-
-divKonvaContainer.appendChild(modalForce);
-divKonvaContainer.appendChild(modalMoment);
-divKonvaContainer.appendChild(modalFixedSupport);
-divKonvaContainer.appendChild(modalRollerSupport);
-divKonvaContainer.appendChild(modalPinnedSupport);
-divKonvaContainer.appendChild(panel);
-divKonvaContainer.appendChild(delPanel);
-divKonvaContainer.appendChild(anglePanel); //new
-
-// listenPanelMovement(panel);
-listenPanelMovement(anglePanel); //new
-listenPanelMovement(delPanel);
-listenPanelMovement(modalMoment); 
-listenPanelMovement(modalForce); 
-listenPanelMovement(modalFixedSupport);
-listenPanelMovement(modalRollerSupport); 
-listenPanelMovement(modalPinnedSupport);
 
 x_reference = new xReference([0,heightStage-5*blockSnapSize]);
 y_reference = new yReference([widthStage-5*blockSnapSize,0]);
@@ -60,22 +33,49 @@ layer.add(y_reference.getKonvaLine());
 x_reference.hideAll();
 y_reference.hideAll();
 
-const [dcl, group] = createBeam(nameBeam="initialBeam"); // initialBeam no puede ser destruida
+const [dcl, group] = createBeam(layer, nameBeam="initialBeam"); // initialBeam no puede ser destruida
+dcl.setIsOrigin(true);
 
-paintIfMouseOver(group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
-paintIfMouseOver(group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
-paintIfMouseOver(group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2].getAttr("fill"), group.getChildren()[2].getAttr("stroke"));
+paintIfMouseOver(dcl, group.getChildren()[0], nfillc, nstrokec, group.getChildren()[0].getAttr("fill"), group.getChildren()[0].getAttr("stroke"));
+paintIfMouseOver(dcl, group.getChildren()[1], nfillc, nstrokec, group.getChildren()[1].getAttr("fill"), group.getChildren()[1].getAttr("stroke"));
+paintIfMouseOver(dcl, group.getChildren()[2], nfillc, nstrokec, group.getChildren()[2].getAttr("fill"), group.getChildren()[2].getAttr("stroke"));
 
-
-const shadowLine = createShadowBeam(8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
+const shadowLine = createShadowBeam(layer, 8*blockSnapSize, 8*blockSnapSize,  3*blockSnapSize, 0,  "shadowInitialBeam");
 shadowLine.hide();
 
-dcl.setIsOrigin(true);
-console.log("dcl",dcl);
-listenNodeMovement(group, shadowLine, "initialBeam", listenUpdate=false);
-listenCreateElement();
-listenDeleteElement();
+const modalForce = createModalForce(divKonvaContainer, layer, dcl, false);
+const modalMoment = createModalMoment(divKonvaContainer, layer, dcl, false); 
+const modalFixedSupport = createModalFixedSupport(divKonvaContainer, layer, dcl, false);
+const modalRollerSupport = createModalRollerSupport(divKonvaContainer, layer, dcl, false); 
+const modalPinnedSupport = createModalPinnedSupport(divKonvaContainer, layer, dcl, false);
+const delPanel = createDelPanel(divKonvaContainer, layer, dcl, false);
+const anglePanel = createAngleReferencePanel(divKonvaContainer, layer, dcl, false); //new
+const panel = createPanel(divKonvaContainer, layer, dcl, false);
+
+divKonvaContainer.appendChild(modalForce);
+divKonvaContainer.appendChild(modalMoment);
+divKonvaContainer.appendChild(modalFixedSupport);
+divKonvaContainer.appendChild(modalRollerSupport);
+divKonvaContainer.appendChild(modalPinnedSupport);
+divKonvaContainer.appendChild(panel);
+divKonvaContainer.appendChild(delPanel);
+divKonvaContainer.appendChild(anglePanel); //new
+
+// listenPanelMovement(panel);
+listenPanelMovement(anglePanel); //new
+listenPanelMovement(delPanel);
+listenPanelMovement(modalMoment); 
+listenPanelMovement(modalForce); 
+listenPanelMovement(modalFixedSupport);
+listenPanelMovement(modalRollerSupport); 
+listenPanelMovement(modalPinnedSupport);
+
+
+listenNodeMovement(dcl, group, shadowLine, "initialBeam", listenUpdate=false);
+listenCreateElement(divKonvaContainer);
+listenDeleteElement(divKonvaContainer);
 listenHiddePanels();
+
 
 showReferences();
 turnToRealDCL(listenUpdate=false);
