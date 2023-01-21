@@ -18,52 +18,83 @@
     <script src="{% static 'js/templates/step1.js' %}" defer></script>
     <script src="{% static 'js/verify_step1.js' %}" defer></script>
     <script src="{% static 'js/preview_image.js'%}" defer></script>
+
+    <link rel="stylesheet" href="{% static 'css/style_edit_task.css' %}" />
+
+
     <title>ITS ESTATICA</title>
 </head>
 <body>
     <header style="width: 100%; height: 68px; border-bottom: 1px solid black;">
         <nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%; height: 100%;">
-            <h1 class="navbar-brand" style="position: absolute; left: 50%; transform: translate(-50%, 0%); padding: 5%x; font-family: andale mono; font-size: 30px;">
+            <button id="saveButton" style="margin-left: 15%; margin-right: 10px;" class="btn btn-success createTask" data-taskid="{{taskId}}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                </svg>
+                VERIFICAR
+            </button>
+            {% include 'modalInfo.html'%}
+            <h1 class="navbar-brand" style="position: absolute; left: 50%; transform: translate(-50%, 0%); padding: 5%x; font-size: 30px;">
                 <a href="{% url 'index' %}" style="text-decoration: none; color: black;">ITS ESTATICA</a>
             </h1>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto" style="margin-left: 85%;">
+                <ul class="navbar-nav ml-auto" style="margin-left: 77%;">
+                    <li>
+                        <a href="{% url 'teacher_home' %}" class="btn btn-light my-2 my-lg-0">Volver</a>
+                    </li>   
                     <li>
                         <a href="{% url 'sign_in' %}" class="btn btn-light my-2 my-lg-0">Salir</a>
-                    </li>     
+                    </li> 
+                       
                 </ul>
             </div>
         </nav>
     </header>
     <main>
-        <div class="container">
+        <div id="workArea">
             {{correctDcl|json_script:'correctDcl'}}
+            
+            <div id="confAndImageArea" class="row">
+                <div id="ImagenArea" class="col-7">
+                    <div id="imagePreviewContainer" style="display: flex; align-items: center; justify-content: center;">
+                        <img id="imagePreview" data-image= "{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 200px;">
+                    </div>
+                </div> 
+                <div id="configArea" class="col-5">
+                    <p style="margin-top: 8px;">
+                        <p>
+                            <input type="checkbox" id="turnToRealDCL">
+                            Reemplazar viculos por fuerzas (Vista no editable)
+                        </p>
+                        <hr style = "border-top: 2px solid black; margin-top: 4px; margin-bottom: 4px">
+                        Configurar dimensiones
+                        <select name="dimensiones" id="dim">
+                            <option value=1>1m</option>
+                            <option value=0.01>1cm</option>
+                            <option value=0.1>10cm</option>
+                            <option value=10>10m</option>
+                            <option value=100>100m</option>
+                        </select>
+                        <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button> 
+                        <br>
+                        <input type="checkbox" id="showReferences">
+                        <label for="dimensiones" style="font-weight: normal;"> Mostrar dimensiones </label>     
+                    </p>
+                </div> 
+            </div>
+
             <input type="hidden" id="taskInfo" data-statement="{{statement}}" data-correctdcl="{{correctDcl}}">
-            <p>Enunciado</p>
-            <div id="statement" style="width: 1440px; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px; margin-top: 20px; padding-left: 5px;"></div>
-            <div id="imagePreviewContainer" style="display: flex; align-items: center; justify-content: center;">
-                <img id="imagePreview" data-image= "{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
+            
+
+            <div class="row" id="problemArea">
+                <div class="col" id="containerKonva" style=" width: 900px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);">
+                </div>
+                <div id="equAndPro" class="col">
+                    <h1>Enunciado</h1>
+                    <div id="statement" style="width: 100%; height:85%; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px;  padding-left: 5px;"></div>
+                </div>
             </div>
-            <p>
-                Reemplazar viculos por fuerzas
-                (Vista no editable)
-                <input type="checkbox" id="turnToRealDCL">
-                Mostrar referencias
-                <input type="checkbox" id="showReferences">
-                <label for="dimensiones">Dimensiones: </label>
-                <select name="dimensiones" id="dim">
-                    <option value=1>1m</option>
-                    <option value=0.01>1cm</option>
-                    <option value=0.1>10cm</option>
-                    <option value=10>10m</option>
-                    <option value=100>100m</option>
-                </select>
-                <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button>
-                {% include 'modalInfo.html'%}      
-            </p> 
-            <div id="containerKonva" id="containerKonva" style=" width: 1440px; background-color: antiquewhite; border: 10px outset rgb(128, 70, 16);"></div>
-            </div>
-            <button id="verifyButton" class="btn btn-primary createTask" data-taskid="{{taskId}}">VERIFICAR</button>
+
             <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}"/>
         </div> 
     </main>
