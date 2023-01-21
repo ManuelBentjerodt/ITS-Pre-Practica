@@ -71,13 +71,13 @@
                             </svg>
                         </button>
                     </div>
-                    <hr style = "border-top: 2px solid black; margin-top: 4px; margin-bottom: 4px">
+                    <hr class="hrStyleBlack">
                     <p style="margin-top: 8px;">
                         <p>
                             <input type="checkbox" id="turnToRealDCL">
                             Reemplazar viculos por fuerzas (Vista no editable)
                         </p>
-                        <hr style = "border-top: 2px solid black; margin-top: 4px; margin-bottom: 4px">
+                        <hr class="hrStyleBlack">
                         Configurar dimensiones
                         <select name="dimensiones" id="dim">
                             <option value=1>1m</option>
@@ -99,11 +99,14 @@
                 <div id="equAndPro" class="col">
                     <textarea id="statement" placeholder="Colocar enunciado del problema aca." style="width: 100%; height:49.25%; background-color: rgb(0, 83, 56); border: 10px outset rgb(128, 70, 16); color: white; font-size: 20px;  padding-left: 5px;"></textarea>
                     <div id="equations" style="width: 100%; height:50%; background-color: rgb(0, 83, 56); color: whitesmoke; border: 10px outset rgb(128, 70, 16);">
-                        <p id="forcesX">ΣFx: = 0</p>
-                        <p id="forcesY">ΣFy: = 0</p>
-                        <p id="moments">ΣM: = 0</p>
-                        <p id="difficulty">Dificultad: = <span id="difficultyValue">0</span></p>
-                        <p id="classification">Tags: = []</p>
+                        <p class="title">Ecuaciones</p>
+                        <p class="eqText" id="forcesX">ΣFx: = 0</p>
+                        <p class="eqText" id="forcesY">ΣFy: = 0</p>
+                        <p class="eqText" id="moments">ΣM: = 0</p>
+                        <hr class="hrStyleWhite">
+                        <p class="title">Info</p>
+                        <p class="eqText" id="difficulty">Dificultad: <span id="difficultyValue">0</span></p>
+                        <p class="eqText" id="classification">Tags: = []</p>
                     </div>
                 </div>
             </div>

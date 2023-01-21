@@ -30,8 +30,33 @@
     border-style: solid;
 }
 
+textarea::placeholder {
+    color: rgb(255, 255, 255);
+    opacity: 0.5;
+  }
 
 #confAndImageArea {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.title {
+    font-size: large;
+    font-weight: bold;
+    margin: 4px;
+}
+
+.hrStyleWhite {
+    border-top: 2px solid white;
+    margin: 4px;
+}
+
+.hrStyleBlack {
+    border-top: 2px solid black;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.eqText {
+    margin: 6px;
 }
