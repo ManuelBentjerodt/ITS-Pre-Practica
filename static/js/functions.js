@@ -2501,7 +2501,7 @@ function tryPushLinkForces(linkForces, name, proyection) {
 }
 
 
-function calculateEquations(distanceMultiplier, dimensionValue) {
+function calculateEquations(distanceMultiplier, dimensionValue,fourthStep = false) {
     const origin = dcl.findOriginNode()
 
     const moments = [];
@@ -2700,30 +2700,41 @@ function calculateEquations(distanceMultiplier, dimensionValue) {
                 coeffyx = `*cos(${prettyAngleFy})`;
                 coeffyy = `*sin(${prettyAngleFy})`;
             }
-
+            
             tryPushLinkForces(linkForcesX, `${node.name}y${coeffyx}`, proyectionFy.x);
             tryPushLinkForces(linkForcesY, `${node.name}y${coeffyy}`, proyectionFy.y);
-
+            
             tryPushLinkMoments(linkMoments, `${node.name}y*${distY}${coeffyx}`, proyectionFy.x, dy);
             tryPushLinkMoments(linkMoments, `${node.name}y*${distX}${coeffyy}`, proyectionFy.y, dx);
-
+            
         }
     })
+    
+        
 
-    let textForcesX = "ΣFx: ";
-    let textForcesY = "ΣFy: ";
-    let textMoments = "ΣM: ";
+        let textForcesX = "ΣFx: ";
+        let textForcesY = "ΣFy: ";
+        let textMoments = "ΣM: ";
 
+        if (fourthStep){ 
+             textForcesX = "";
+             textForcesY = "";
+             textMoments = "";
+      
+        }
+    
+    
+    
     forcesX.forEach(force => {
         if (force[0] > 0) textForcesX += "+";
         textForcesX += `${force[0]}${force[1]} `;
     })
-
+    
     forcesY.forEach(force => {
         if (force[0] > 0) textForcesX += "+";
         textForcesY += `${force[0]}${force[1]} `;
     })
-
+    
     let i = 0;
     moments.forEach(moment => {
         if (typeof moment === "number") {
@@ -2732,33 +2743,35 @@ function calculateEquations(distanceMultiplier, dimensionValue) {
         } else {
             if (moment[0][0] > 0) textMoments += `+${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;
             else textMoments += `${moment[0][0]}*${moment[1][0]}*${moment[0][1]}${moment[1][1]} `;
-
+            
         }
         i++;
     })
-
-
+    
+    
     linkForcesX.forEach(lfx => {
         if (lfx[1] === "positive") textForcesX += "+";
         else if (lfx[1] === "negative") textForcesX += "-";
         textForcesX += `${lfx[0]} `;
     })
-
+    
     linkForcesY.forEach(lfy => {
         if (lfy[1] === "positive") textForcesY += "+";
         else if (lfy[1] === "negative") textForcesY += "-";
         textForcesY += `${lfy[0]} `;
     })
-
+    
     linkMoments.forEach(lm => {
         if (lm[1] === "positive") textMoments += "+";
         else if (lm[1] === "negative") textMoments += "-";
         textMoments += `${lm[0]} `;
     })
-
+    
+    if (!fourthStep) {
     textForcesX += " = 0";
     textForcesY += " = 0";
     textMoments += " = 0";
+    }
 
     return [textForcesX, textForcesY, textMoments];
 }
@@ -2767,14 +2780,16 @@ function calculateEquations(distanceMultiplier, dimensionValue) {
 
 function updateEquations() {
     const [Fx, Fy, M] = calculateEquations(distanceMultiplier, dimensionValue);
-
+    
     const pFx = document.querySelector("#forcesX");
     const pFy = document.querySelector("#forcesY");
     const pM = document.querySelector("#moments");
-
+    
     pFx.innerText = Fx;
     pFy.innerText = Fy;
     pM.innerText = M;
+
+    
 }
 
 function rotateKonvaObject(object, angle = 90) {

@@ -128,3 +128,8 @@ document.querySelector("#statement").innerHTML = statement;
 // const correctJson = document.getElementById('correctDcl').textContent;
 // const correctDcl = recreateDcl(correctJson);
 // console.log("correct Dcl: ",correctDcl);
+const [Fx, Fy, M] = calculateEquations(distanceMultiplier, dimensionValue,true);
+console.log("Fx: ",Fx);
+console.log("Fy: ",Fy);
+console.log("M: ",M);
+
