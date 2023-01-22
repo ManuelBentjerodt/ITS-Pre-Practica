@@ -31,6 +31,9 @@
 <body>
     <header style="width: 100%; height: 68px; border-bottom: 1px solid black;">
         <nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%; height: 100%;">
+            <h1 class="navbar-brand" style="position: absolute; left: 50%; transform: translate(-50%, 0%); padding: 5%x; font-size: 30px;">
+                <a href="{% url 'index' %}" style="text-decoration: none; color: black;">ITS ESTATICA</a>
+            </h1>
             <button id="saveButton" style="margin-left: 15%; margin-right: 10px;" class="btn btn-success createTask" data-taskid="{{taskId}}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
                     <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
@@ -38,9 +41,6 @@
                 Guardar
             </button>
             {% include 'modalInfo.html'%}
-            <h1 class="navbar-brand" style="position: absolute; left: 50%; transform: translate(-50%, 0%); padding: 5%x; font-size: 30px;">
-                <a href="{% url 'index' %}" style="text-decoration: none; color: black;">ITS ESTATICA</a>
-            </h1>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto" style="margin-left: 77%;">
                     <li>
@@ -78,16 +78,17 @@
                             Reemplazar viculos por fuerzas (Vista no editable)
                         </p>
                         <hr class="hrStyleBlack">
-                        Configurar dimensiones
-                        <select name="dimensiones" id="dim">
-                            <option value=1>1m</option>
-                            <option value=0.01>1cm</option>
-                            <option value=0.1>10cm</option>
-                            <option value=10>10m</option>
-                            <option value=100>100m</option>
-                        </select>
-                        <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button> 
-                        <br>
+                        <div style="margin-bottom: 10px;">
+                            Configurar dimensiones
+                            <select name="dimensiones" id="dim">
+                                <option value=1>1m</option>
+                                <option value=0.01>1cm</option>
+                                <option value=0.1>10cm</option>
+                                <option value=10>10m</option>
+                                <option value=100>100m</option>
+                            </select>
+                            <button style="padding: 1px 5px 1px 5px; margin-bottom: 6px" type="submit" class="btn btn-success btn-sm" onclick="changeDimensions()" id="dimSubmit">Aplicar</button>
+                        </div> 
                         <input type="checkbox" id="showReferences">
                         <label for="dimensiones" style="font-weight: normal;"> Mostrar dimensiones </label>     
                     </p>

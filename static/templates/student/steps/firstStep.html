@@ -67,16 +67,17 @@
                             Reemplazar viculos por fuerzas (Vista no editable)
                         </p>
                         <hr style = "border-top: 2px solid black; margin-top: 4px; margin-bottom: 4px">
-                        Configurar dimensiones
-                        <select name="dimensiones" id="dim">
-                            <option value=1>1m</option>
-                            <option value=0.01>1cm</option>
-                            <option value=0.1>10cm</option>
-                            <option value=10>10m</option>
-                            <option value=100>100m</option>
-                        </select>
-                        <button type="submit"  onclick="changeDimensions()" id="dimSubmit">Aplicar </button> 
-                        <br>
+                        <div style="margin-bottom: 10px;">
+                            Configurar dimensiones
+                            <select name="dimensiones" id="dim">
+                                <option value=1>1m</option>
+                                <option value=0.01>1cm</option>
+                                <option value=0.1>10cm</option>
+                                <option value=10>10m</option>
+                                <option value=100>100m</option>
+                            </select>
+                            <button style="padding: 1px 5px 1px 5px; margin-bottom: 6px" type="submit" class="btn btn-success btn-sm" onclick="changeDimensions()" id="dimSubmit">Aplicar</button>
+                        </div>
                         <input type="checkbox" id="showReferences">
                         <label for="dimensiones" style="font-weight: normal;"> Mostrar dimensiones </label>     
                     </p>
