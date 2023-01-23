@@ -11,7 +11,7 @@ class FirstStepView(View):
 
         context = {
             'statement': task.statement,
-            'studentDcl':"",
+            'imageUrl': task.image.url
             }
         return render(request, 'student/steps/firstStep.html', context)
 

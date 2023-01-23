@@ -24,9 +24,17 @@ class ThirdStepView(View):
 
             studentdcl = recreate_dcl(studentDict)
             teacherdcl = recreate_dcl(teacherDict)
+            print("teacherdcl: ", teacherdcl)
+            print("studentdcl: ", studentdcl)
             
-            print(graphs_are_equal(teacherdcl, studentdcl))
+            if veryfy_step_3(teacherdcl, studentdcl)["status"]:
+                print("correcto")
+                return JsonResponse({'success': True, 'redirect': '/student_home'})
+            else:
+                print("incorrecto")
+                for error in veryfy_step_3(teacherdcl, studentdcl)["errors"]:
+                    print(error)
+                return JsonResponse({'success': False, 'redirect': '/student_home'})
 
-
-        return JsonResponse({'success': True, 'redirect': '/teacher_home'})
+    
         # return redirect('teacher_home')

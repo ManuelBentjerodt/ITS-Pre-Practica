@@ -18,16 +18,16 @@ class Node:
 
     def __str__(self, level=0):
         indent = ' ' * (level * 4)
-        s = '\n'.join([f'{indent}id = {self.id}',
+        s = '\n' + '\n'.join([f'{indent}id = {self.id}',
             f'{indent}coordinate = {self.coordinate}',
-            f'{indent}isOrihin = {self.isOrigin}',
+            f'{indent}isOrigin = {self.isOrigin}',
             f'{indent}link = {self.link}',
             f'{indent}linkRotation = {self.linkRotation}',
             f'{indent}forces = {self.forces}',
             f'{indent}moments = {self.moments}'])
         for child in self.children:
             s += child.__str__(level + 1)
-        return '___GRAPH___\n\n' + s
+        return s
 
     def add_child(self, child):
         self.children.append(child)
@@ -123,3 +123,32 @@ def graphs_are_equal(correct, test):
         return True
     return False
 
+
+def veryfy_step_3(correct_graph, test_graph):
+    all_correct_nodes = sorted(list(correct_graph.get_all_descendants()), key=lambda x: x.id)
+    all_test_nodes = sorted(list(test_graph.get_all_descendants()), key=lambda x: x.id)
+    
+    correct = True
+
+    errors = []
+
+    for i in range(len(all_correct_nodes)):
+        correct_node = all_correct_nodes[i]
+        test_node = all_test_nodes[i]
+        if correct_node.link != test_node.link:
+            errors.append(f'El nodo {test_node.id} tiene un link incorrecto')
+            correct = False
+        elif correct_node.linkRotation != test_node.linkRotation:
+            errors.append(f'El nodo {test_node.id} tiene un linkRotation incorrecto')
+            correct = False
+        if correct_node.forces != test_node.forces:
+            errors.append(f'El nodo {test_node.id} tiene un forces incorrecto')
+            correct = False
+        if correct_node.moments != test_node.moments:
+            errors.append(f'El nodo {test_node.id} tiene un moments incorrecto')
+            correct = False
+        if correct_node.isOrigin != test_node.isOrigin:
+            errors.append(f'El nodo {test_node.id} tiene un isOrigin incorrecto')
+            correct = False
+
+    return {"status": correct, "errors": errors}
