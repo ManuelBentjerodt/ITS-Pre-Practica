@@ -11,7 +11,7 @@ class ThirdStepView(View):
 
         context = {
             'statement': task.statement,
-            'studentDcl':"",
+            'correctDcl': task.dcl,
             }
         return render(request, 'student/steps/thirdStep.html', context)
 

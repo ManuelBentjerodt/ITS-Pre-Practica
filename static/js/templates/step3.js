@@ -38,6 +38,7 @@ y_reference.hideAll();
 
 
 const correctDclJson = document.querySelector("#correctDcl").textContent;
+console.log(correctDclJson);
 const correctDcl = recreateDcl(correctDclJson);
 
 const dcl = recreateDcl(correctDclJson);
