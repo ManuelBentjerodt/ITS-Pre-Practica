@@ -133,3 +133,89 @@ console.log("Fx: ",Fx);
 console.log("Fy: ",Fy);
 console.log("M: ",M);
 
+// console.log("lista Fx: ", Fx.split("+" || "-"));
+// console.log("lista Fy: ", Fy.split("+" || "-"));
+// console.log("lista M: ", M.split("+" || "-"));
+
+function stringToList(string){
+    let list = []; 
+    first = true;
+    listTemp = "";
+    for (let i=0; i<string.length; i++){
+        if ((string[i] == "+" || string[i] == "-") && !first ){
+            list.push(listTemp);
+        }
+        else{
+            listTemp+=string[i];
+        }
+        first = false;
+    }
+    list.push(listTemp);
+    return list;
+}
+
+
+
+
+function listTo2(string){
+    let list = []; 
+    first = 0;
+    listTemp = "";
+    for (let i=0; i<string.length; i++){
+        if ((string[i] == "+" || string[i] == "-") && first == 0){
+            listTemp+=string[i];
+            first = 1;
+        }
+        else if((string[i] == "+" || string[i] == "-") && first == 1){
+            list.push(listTemp);
+            listTemp = "";
+            listTemp+=string[i];
+        }
+        else{
+            listTemp+=string[i];
+        }//
+       
+    }
+    list.push(listTemp);
+    return list;
+}
+
+
+
+function replaceAll(list){
+    for (let i=0; i<list.length; i++){
+        list[i].replace(" ", "");
+    }
+    return list;
+}
+
+
+
+// console.log("new fX: ", listTo2(Fx));
+// console.log("new fY: ", listTo2(Fy));
+// console.log("new M: ", listTo2(M));
+
+let newFx = listTo2(Fx);
+let newFy = listTo2(Fy);
+let newM = listTo2(M);
+
+newFx =replaceAll(newFx);
+newFy = replaceAll(newFy);
+newM = replaceAll(newM);
+
+console.log("new fX: ",newFx);
+console.log("new fY: ", newFy);
+console.log("new M: ", newM);
+
+for (let i=0; i<newFx.length; i++){
+    newFx[i] = newFx[i].replace(" ", "");
+}
+for (let i=0; i<newFy.length; i++){
+    newFy[i] = newFy[i].replace(" ", "");
+}
+for (let i=0; i<newM.length; i++){
+    newM[i] = newM[i].replace(" ", "");
+}
+console.log(newFx);
+console.log(newFy);
+console.log(newM);
