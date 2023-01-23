@@ -1,3 +1,7 @@
+body {
+    min-width: 1600px;
+}
+
 #workArea {
     padding-left: 15%;
     padding-right: 13%;
