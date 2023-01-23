@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import JsonResponse
 from ...models import Task
@@ -10,7 +11,7 @@ import os
 
 
 class EditTaskView(View):
-    @login_required(login_url="sign_in")
+    @method_decorator(login_required(login_url='sign_in'))
     def get(self, request, id):
         task = Task.objects.get(id = id)
 
@@ -32,7 +33,7 @@ class EditTaskView(View):
 
         return render (request, 'teacher/edit_task.html', context)
 
-    @login_required(login_url="sign_in")
+    @method_decorator(login_required(login_url='sign_in'))
     def post(self, request, id):
         task = Task.objects.get(id = id)
 
@@ -52,7 +53,7 @@ class EditTaskView(View):
             
             return JsonResponse({'success': True})
 
-
+    @method_decorator(login_required(login_url='sign_in'))
     def delete(self, request, id): # delete image
         task = Task.objects.get(id = id)
 
