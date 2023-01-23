@@ -1,0 +1,30 @@
+.tag {
+    border: 1px;
+    border-style: solid;
+    border-radius: 30px;
+    border-color: black;
+    background-color:rgb(240, 240, 240);
+    padding-left: 10px;
+    padding-right: 10px;
+    width: fit-content;
+    font-size: small;
+}
+
+.center {
+    text-align: center;
+}
+
+.id {
+    border: 1px;
+    border-style: solid;
+    border-radius: 30px;
+    border-color: #C0FDFB;
+    font-weight: bold;
+    color: black;
+    background-color:#C0FDFB;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: fit-content;
+    font-size: medium;
+    text-decoration: none;
+}
