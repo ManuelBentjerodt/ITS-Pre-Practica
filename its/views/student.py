@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.views import View
 import json
 from django.http import JsonResponse
+import re
 
 @login_required(login_url="sign_in")
 def student_home(request):
@@ -146,29 +147,37 @@ class FourthStepView(View):
             print("\nm: ",jsondata['mEquation'])
             print("//////////////////////////")
 
+            s = task.mEquation 
+            list = [x.strip("+") for x in re.findall(r".+?(?=[+-]|$)", s)]
+            print("List:")
+            print(list)
+            print("\n")
+
+
+
             #Ecuaciones correctas
-            fxCorrect = task.fxEquation.split("+" or "-")
-            fyCorrect = task.fyEquation.split("+" or "-")
-            mCorrect = task.mEquation.split("+" or "-")
+            # fxCorrect = task.fxEquation.split("+" or "-")
+            # fyCorrect = task.fyEquation.split("+" or "-")
+            # mCorrect = task.mEquation.split("+" or "-")
 
 
-            print("fxCorrect: ",fxCorrect)
-            print("fyCorrect: ",fyCorrect)
-            print("mCorrect: ",mCorrect)
+            # print("fxCorrect: ",fxCorrect)
+            # print("fyCorrect: ",fyCorrect)
+            # print("mCorrect: ",mCorrect)
 
-            #Sacamos los espacios en blanco de correcta
-            i = 0
-            for c in fyCorrect:
-                fyCorrect[i] = c.strip()
-                i+=1
-            print("\nNewFy: ",fyCorrect)
+            # #Sacamos los espacios en blanco de correcta
+            # i = 0
+            # for c in fyCorrect:
+            #     fyCorrect[i] = c.strip()
+            #     i+=1
+            # print("\nNewFy: ",fyCorrect)
 
 
-            i=0
-            for c in answerFy:
-                answerFy[i] = c.strip()
-                i+=1
-            print("\nNewAnswerFy: ",answerFy)
+            # i=0
+            # for c in answerFy:
+            #     answerFy[i] = c.strip()
+            #     i+=1
+            # print("\nNewAnswerFy: ",answerFy)
 
 
 
