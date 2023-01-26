@@ -50,8 +50,10 @@ class EditTaskView(View):
             'sizeFactor': task.sizeFactor,
             'difficulty': task.difficulty,
             'statement': task.statement,
-            'imageUrl': taskImageUrl
-            
+            'imageUrl': taskImageUrl,
+            'fxEquation': task.fxEquation,
+            'fyEquation': task.fyEquation,
+            'mEquation': task.mEquation
         }
 
         return render (request, 'teacher/edit_task.html', context)
@@ -66,9 +68,13 @@ class EditTaskView(View):
             task.sizeFactor = float(jsondata['sizeFactor'])
             task.difficulty = float(jsondata['difficulty'])
             task.statement = jsondata['statement']
+            task.fxEquation = jsondata['fxEquation']
+            task.fyEquation = jsondata['fyEquation']
+            task.mEquation = jsondata['mEquation']
             task.save()
 
             return JsonResponse({'success': True, 'redirect': '/teacher_home'})
+
 
         else:
             task.image = request.FILES['image']

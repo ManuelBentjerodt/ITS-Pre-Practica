@@ -127,11 +127,63 @@ class FourthStepView(View):
 
             return JsonResponse({'success': True, 'redirect': '/teacher_home'})
 
+        if request.content_type == "verify4/json":
+            print("\nHola esto funciona verify4\n")
+            print("fx: ",task.fxEquation)
+            print("fy: ",task.fyEquation)
+            print("m: ",task.mEquation)
+
+            jsondata = json.loads(request.body)
+
+            #respuesta del alumnno
+            answerFx = jsondata['fxEquation'].split("+" or "-")
+            answerFy = jsondata['fyEquation'].split("+" or "-")
+            answerM = jsondata['mEquation'].split("+" or "-")
+
+            print("//////////////////////////")
+            print("\nfx: ",jsondata['fxEquation'])
+            print("\nfy: ",jsondata['fyEquation'])
+            print("\nm: ",jsondata['mEquation'])
+            print("//////////////////////////")
+
+            #Ecuaciones correctas
+            fxCorrect = task.fxEquation.split("+" or "-")
+            fyCorrect = task.fyEquation.split("+" or "-")
+            mCorrect = task.mEquation.split("+" or "-")
+
+
+            print("fxCorrect: ",fxCorrect)
+            print("fyCorrect: ",fyCorrect)
+            print("mCorrect: ",mCorrect)
+
+            #Sacamos los espacios en blanco de correcta
+            i = 0
+            for c in fyCorrect:
+                fyCorrect[i] = c.strip()
+                i+=1
+            print("\nNewFy: ",fyCorrect)
+
+
+            i=0
+            for c in answerFy:
+                answerFy[i] = c.strip()
+                i+=1
+            print("\nNewAnswerFy: ",answerFy)
+
+
+
+            return JsonResponse({'success': True, 'redirect': '/teacher_home'})
+
+
+
         else:
             task.image = request.FILES['image']
             task.save()
             
             return JsonResponse({'success': True})
+
+        
+
 
 
     def delete(self, request, id): # delete image

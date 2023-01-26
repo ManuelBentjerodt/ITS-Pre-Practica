@@ -17,7 +17,7 @@
     <script src="{% static 'js/models/x_reference.js' %}" defer></script>
     <script src="{% static 'js/functions.js' %}" defer></script>
     <script src="{% static 'js/templates/step4.js' %}" defer></script>
-    <script src="{% static 'js/verify_step1.js' %}" defer></script>
+    <script src="{% static 'js/verify_step4.js' %}" defer></script>
     <script src="{% static 'js/preview_image.js'%}" defer></script>
     <title>ITS ESTATICA</title>
 </head>
@@ -46,8 +46,7 @@
                 <img id="imagePreview" data-image= "{{ imageUrl }}" class= "img-thumbnail" alt="task image" style="max-height: 400px;">
             </div>
             <p>
-                Reemplazar viculos por fuerzas
-                (Vista no editable)
+                Reemplazar viculos posr fuerzas
                 <input type="checkbox" id="turnToRealDCL">
                 Mostrar referencias
                 <input type="checkbox" id="showReferences">
@@ -86,6 +85,13 @@
               <div class="col-sm-10">
                 <input type="text" class="form-control" id="inputEquationX" placeholder="Sumatoria Fuerzas X">
               </div>
+
+              <span class="input-group-text" id="basic-addon1" style="width: 40px; position: relative; left: 10px;"  >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path>
+                </svg>
+            </span>
+
             </div>
 
             <div class="form-group row">
@@ -93,13 +99,33 @@
                 <div class="col-sm-10">
                   <input type="text" class="form-control" id="inputEquationY" placeholder="Sumatoria Fuerzas Y">
                 </div>
+
+                <span class="input-group-text" id="basic-addon1" style="width: 40px; position: relative; left: 10px;"  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path>
+                    </svg>
+                </span>
+
               </div>
-              <div class="form-group row">
-                <label for="colFormLabel" class="col-sm-2 col-form-label">ΣM: 0 =</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" id="inputEquationM" placeholder="Sumatoria Momentos">
-                </div>
-              </div>
+
+
+
+              <div class="form-group row" >
+
+                  
+                  <label for="colFormLabel" class="col-sm-2 col-form-label">ΣM: 0 =</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="inputEquationM" placeholder="Sumatoria Momentos">
+                    </div>
+
+                    <span class="input-group-text" id="basic-addon1" style="width: 40px; position: relative; left: 10px;"  >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-lg" viewBox="0 0 16 16">
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path>
+                        </svg>
+                    </span>
+            </div>
+            
+           
           </form>
 
 

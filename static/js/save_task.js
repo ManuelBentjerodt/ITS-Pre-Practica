@@ -8,9 +8,9 @@ function saveTask(e) {
     const difficulty = document.querySelector("#difficultyValue").innerText;
     const statement = document.querySelector("#statement").value;
 
+    const [Fx, Fy, M] = calculateEquations(distanceMultiplier, dimensionValue,true);
+
     const tags = document.querySelectorAll(".tag");
-
-
 
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
     const href = window.location.href;
@@ -20,6 +20,9 @@ function saveTask(e) {
         "sizeFactor": sizeFactor,
         "statement": statement,
         "dclJSON": dclJSON,
+        "fxEquation": Fx,
+        "fyEquation": Fy,
+        "mEquation": M,
     })
    
     fetch(`${href}`, {

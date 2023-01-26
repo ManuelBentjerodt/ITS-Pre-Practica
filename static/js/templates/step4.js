@@ -133,43 +133,24 @@ console.log("Fx: ",Fx);
 console.log("Fy: ",Fy);
 console.log("M: ",M);
 
-// console.log("lista Fx: ", Fx.split("+" || "-"));
-// console.log("lista Fy: ", Fy.split("+" || "-"));
-// console.log("lista M: ", M.split("+" || "-"));
-
-function stringToList(string){
-    let list = []; 
-    first = true;
-    listTemp = "";
-    for (let i=0; i<string.length; i++){
-        if ((string[i] == "+" || string[i] == "-") && !first ){
-            list.push(listTemp);
-        }
-        else{
-            listTemp+=string[i];
-        }
-        first = false;
-    }
-    list.push(listTemp);
-    return list;
-}
-
-
-
 
 function listTo2(string){
     let list = []; 
     first = 0;
     listTemp = "";
     for (let i=0; i<string.length; i++){
-        if ((string[i] == "+" || string[i] == "-") && first == 0){
+        if ( first == 0){
             listTemp+=string[i];
             first = 1;
         }
-        else if((string[i] == "+" || string[i] == "-") && first == 1){
+        else if((string[i] == "+" || string[i] == "-") && first == 1 && string[i-1] != "*"){
             list.push(listTemp);
             listTemp = "";
             listTemp+=string[i];
+        }
+        else if((string[i] == "+" || string[i] == "-") && string[i-1] == "*"){
+            listTemp+=string[i];
+
         }
         else{
             listTemp+=string[i];
@@ -181,19 +162,110 @@ function listTo2(string){
 }
 
 
-
 function replaceAll(list){
     for (let i=0; i<list.length; i++){
-        list[i].replace(" ", "");
+        list[i] = list[i].replace(/\s/g, "");
+  
+    }
+    return list;
+}
+
+function deleteEmpty(list){
+    for (let i=0; i<list.length; i++){
+        if (list[i] ==""){
+            list.splice(i,1);
+        }
+    }
+    return list;
+}
+
+function deletePlus(list){
+    for (let i=0; i<list.length; i++){
+        list[i] = list[i].replace("+", "");
+    }
+    return list;
+}
+
+function check(correct,answer){
+    isGood = false;
+    for (let i=0; i<answer.length; i++){
+        for (let j=0; j<correct.length; j++){
+            if (answer[i] == correct[j]){
+                isGood = true;
+                break;
+            }
+            else{
+                isGood = false;
+            }
+        }
+        if (isGood == false){
+            return false;
+        }
+        
+    }
+    return isGood;
+}
+
+
+function separateMulti(list){
+    for (let i=0; i<list.length; i++){
+        if (list[i].includes("*")){
+            list[i] = list[i].split("*");
+        }
     }
     return list;
 }
 
 
+function sign(list){
+    positive = 1;
+    for (let i=0; i<list.length; i++){
+       if (list[i].includes("-")){
+           positive *=-1;
+       }
+    }
+    return positive;
+    
+}
 
-// console.log("new fX: ", listTo2(Fx));
-// console.log("new fY: ", listTo2(Fy));
-// console.log("new M: ", listTo2(M));
+
+// function checkUlti(correct,answer){
+
+//     for (let i=0; i<answer.length; i++){
+//         for (let j=0; answer[i].length; j++){
+
+            
+
+//             areEqual = false;
+//             for (let k=0; k<correct.length; k++){
+//                 for (let l=0; correct[k].length; l++){
+//                     if (answer[i][j] == correct[k][l]){
+//                         areEqual = true;
+//                         break;
+//                     }
+//                     else{
+//                         areEqual = false;
+//                     }
+//                 }
+//                 if (areEqual == true){
+//                     console.log(answer[i][j]," es igual a ",correct[k][l]);
+//                     console.log("vemos el siguiente de answer");
+//                     break;
+//                 }
+//                else{
+//                 console.log(answer[i][j],"no esta en esta lista ", correct[k]);
+//                }
+                
+//             }
+
+//     }
+
+//  }
+// }
+
+
+
+
 
 let newFx = listTo2(Fx);
 let newFy = listTo2(Fy);
@@ -203,19 +275,36 @@ newFx =replaceAll(newFx);
 newFy = replaceAll(newFy);
 newM = replaceAll(newM);
 
-console.log("new fX: ",newFx);
-console.log("new fY: ", newFy);
-console.log("new M: ", newM);
+newFx = deleteEmpty(newFx);
+newFy = deleteEmpty(newFy);
+newM = deleteEmpty(newM);
 
-for (let i=0; i<newFx.length; i++){
-    newFx[i] = newFx[i].replace(" ", "");
-}
-for (let i=0; i<newFy.length; i++){
-    newFy[i] = newFy[i].replace(" ", "");
-}
-for (let i=0; i<newM.length; i++){
-    newM[i] = newM[i].replace(" ", "");
-}
-console.log(newFx);
-console.log(newFy);
-console.log(newM);
+newFx = deletePlus(newFx);
+newFy = deletePlus(newFy);
+newM = deletePlus(newM);
+
+
+
+
+
+console.log("Fx respuesta en lista: ",newFx);
+console.log("Fy respuesta en lista: ",newFy);
+console.log("M respuesta en lista: ",newM);
+
+
+
+
+separateFx = separateMulti(newFx);
+separateFy = separateMulti(newFy);
+separateM = separateMulti(newM);
+
+console.log("Fx separado: ",separateFx);
+console.log("Fy separado: ",separateFy);
+console.log("M separado: ",separateM);
+
+
+
+
+const dclReal  = document.getElementById("turnToRealDCL");
+console.log("dclReal: ",dclReal);
+dclReal.click();

@@ -19,10 +19,13 @@ class Task(models.Model):
     image = models.ImageField(null=True,blank = True, upload_to = upload_image)
     difficulty = models.FloatField(max_length=20, null=True)
     sizeFactor = models.FloatField(max_length=20, null=True)
-    
+    fxEquation = models.CharField(max_length=50, null=True)
+    fyEquation = models.CharField(max_length=50, null=True)
+    mEquation = models.CharField(max_length=50, null=True)
 
     def save(self, *args, **kwargs):
         super(Task, self).save(*args, **kwargs)
+        print("La fx es: "+ self.fxEquation)
         self.updateTags()
 
     def updateTags(self):
@@ -87,6 +90,8 @@ class Task(models.Model):
             self.tags.add(tag)
 
 
+    def checkEquations(self,correct,answer):
+        pass
     
 
     
