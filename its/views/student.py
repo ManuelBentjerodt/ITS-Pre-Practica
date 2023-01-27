@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.views import View
 import json
 from django.http import JsonResponse
-import re
+
 
 @login_required(login_url="sign_in")
 def student_home(request):
@@ -133,54 +133,11 @@ class FourthStepView(View):
             print("fx: ",task.fxEquation)
             print("fy: ",task.fyEquation)
             print("m: ",task.mEquation)
-
+            
             jsondata = json.loads(request.body)
 
-            #respuesta del alumnno
-            answerFx = jsondata['fxEquation'].split("+" or "-")
-            answerFy = jsondata['fyEquation'].split("+" or "-")
-            answerM = jsondata['mEquation'].split("+" or "-")
-
-            print("//////////////////////////")
-            print("\nfx: ",jsondata['fxEquation'])
-            print("\nfy: ",jsondata['fyEquation'])
-            print("\nm: ",jsondata['mEquation'])
-            print("//////////////////////////")
-
-            s = task.mEquation 
-            list = [x.strip("+") for x in re.findall(r".+?(?=[+-]|$)", s)]
-            print("List:")
-            print(list)
-            print("\n")
-
-
-
-            #Ecuaciones correctas
-            # fxCorrect = task.fxEquation.split("+" or "-")
-            # fyCorrect = task.fyEquation.split("+" or "-")
-            # mCorrect = task.mEquation.split("+" or "-")
-
-
-            # print("fxCorrect: ",fxCorrect)
-            # print("fyCorrect: ",fyCorrect)
-            # print("mCorrect: ",mCorrect)
-
-            # #Sacamos los espacios en blanco de correcta
-            # i = 0
-            # for c in fyCorrect:
-            #     fyCorrect[i] = c.strip()
-            #     i+=1
-            # print("\nNewFy: ",fyCorrect)
-
-
-            # i=0
-            # for c in answerFy:
-            #     answerFy[i] = c.strip()
-            #     i+=1
-            # print("\nNewAnswerFy: ",answerFy)
-
-
-
+            print("\nesto es la respuesta: ")
+            print(task.checkEquations(task.mEquation,jsondata['mEquation']))
             return JsonResponse({'success': True, 'redirect': '/teacher_home'})
 
 

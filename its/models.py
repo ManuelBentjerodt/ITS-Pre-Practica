@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+import re
+import sympy
 
 
 def upload_image(instance, file_name):
@@ -90,9 +92,31 @@ class Task(models.Model):
             self.tags.add(tag)
 
 
-    def checkEquations(self,correct,answer):
-        pass
-    
+    def checkEquations(self,ft, fs):
+        ft = str(ft.lower())
+        fs = str(fs.lower())
+        # get const"
+        getConst = lambda func : list(set(re.findall(r"[a-zA-Z]+", func)))
+            
+        # Check if are same elements in equa
+        if (getConst(ft) != getConst(fs)):
+            return False
+        
+        # replace const to number for evaluate
+        tempFt = ft
+        tempFs = fs
+        for valConst in range(len(getConst(ft))):
+            tempFt = tempFt.replace(getConst(ft)[valConst], str(valConst+1))
+            tempFs = tempFs.replace(getConst(ft)[valConst], str(valConst+1))
+        
+        # check if to evaluate return the same values
+
+        if int(sympy.sympify(tempFt)) != int(sympy.sympify(tempFs)):
+            return False
+        
+        # good case
+        return True
+                
 
     
 class Account(models.Model):
