@@ -27,7 +27,6 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         super(Task, self).save(*args, **kwargs)
-        print("La fx es: "+ self.fxEquation)
         self.updateTags()
 
     def updateTags(self):
@@ -93,11 +92,17 @@ class Task(models.Model):
 
 
     def checkEquations(self,ft, fs):
+
+        if (fs == "" and ft == ""):
+            return True
+        elif (ft == ""):
+            return False
+
         ft = str(ft.lower())
         fs = str(fs.lower())
         # get const"
         getConst = lambda func : list(set(re.findall(r"[a-zA-Z]+", func)))
-            
+
         # Check if are same elements in equa
         if (getConst(ft) != getConst(fs)):
             return False

@@ -10,6 +10,8 @@ function saveTask(e) {
 
     const [Fx, Fy, M] = calculateEquations(distanceMultiplier, dimensionValue,true);
 
+
+    
     const tags = document.querySelectorAll(".tag");
 
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;

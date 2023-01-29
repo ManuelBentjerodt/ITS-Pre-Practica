@@ -129,15 +129,31 @@ class FourthStepView(View):
             return JsonResponse({'success': True, 'redirect': '/teacher_home'})
 
         if request.content_type == "verify4/json":
-            print("\nHola esto funciona verify4\n")
-            print("fx: ",task.fxEquation)
-            print("fy: ",task.fyEquation)
-            print("m: ",task.mEquation)
+            fxTeacher = task.fxEquation
+            fyTeacher = task.fyEquation
+            mTeacher = task.mEquation
+            
+            print("fx: ",fxTeacher)
+            print("fy: ",fyTeacher)
+            print("m: ",mTeacher)
             
             jsondata = json.loads(request.body)
 
             print("\nesto es la respuesta: ")
-            print(task.checkEquations(task.mEquation,jsondata['mEquation']))
+
+            print("Ecuacion Fx: ")
+            fxCorrect = task.checkEquations(fxTeacher,jsondata['fxEquation'])
+            print(fxCorrect)
+            print("Ecuacion Fy: ")
+            fyCorrect = task.checkEquations(fyTeacher,jsondata['fyEquation'])
+            print(fyCorrect)
+            print("Ecuacion M: ")
+            mCorrect = task.checkEquations(mTeacher,jsondata['mEquation'])
+            print(mCorrect)
+
+
+
+
             return JsonResponse({'success': True, 'redirect': '/teacher_home'})
 
 
