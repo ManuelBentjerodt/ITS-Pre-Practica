@@ -6,8 +6,7 @@ function verifyTask() {
     const href = window.location.href;
     const csfrToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-    const copyDCL = getCopyDcl(dcl).generateCopy();
-
+    const copyDCL = getCopyDcl(dcl);
     const data = JSON.stringify({
         "studentDcl": copyDCL,
     })
@@ -25,6 +24,7 @@ function verifyTask() {
         
     })
     .then((data) => {
+        console.log(data)
         //window.location.href = data.redirect
     })
 }   

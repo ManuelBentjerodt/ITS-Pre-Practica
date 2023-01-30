@@ -38,30 +38,54 @@ y_reference.hideAll();
 
 
 const correctDclJson = document.querySelector("#correctDcl").textContent;
-console.log(correctDclJson);
-const correctDcl = recreateDcl(correctDclJson);
 
+const correctDcl = recreateDcl(correctDclJson);
 const dcl = recreateDcl(correctDclJson);
 
 const modalForce = createModalForce(divKonvaContainer, layer, dcl, false); 
-const modalMoment = createModalMoment(divKonvaContainer, layer, dcl, false); 
+const modalMoment = createModalMoment(divKonvaContainer, layer, dcl, false, true); 
+
 const modalFixedSupport = createModalFixedSupport(divKonvaContainer, layer, dcl, false);
 const modalRollerSupport = createModalRollerSupport(divKonvaContainer, layer, dcl, false); 
 const modalPinnedSupport = createModalPinnedSupport(divKonvaContainer, layer, dcl, false);
+
 const delPanel = createDelPanel(divKonvaContainer, layer, dcl, false);
+
 const anglePanel = createAngleReferencePanel(divKonvaContainer, layer, dcl, false); //new
-const panel = createPanel(divKonvaContainer, layer, dcl, false);
+
+
+const modalReactionForce = createModalReactionForce2(divKonvaContainer, layer, dcl, false);
+// const modalReactionForce = createModalReactionForce(divKonvaContainer, layer, dcl, false);
+const modalPointForce = createModalPointForce(divKonvaContainer, layer, dcl, false);
+const choiceForceModalStep3 = createModalChoiceForce(divKonvaContainer, layer, dcl, modalReactionForce, modalPointForce, false);
+
+const choiceMomentModalStep3 = createModalChoiceMoment(divKonvaContainer, layer, dcl, modalMoment, null, false);
+
+const panelStep3 = createPanelStep3(divKonvaContainer, layer, dcl, choiceForceModalStep3, choiceMomentModalStep3, false);
+
+
 
 divKonvaContainer.appendChild(modalForce);
 divKonvaContainer.appendChild(modalMoment);
+
 divKonvaContainer.appendChild(modalFixedSupport);
 divKonvaContainer.appendChild(modalRollerSupport);
 divKonvaContainer.appendChild(modalPinnedSupport);
-divKonvaContainer.appendChild(panel);
+
 divKonvaContainer.appendChild(delPanel);
+
 divKonvaContainer.appendChild(anglePanel); //new
 
-listenPanelMovement(panel);
+divKonvaContainer.appendChild(modalPointForce);
+divKonvaContainer.appendChild(modalReactionForce);
+divKonvaContainer.appendChild(choiceForceModalStep3);
+
+divKonvaContainer.appendChild(choiceMomentModalStep3);
+
+divKonvaContainer.appendChild(panelStep3);
+
+
+listenPanelMovement(panelStep3);
 listenPanelMovement(delPanel);
 listenPanelMovement(modalMoment); 
 listenPanelMovement(modalForce); 
@@ -69,19 +93,22 @@ listenPanelMovement(modalFixedSupport);
 listenPanelMovement(modalRollerSupport); 
 listenPanelMovement(modalPinnedSupport);
 listenPanelMovement(anglePanel); 
+listenPanelMovement(modalReactionForce);
+listenPanelMovement(modalPointForce);
+listenPanelMovement(choiceForceModalStep3);
 
-listenCreateElement(divKonvaContainer);
+listenCreateElement(divKonvaContainer, panelStep3);
 listenDeleteElement(divKonvaContainer);
 listenHiddePanels();
 listenAngleReference(divKonvaContainer); 
 
 
 drawDcl(correctDcl, layerTeacher, null, null, false);
-removeDraggableFromAllNodes(correctDcl);
+// removeDraggableFromAllNodes(correctDcl);
 
 const allCorrectNodes = [correctDcl, ...correctDcl.getAllDecendents()];
 allCorrectNodes.forEach(node => {
-    removePaintIsMouseOver(node);
+    // removePaintIsMouseOver(node);
 });
 
 visibilityLines(layerTeacher, "horizontalLine", "hide");

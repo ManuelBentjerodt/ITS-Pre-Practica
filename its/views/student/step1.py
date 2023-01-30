@@ -9,9 +9,15 @@ class FirstStepView(View):
     def get(self, request, id):
         task = Task.objects.get(id = id)
 
+        try:
+            taskImageUrl = task.image.url
+
+        except:
+            taskImageUrl = None
+
         context = {
             'statement': task.statement,
-            'imageUrl': task.image.url
+            'imageUrl': taskImageUrl
             }
         return render(request, 'student/steps/firstStep.html', context)
 
@@ -25,8 +31,13 @@ class FirstStepView(View):
             studentdcl = recreate_dcl(studentDict)
             teacherdcl = recreate_dcl(teacherDict)
             
-            print(graphs_are_equal(teacherdcl, studentdcl))
+            print("studentdcl: ", studentDict)
+
+            nodes_equals = nodes_are_equals(teacherdcl, studentdcl)
+
+            return JsonResponse({'success': nodes_equals['status'], 'redirect': '/student_home', 'errors': nodes_equals['errors']})
+            
 
 
-        return JsonResponse({'success': True, 'redirect': '/teacher_home'})
+        return JsonResponse({'success': False, 'redirect': '/teacher_home', 'errors': ['bad request']})
         # return redirect('teacher_home')

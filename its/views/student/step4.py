@@ -25,7 +25,7 @@ class FourthStepView(View):
             studentdcl = recreate_dcl(studentDict)
             teacherdcl = recreate_dcl(teacherDict)
             
-            print(graphs_are_equal(teacherdcl, studentdcl))
+            print(nodes_are_equals(teacherdcl, studentdcl))
 
 
         return JsonResponse({'success': True, 'redirect': '/teacher_home'})
