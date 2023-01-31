@@ -62,7 +62,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
         points: [0, 0, x1, y1],
         strokeWidth: 5,
         stroke: "black",
-        fill : "black",
+        fill: "black",
         id: idByDate + 1
     });
 
@@ -95,7 +95,7 @@ function newBeam(x0, y0, x1, y1, nameBeam = "beam", _id) { //parte en el punto (
     return group;
 }
 
-function createBeam(layer, nameBeam="beam", _id = null, coordinates = null, _node = null) {
+function createBeam(layer, nameBeam = "beam", _id = null, coordinates = null, _node = null) {
     let x0 = lastBeamNodeClick.x
     let y0 = lastBeamNodeClick.y
     let x1 = blockSnapSize * 3;
@@ -120,13 +120,13 @@ function createBeam(layer, nameBeam="beam", _id = null, coordinates = null, _nod
     if (_node) {
         secondNode = _node;
         originNode = _node.parent;
-        
+
     } else {
         originNode = new Node([x0, y0], id = line.getChildren()[1].getAttr("id"));
         secondNode = new Node([x0 + x1, y0 + y1], id = line.getChildren()[2].getAttr("id"));
         joinNodes(originNode, secondNode);
     }
-    
+
 
     originNode.setKonvaCircle(line.getChildren()[1]);
     secondNode.setKonvaCircle(line.getChildren()[2]);
@@ -232,8 +232,6 @@ function createBeam2(layer, dcl, _node = null, _parent = null, listenUpdate = tr
 
     x_reference.addPoint(circle);
     y_reference.addPoint(circle);
-
-    hideAllPanels();
 
     listenNodeMovement(dcl, group, shadowLine, "beam2", listenUpdate);
     if (listenUpdate) {
@@ -496,8 +494,6 @@ function createFixedSupport(dcl, layer, _node = null, rotation, listenUpdate = t
     paintIfMouseOver(dcl, l2, nfillc, nstrokec, l2.getAttr("fill"), l2.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(dcl, l3, nfillc, nstrokec, l3.getAttr("fill"), l3.getAttr("stroke"), paintGroup = true);
 
-    hideAllPanels();
-
     if (nodeParent.link === null) {
         nodeParent.setLink("fixedSupport");
         nodeParent.setKonvaLink(group);
@@ -576,8 +572,6 @@ function createRollerSupport(dcl, layer, _node = null, rotation, listenUpdate) {
     paintIfMouseOver(dcl, triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = true);
     paintIfMouseOver(dcl, base, nfillc, nstrokec, triangle.getAttr("fill"), base.getAttr("stroke"), paintGroup = true);
 
-    hideAllPanels();
-
     if (nodeParent.link === null) {
         nodeParent.setLink("rollerSupport");
         nodeParent.setKonvaLink(group);
@@ -648,8 +642,6 @@ function createPinnedSupport(dcl, layer, _node = null, rotation, listenUpdate = 
 
     paintIfMouseOver(dcl, triangle, nfillc, nstrokec, triangle.getAttr("fill"), triangle.getAttr("stroke"), paintGroup = false);
 
-    hideAllPanels();
-
     if (nodeParent.link === null) {
         nodeParent.setLink("pinnedSupport");
         nodeParent.setKonvaLink(group);
@@ -669,8 +661,7 @@ function createPinnedSupport(dcl, layer, _node = null, rotation, listenUpdate = 
 
     layer.add(group);
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
+    hideAllPanels();
 
     indexOfNodeNames += 1;
     if (listenUpdate) {
@@ -725,8 +716,7 @@ function createBallJoint(dcl, _node = null, listenUpdate = true) {
         nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
         nodeNameList[indexOfNodeNames][1] = nodeParent.id;
     } else {
-        panel.style.visibility = "hidden";
-        delPanel.style.visibility = "hidden";
+        hideAllPanels();
         if (_node) {
             nodeParent.setKonvaLink(group);
             nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
@@ -806,8 +796,7 @@ function createConnectingRod(dcl, _node = null, listenUpdate = true) {
         nodeNameList[indexOfNodeNames][1] = nodeParent.id;
 
     } else {
-        panel.style.visibility = "hidden";
-        delPanel.style.visibility = "hidden";
+        hideAllPanels();
         if (_node) {
             nodeParent.setKonvaLink(group);
             nodeParent.setName(nodeNameList[indexOfNodeNames][0]);
@@ -818,10 +807,8 @@ function createConnectingRod(dcl, _node = null, listenUpdate = true) {
     }
 
     layer.add(group);
-    
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
+    hideAllPanels();
 
     indexOfNodeNames += 1;
     if (listenUpdate) {
@@ -835,7 +822,8 @@ function createConnectingRod(dcl, _node = null, listenUpdate = true) {
 
 //------------------------------------------------------Forces y moments-----------------------------------------------//
 
-function createForce(dcl, layer, valMagnitud, valAngle, typeForce, node, color="black", listenUpdate=true, X=null, Y=null, isNew=true, attachToNode=true) {
+function createForce(dcl, layer, valMagnitud, valAngle, typeForce, node, color = "black", listenUpdate = true, X = null, Y = null, isNew = true, attachToNode = true) {
+    // console.log(dcl, layer, valMagnitud, valAngle, typeForce, node, color, listenUpdate, X, Y, isNew, attachToNode)
     let [x0, y0] = node.coordinate;
 
     let magnitud = valMagnitud;
@@ -851,14 +839,16 @@ function createForce(dcl, layer, valMagnitud, valAngle, typeForce, node, color="
     const lx = large * Math.cos(angle * Math.PI / 180)
     const ly = large * Math.sin(degToRad(angle))
 
+    let sign = magnitud >= 0 ? "+" : "-";
     if (color != "black") {
         x0 = X;
         y0 = Y;
         txt = valMagnitud;
         dragg = false;
+        sign = parseFloat(magnitud.substring(0, 1)) >= 0 ? "+" : "-";
     }
 
-    const group = new Konva.Group({ tension: [magnitud, angle, typeForce], name: "force", x: x0, y: y0 });
+    const group = new Konva.Group({ tension: [magnitud, angle, typeForce, sign], name: "force", x: x0, y: y0 });
     const arrow = new Konva.Arrow({
         x: (nodeRadius + strokeVal) * Math.cos(degToRad(angle)),
         y: -(nodeRadius + strokeVal) * Math.sin(degToRad(angle)),
@@ -890,14 +880,13 @@ function createForce(dcl, layer, valMagnitud, valAngle, typeForce, node, color="
         node.addForce(parseFloat(magnitud), parseFloat(angle), typeForce);
     }
 
-    if (attachToNode){
+    if (attachToNode) {
         node.addKonvaForce(group);
     }
-    
+
     group.setAttr("id", node.id);
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-    modalForce.style.visibility = "hidden";
+
+    hideAllPanels();
 
     forceMovement(group, 2 * blockSnapSize, strokeVal, typeForce, listenUpdate)
     if (listenUpdate) {
@@ -967,7 +956,7 @@ function forceMovement(group, large, strokeVal, typeForce, listenUpdate = true) 
     })
 }
 
-function createMoment(dcl, layer, val, typeMoment, node, color = "black", listenUpdate=true, X=0, Y=0, isNew=true, attachToNode=true) {
+function createMoment(dcl, layer, val, typeMoment, node, color = "black", listenUpdate = true, X = 0, Y = 0, isNew = true, attachToNode = true) {
     let [x0, y0] = node.coordinate
 
     let magnitud = val;
@@ -999,7 +988,7 @@ function createMoment(dcl, layer, val, typeMoment, node, color = "black", listen
         }
     }
 
-    const group = new Konva.Group({ name: "moment", tension: magnitud, x: x0, y: y0 });
+    const group = new Konva.Group({ name: "moment", tension: [magnitud, typeMoment], x: x0, y: y0 });
     const arrow = new Konva.Arrow({
         x: 0,
         y: 0,
@@ -1030,16 +1019,15 @@ function createMoment(dcl, layer, val, typeMoment, node, color = "black", listen
         node.addMoment(parseFloat(magnitud), typeMoment);
     }
 
-    if (attachToNode){
+    if (attachToNode) {
         node.addKonvaMoment(group);
     }
 
     group.setAttr("id", node.id);
     layer.add(group);
 
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-    modalMoment.style.visibility = "hidden";
+    hideAllPanels();
+
     if (listenUpdate) {
         updateEquations();
         updateDificulty();
@@ -1060,7 +1048,7 @@ function getOffset(element) {
 
 //------------------------------------------------------Panel Herramientas-----------------------------------------------//
 
-function createButton(container, layer, dcl, widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal, selectType, listenUpdate) {
+function createButton(container, layer, dcl, widthPanel, heightPanel, idNameText, btnText, efunction, image, inputMagnitud, inputAngle, element, selectObj, modal, selectType, listenUpdate, extra) {
     const btn = document.createElement("button");
     btn.type = "button";
 
@@ -1079,43 +1067,175 @@ function createButton(container, layer, dcl, widthPanel, heightPanel, idNameText
     btn.style.justifyContent = "center";
     btn.id = idNameText;
 
-    if (idNameText == "changeOriginBtn" || idNameText == "modalRotationBtn") {
-        btn.style.color = "black";
+    if (idNameText == "changeOriginBtn" || idNameText == "modalRotationBtn" || idNameText == "choiceBtn") {
+        btn.style.color = "white";
         btn.innerText = btnText;
     }
     btn.addEventListener("dblclick", () => {
+        hideAllPanels();
 
-        if (idNameText == "beamBtn") { 
-            efunction(layer, dcl, listenUpdate);
-
-        } else if (idNameText == "forceBtn") {
+        if (idNameText == "createForce") {
             const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
             efunction(dcl, layer, inputMagnitud.value, inputAngle.value, selectType.value, node, "black", listenUpdate);
-        
-        } else if (idNameText == "momentBtn") {
+
+        } else if (idNameText == "createMoment") {
             const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
             efunction(dcl, layer, inputMagnitud.value, selectType.value, node, "black", listenUpdate)
-        
-        } else if (idNameText == "deleteElementBtn") {
-            efunction(layer, element, listenUpdate);
-        
+
+        } else if (idNameText == "deleteElement") {
+            efunction(lastElementClick, listenUpdate);
+
         } else if (idNameText == "modalRotationBtn") { // boton para creare vinculos
             efunction(dcl, layer, null, rotation = selectObj.value, listenUpdate);
-        
-        } else if (idNameText == "modalBtn") { // mostrar modal
-            console.log(container)
-            console.log(layer)
-            console.log(modal)
 
+        } else if (idNameText == "modalBtn") { // mostrar modal
             efunction(container, modal, listenUpdate);
-        
+
         } else if (idNameText == "AngleBtn") {
             efunction(layer, dcl, listenUpdate);
+
+        } else if (idNameText == "choiceBtn") {
+            efunction(container, modal, listenUpdate);
+
+        } else if (idNameText == "createForeceReactionStep32") { 
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"));
+            const [x, y] = node.coordinate;
+            const {reaction, proyection, sign, trigonometry, angle} = extra;
+            let angleForce;
+            if (proyection.value == "vertical") {
+                if (sign.value == "+") {
+                    angleForce = 270;
+                } else {
+                    angleForce = 90;
+                }
+            } else {
+                if (sign.value == "+") {
+                    angleForce = 180;
+                } else {
+                    angleForce = 0;
+                }
+            }
+            
+            let magnitudText = reaction.value; 
+            let trigonometric;
+            if (trigonometry.value == "sin") {
+                trigonometric = `*sin(${angle.value})`;
+                magnitudText += trigonometric;
+                trigonometric = trigonometric.substring(1, trigonometric.length);
+            } else if (trigonometry.value == "cos") {
+                trigonometric = `*cos(${angle.value})`;
+                magnitudText += trigonometric;
+                trigonometric = trigonometric.substring(1, trigonometric.length);
+            } else {
+                trigonometric = "";
+            }
+
+            const forceAngleX = angleFx(angleForce);
+            const Xx = x + lasForce * Math.cos(degToRad(forceAngleX));
+            const Yx = y - lasForce * Math.sin(degToRad(forceAngleX));
+
+            const forceAngleY = angleFy(angleForce);
+            const Xy = x + lasForce * Math.sin(degToRad(forceAngleY));
+            const Yy = y - lasForce * Math.cos(degToRad(forceAngleY));
+
+            let X, Y;
+            if (proyection.value == "horizontal") {
+                X = Xx;
+                Y = Yx;
+            } else if (proyection.value == "vertical"){
+                X = Xy;
+                Y = Yy;
+            }
+            
+            efunction(dcl, layer, magnitudText, angleForce, "Reaction", node, "green", listenUpdate, X, Y, false, true);
+            if (proyection.value == "horizontal") {
+                if (sign.value == "+") {
+                    node.step3.axisXsupport.push(["+", reaction.value, trigonometric]);
+                } else if (sign.value == "-"){
+                    node.step3.axisXsupport.push(["-", reaction.value, trigonometric]);
+                }
+            } else if (proyection.value == "vertical") {
+                if (sign.value == "+") {
+                    node.step3.axisYsupport.push(["+", reaction.value, trigonometric]);
+                } else if (sign.value == "-") {
+                    node.step3.axisYsupport.push(["-", reaction.value, trigonometric]);
+                }
+            }
+
+
+        } else if (idNameText == "createPointForceStep3") {
+            const {proyection, sign, trigonometry, angle, magnitud, type} = extra;
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"));
+            let angleForce;
+            if (proyection.value == "vertical") {
+                if (sign.value == "+") {
+                    angleForce = 270;
+                } else {
+                    angleForce = 90;
+                }
+            } else {
+                if (sign.value == "+") {
+                    angleForce = 180;
+                } else {
+                    angleForce = 0;
+                }
+            }
+            let magnitudText = magnitud.value + type.value;
+            let trigonometric = trigonometry.value;
+            if (trigonometry.value == "sin") {
+                trigonometric = `*sin(${angle.value})`;
+                magnitudText += trigonometric;
+                trigonometric = trigonometric.substring(1, trigonometric.length)
+
+            } else if (trigonometry.value == "cos") {
+                trigonometric = `*cos(${angle.value})`;
+                magnitudText += trigonometric;
+                trigonometric = trigonometric.substring(1, trigonometric.length)
+            } else {
+                trigonometric = "";
+            }
+
+            
+
+            efunction(dcl, layer, magnitudText, angleForce, type.value, node, "green", listenUpdate, node.coordinate[0], node.coordinate[1], false, true);
+            
+            if (proyection.value == "horizontal") {
+                if (sign.value == "+") {
+                    node.step3.forcesX.push(["+",parseFloat( magnitud.value), type.value, trigonometric]);
+                } else if (sign.value == "-"){
+                    node.step3.forcesX.push(["-", parseFloat(-magnitud.value), type.value, trigonometric]);
+                }
+            } else if (proyection.value == "vertical") {
+                if (sign.value == "+") {
+                    node.step3.forcesY.push(["+",parseFloat( magnitud.value), type.value, trigonometric]);
+                } else if (sign.value == "-") {
+                    node.step3.forcesY.push(["-",parseFloat( magnitud.value), type.value, trigonometric]);
+                }
+            }
+            hideAllPanels();
+
+        } else if (idNameText == "createMomentReactionStep3") { 
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            efunction(dcl, layer, `Rm`, "Reaction", node, "green", listenUpdate, node.coordinate[0], node.coordinate[1], false, true)
+            node.step3.momentsSupport.push("Rm");
+
+        } else if (idNameText == "createPointMomentStep3") {
+            const node = dcl.findNodeById(lastNodeClick.getAttr("id"))
+            efunction(dcl, layer, inputMagnitud.value, selectType.value, node, "green", listenUpdate, node.coordinate[0], node.coordinate[1], false, true);
+            if (inputMagnitud.value > 0) {
+                node.step3.moments.push(["+",parseFloat( inputMagnitud.value), selectType.value]);
+            } else {
+                node.step3.moments.push(["-", parseFloat(-inputMagnitud.value), selectType.value]);
+            }
+
+        } else if ("createBeam2") {
+            efunction(layer, dcl, _node = null, _parent = null, listenUpdate = true)        
         
         } else {
-            console.log("viga?")
+            console.log("llamand a else in createButton");
             efunction(layer, dcl, null, null, listenUpdate);
         }
+
 
     });
     return btn;
@@ -1249,7 +1369,6 @@ function createPanel(container, layer, dcl, listenUpdate = true) {
     bodyPanel.style.gridTemplateColumns = "1fr 1fr";
     bodyPanel.style.gridTemplateRows = "1fr 1fr 1fr 1fr";
 
-    const baseUrl = window.location.origin;
     const imgRollerSupport = `url(${imagesFolder}/rollerSupport.png)`;
     const imgPinnedSupport = `url(${imagesFolder}/pinnedSupport.png)`;
     const imgConnectingRod = `url(${imagesFolder}/connectingRod.png)`;
@@ -1259,7 +1378,7 @@ function createPanel(container, layer, dcl, listenUpdate = true) {
     const imgFixedSupport = `url(${imagesFolder}/fixedSupport.png)`;
     const imgBeam = `url(${imagesFolder}/beam.png)`;
 
-    const btnBeam2 = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "beam2btn", "Beam", createBeam2, image = imgBeam, null, null, null, null, null, null, listenUpdate = listenUpdate);
+    const btnBeam2 = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "createBeam2", "Beam", createBeam2, image = imgBeam, null, null, null, null, null, null, listenUpdate = listenUpdate);
     const btnRollerSupport = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Roller support ", showModal, image = imgRollerSupport, null, null, null, null, modal = modalRollerSupport, listenUpdate = listenUpdate);
     const btnPinnedSupport = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Pinned support", showModal, image = imgPinnedSupport, null, null, null, null, modal = modalPinnedSupport, listenUpdate = listenUpdate);
     const btnFixedSupport = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Fixed support", showModal, image = image = imgFixedSupport, null, null, null, null, modal = modalFixedSupport, listenUpdate = listenUpdate);
@@ -1359,55 +1478,6 @@ function roundXY(mouseXY) {
     return { x: X, y: Y };
 }
 
-//------------------------------------------------------Puntaje-----------------------------------------------//
-
-function createScorePanel(x0, y0) {
-    const widthPanel = 240;
-    const heightPanel = 40;
-    const colorPanel = "#DDDDDD";
-
-    const panel = document.createElement("div");
-    panel.style.position = "absolute";
-    panel.style.width = widthPanel + "px";
-    panel.style.height = heightPanel + "px";
-    panel.style.backgroundColor = colorPanel;
-    panel.style.borderColor = "black";
-    panel.style.border = "40px";
-    panel.style.visibility = "visible"; // hidden or visible
-    panel.style.display = "flex";
-
-    const categoryText = document.createElement("h4")
-    categoryText.id = "categoryText";
-    categoryText.innerText = "Categoria: ";
-
-    const valueCategory = document.createElement("h4");
-    valueCategory.id = "valueCategory";
-    valueCategory.innerText = "1";
-
-    const containerCategory = document.createElement("div");
-    containerCategory.style.display = "flex";
-    containerCategory.appendChild(categoryText);
-    containerCategory.appendChild(valueCategory);
-
-    const scoreText = document.createElement("h4");
-    scoreText.id = "scoreText";
-    scoreText.innerText = "Puntaje: ";
-
-    const valueScore = document.createElement("h4");
-    valueScore.id = "valueScore";
-    valueScore.innerText = "0";
-
-    const containerScore = document.createElement("div");
-    containerScore.style.display = "flex";
-
-    containerScore.appendChild(scoreText);
-    containerScore.appendChild(valueScore);
-
-    panel.appendChild(containerCategory);
-    panel.appendChild(containerScore);
-
-    return panel;
-}
 
 function degToRad(deg) {
     return deg * Math.PI / 180;
@@ -1425,7 +1495,7 @@ function prettyDeg(deg) {
     return deg;
 }
 
-function listenCreateElement(container) {
+function listenCreateElement(container, panel) {
     stage.on("dblclick", (e) => {
         if (e.target != stage && e.target && !turnToRealDCLFlag) {
             const mouseXY = roundXY(getXY());
@@ -1434,7 +1504,7 @@ function listenCreateElement(container) {
             lastNodeClick = e.target;
             const nodeParent = dcl.findNodeById(lastNodeClick.getAttr("id"))
             console.log(nodeParent)
-    
+
             if (e.target.name() == "subElementBeamCircle1") {
                 panel.style.visibility = "visible";
                 movePanelTo(container, panel, mouseXY.x, mouseXY.y);
@@ -1467,7 +1537,7 @@ function destroyAttachedKonvaElements(node) {
     })
 }
 
-function deleteElement(element, listenUpdate = true) {
+function deleteElement(element, listenUpdate=true) {
     if (element.name() === "beam2") {
         const node = dcl.findNodeById(element.getAttr("id") + 2) //element es el group del objeto, 
         const parentNode = node.parent
@@ -1501,12 +1571,78 @@ function deleteElement(element, listenUpdate = true) {
             const floatTuple = [parseFloat(tuple[0]), parseFloat(tuple[1])];
             const idx = idxForceInNode(node.forces, floatTuple)
             node.forces.splice(idx, 1)
+            
+            let matchText = tuple[0];
+            console.log(tuple)
+            try {
+                const idxfx = node.step3.forcesX.findIndex(force => {
+                    return `${force[1]}${force[2]}*${force[3]}` == matchText && force[0] == tuple[3];
+                });
+                node.step3.forcesX.splice(idxfx, 1);
+            } catch (e) {
+                console.log("Error en step3ForceAngle   1");
+            }
 
+            try {
+                const idxfy = node.step3.forcesY.forEach(force => {
+                    console.log(force, tuple)
+                    return `${force[1]}${force[2]}*${force[3]}` == matchText && force[0] == tuple[3];
+                });
+                node.step3.forcesY.splice(idxfy, 1);
+            } catch (e) {
+                console.log("Error en step3ForceAngle    2");
+            }
+
+            try {
+                const idxaxs = node.step3.axisXsupport.findIndex(force => {
+                    return `${force[1]}${force[2]}*${force[3]}` == matchText && force[0] == tuple[3];
+                });
+                node.step3.axisXsupport.splice(idxaxs, 1);
+            } catch (e) {
+                console.log("Error en step3ForceAngle    3");
+            }
+
+            try {
+                const idxays = node.step3.axisYsupport.findIndex(force => {
+                    return `${force[1]}${force[2]}*${force[3]}` == matchText && force[0] == tuple[3];
+                });
+                node.step3.axisYsupport.splice(idxays, 1);
+            } catch (e) {
+                console.log("Error en step3ForceAngle    4");
+            }
+            
+            
+            
         } else if (element.name() === "moment") {
-            const val = parseFloat(element.getAttr("tension"))
-            const idx = node.moments.indexOf(val)
-            node.moments.splice(idx, 1)
+            const [magnitud, type] = element.getAttr("tension")
+            const idxm = node.moments.findIndex(moment => {
+                return parseFloat(moment[0]) == parseFloat(magnitud) && moment[1] == type;
+            });
+
+            node.moments.splice(idxm, 1)
+
+            try {
+                const idxm = node.step3.moments.findIndex(moment => {
+                    return parseFloat(moment[1]) == parseFloat(magnitud) && moment[2] == type;
+                    // return `Rm` == matchText;
+                });
+                node.step3.moments.splice(idxm, 1);
+            } catch (e) {
+                console.log("Error en step3ForceAngle    5");
+            }
+
+            try {
+                const idxms = node.step3.momentsSupport.findIndex(moment => {
+                    return moment == "Rm";
+                    // return `Rm` == matchText;
+                });
+                node.step3.momentsSupport.splice(idxms, 1);
+            } catch (e) {
+                console.log("Error en step3ForceAngle    5");
+            }
         }
+
+        
     }
 
     element.destroy();
@@ -1568,14 +1704,22 @@ function listenDeleteElement(container) {
 }
 
 function hideAllPanels() {
-    panel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
-    modalForce.style.visibility = "hidden";
-    modalMoment.style.visibility = "hidden";
-    modalFixedSupport.style.visibility = "hidden";
-    modalRollerSupport.style.visibility = "hidden";
-    modalPinnedSupport.style.visibility = "hidden";
-    anglePanel.style.visibility = "hidden";
+    try {panel.style.visibility = "hidden";} catch (error) {} 
+    try {delPanel.style.visibility = "hidden";} catch (error) {}
+    try {modalForce.style.visibility = "hidden";} catch (error) {}
+    try {modalMoment.style.visibility = "hidden";} catch (error) {}
+    try {modalFixedSupport.style.visibility = "hidden";} catch (error) {}
+    try {modalRollerSupport.style.visibility = "hidden";} catch (error) {}
+    try {modalPinnedSupport.style.visibility = "hidden";} catch (error) {}
+    try {anglePanel.style.visibility = "hidden";} catch (error) {}
+    try {panelStep3.style.visibility = "hidden";} catch (error) {}
+    try {choiceForceModalStep3.style.visibility = "hidden";} catch (error) {}
+    try {choiceMomentModalStep3.style.visibility = "hidden";} catch (error) {}
+    try {modalPointForce.style.visibility = "hidden";} catch (error) {}
+    try {modalReactionForce.style.visibility = "hidden";} catch (error) {}
+    
+    // try {forceModalStep3.style.visibility = "hidden";} catch (error) {}
+
 }
 
 function listenHiddePanels() {
@@ -1585,19 +1729,10 @@ function listenHiddePanels() {
     });
 }
 
-function updateCounts() {
-    stage.find((element) => {
-        if (element.name() == "fixedSupport") countFixedSupport += 1;
-        else if (element.name() == "rollerSupport") countRollerSupport += 1;
-        else if (element.name() == "fixedSupport") countFixedSupport += 1;
-    });
-}
 
 //------------------------------------------------------Delete panel-----------------------------------------------//
-function delElement(listenUpdate=true) {
-    deleteElement(lastElementClick, listenUpdate);
-    hideAllPanels();
-}
+
+
 function listenAngleCreated(konvaArc) {
     stage.on("click", () => {
         if (konvaArc) {
@@ -1646,15 +1781,15 @@ function createAngleReference() {
 
     layer.add(arc);
 
-    anglePanel.style.visibility = "hidden";
-    delPanel.style.visibility = "hidden";
+    hideAllPanels();
+
     listenArrowRotation(arc, forceObject);
     listenAngleCreated(arc);
 }
 
 
 
-function createDelPanel(container, layer, dcl, listenUpdate=true) {
+function createDelPanel(container, layer, dcl, listenUpdate = true) {
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
@@ -1672,8 +1807,8 @@ function createDelPanel(container, layer, dcl, listenUpdate=true) {
     panel.style.visibility = "hidden";
     panel.style.zIndex = "1001";
 
-    const deleteElementBtn = createButton(container, layer, dcl, widthPanel, heightPanel, "delElementBtn", "Delete", delElement, image = imgDelete, null, null, null, null, null, null, listenUpdate);
-
+    const deleteElementBtn = createButton(container, layer, dcl, widthPanel, heightPanel, "deleteElement", "Delete", deleteElement, imgDelete, null, null, lastElementClick, null, null, null, listenUpdate);
+    console.log(listenUpdate)
     panel.appendChild(deleteElementBtn);
 
     return panel;
@@ -1683,7 +1818,6 @@ function createAngleReferencePanel(container, layer, dcl) {
     const widthPanel = 120;
     const heightPanel = 30;
     const colorPanel = "#DDDDDD";
-    const baseUrl = window.location.origin;
     const imgDelete = `url(${imagesFolder}/referenceAngle.png)`;
 
     const panel = document.createElement("div");
@@ -1704,11 +1838,6 @@ function createAngleReferencePanel(container, layer, dcl) {
 
     return panel;
 }
-
-
-
-
-
 
 function createHashElements(stage) {
     const hash = {
@@ -1957,7 +2086,7 @@ function styleForElementGridPanel(element, row, col) {
     element.style.margin = "2px";
 }
 
-function createModalForce(container, layer, dcl,listenUpdate = true) {
+function createModalForce(container, layer, dcl, listenUpdate = true) {
     const widthModal = 400;
     const heightModal = 180;
 
@@ -1979,6 +2108,7 @@ function createModalForce(container, layer, dcl,listenUpdate = true) {
     modal.style.display = "grid";
     modal.style.gridTemplateRows = "1fr 1fr 1fr";
     modal.style.gridTemplateColumns = "1fr 1fr 1fr";
+    modal.style.visibility = "hidden";
 
     const textMagnitude = createBelementForGrid("Magnitud", "1", "1");
     const textMagnitudeUnit = createBelementForGrid("Unidad", "1", "2");
@@ -1993,7 +2123,7 @@ function createModalForce(container, layer, dcl,listenUpdate = true) {
     const inputCreateForceAngle = createInputAngle("input-create-force-angle", widthModal, heightModalElement);
     styleForElementGrid(inputCreateForceAngle, "2", "3");
 
-    const btnForce = createButton(container, layer, dcl, widthModal / 2, heightModalElement, "forceBtn", "Crear", createForce, null, inputMagnitud = inputCreateForceMagnitud, inputAngle = inputCreateForceAngle, null, null, null, selectTypeForce, listenUpdate);
+    const btnForce = createButton(container, layer, dcl, widthModal / 2, heightModalElement, "createForce", "Crear", createForce, null, inputMagnitud = inputCreateForceMagnitud, inputAngle = inputCreateForceAngle, null, null, null, selectTypeForce, listenUpdate);
     btnForce.style.backgroundColor = "rgb(128, 70, 16)"
     btnForce.style.border = "2px outset rgb(128, 70, 16)";
     btnForce.style.borderRadius = "5px";
@@ -2029,7 +2159,7 @@ function createModalForce(container, layer, dcl,listenUpdate = true) {
     return modal;
 }
 
-function createModalMoment(container, layer, dcl, listenUpdate = true) {
+function createModalMoment(container, layer, dcl, listenUpdate=true, green=false) {
     const widthModal = 380;
     const heightModal = 180;
 
@@ -2066,7 +2196,10 @@ function createModalMoment(container, layer, dcl, listenUpdate = true) {
     selectTypeMoment.style.width = "200px";
     selectTypeMoment.style.margin = "5px";
 
-    const btnMoment = createButton(container, layer, dcl, widthModal / 2, heightModalElement, "momentBtn", "Moment", createMoment, null, inputMagnitude = inputCreateMoment, null, null, null, null, selectTypeMoment, listenUpdate);
+    let btnMoment = createButton(container, layer, dcl, widthModal / 2, heightModalElement, "createMoment", "Moment", createMoment, null, inputMagnitude = inputCreateMoment, null, null, null, null, selectTypeMoment, listenUpdate);
+    if (green) {
+        btnMoment = createButton(container, layer, dcl, widthModal / 2, heightModalElement, "createPointMomentStep3", "Moment", createMoment, null, inputMagnitude = inputCreateMoment, null, null, null, null, selectTypeMoment, listenUpdate, "rgb(0, 83, 56)");
+    }
     btnMoment.style.backgroundColor = "rgb(128, 70, 16)"
     btnMoment.style.border = "2px outset rgb(128, 70, 16)";
     btnMoment.style.borderRadius = "5px";
@@ -2114,7 +2247,7 @@ function recreateDcl(json) {
     return newDCL;
 }
 
-function drawLink(dcl, layer, node,  listenUpdate=true) {
+function drawLink(dcl, layer, node, listenUpdate = true) {
     const rotation = parseInt(node.linkRotation);
     if (node.link === "rollerSupport") {
         createRollerSupport(dcl, layer, node, rotation, listenUpdate);
@@ -2129,7 +2262,7 @@ function drawLink(dcl, layer, node,  listenUpdate=true) {
     }
 }
 
-function drawForces(dcl, layer, node, listenUpdate=true) {
+function drawForces(dcl, layer, node, listenUpdate = true) {
     node.forces.forEach(force => {
         if (force != null) {
             createForce(dcl, layer, force[0], force[1], force[2], node, "black", listenUpdate, null, null, false, true);
@@ -2352,7 +2485,7 @@ function updateDificulty() {
     pDificulty.innerText = dificulty;
 }
 
-function drawDcl(dcl, layer, xRef, yRef, listenUpdate=true) {
+function drawDcl(dcl, layer, xRef, yRef, listenUpdate = true) {
     const allNodes = [dcl, ...dcl.getAllDecendents()]
 
     const nodesInitialBeam = allNodes.slice(0, 2)
@@ -2362,8 +2495,8 @@ function drawDcl(dcl, layer, xRef, yRef, listenUpdate=true) {
     let [x1, y1] = nodesInitialBeam[1].coordinate;
 
     const initialBeam = createBeam(
-        layer, 
-        nameBeam="initialBeam",
+        layer,
+        nameBeam = "initialBeam",
         _id = nodesInitialBeam[1].id,
         coordinates = [
             [x0, y0],
@@ -2409,7 +2542,7 @@ function changeOrigin(listenUpdate = true) {
     oldOriginNode.konvaObjects.circle.setAttr("fill", "red");
     newOriginNode.konvaObjects.circle.setAttr("fill", originColor);
 
-    hideAllPanels();
+
 
     if (listenUpdate) {
         updateEquations();
@@ -2764,12 +2897,8 @@ function rotateKonvaObject(object, angle = 90) {
 }
 
 function showModal(container, modal) {
-    
-    hideAllPanels();
-
     movePanelTo(container, modal, lastBeamNodeClick.x, lastBeamNodeClick.y);
     modal.style.visibility = "visible";
-
 }
 
 function createGenericModalRotation(Idname) {
@@ -2793,7 +2922,7 @@ function createGenericModalRotation(Idname) {
     modal.style.gridTemplateColumns = "1fr";
     modal.id = Idname;
 
-    const textAngle = createBelementForGrid("Angulo (decimal)", "1", "1")
+    const textAngle = createBelementForGrid("Angulo (sexagesimal)", "1", "1")
 
     const inputContainer = createContainerForElementGrid("2", "1");
     const input = document.createElement("input");
@@ -2876,7 +3005,7 @@ function removeDraggableFromAllNodes(dcl) {
             beam.getChildren(child => beamNames.has(child.name())).forEach(child => {
                 child.setAttr("draggable", false);
             })
-        }node.coordinate
+        } node.coordinate
         const forces = node.konvaObjects.forces;
         forces.forEach(force => {
 
@@ -3056,9 +3185,6 @@ function prettyAngle(angle) {
     } else if (270 <= angle && angle < 360) {
         return 360 - angle;
     }
-
-
-
 }
 
 function changeDimensions(listenUpdate = true) {
@@ -3095,36 +3221,36 @@ function helloWorld() {
     console.log("hello world");
 }
 
-function findMinCoordinate(coordinates){
+function findMinCoordinate(coordinates) {
     //en esta funcion se encuentra la coordenada mas a la izquierda y mas arriba para setear el marco de referencia
     let minXCoordoinates = [];
-    
+
     const minX = Math.min(...coordinates.map(coord => coord[0]));
-    
-    for (let i = 0; i < coordinates.length; i++){
-        if (coordinates[i][0] == minX){
+
+    for (let i = 0; i < coordinates.length; i++) {
+        if (coordinates[i][0] == minX) {
             minXCoordoinates.push(coordinates[i]);
 
         }
     }
     const minY = Math.min(...minXCoordoinates.map(coord => coord[1]));
-    const  minCoordinate = [minX, minY];
+    const minCoordinate = [minX, minY];
     return minCoordinate;
 
 }
-function standarizeDCL(DCL){
+function standarizeDCL(DCL) {
 
     let coordinates = [];
     // const copyDCL = Object.assign({}, DCL);
 
     const allNodes = [DCL, ...DCL.getAllDecendents()]
     allNodes.forEach(node => {
-        
+
     })
-    
+
     const nodesInitialBeam = allNodes.slice(0, 2)
     const otherNodes = allNodes.slice(2)
-    
+
 
     nodesInitialBeam.forEach(node => {
         coordinates.push(node.coordinate);
@@ -3134,10 +3260,10 @@ function standarizeDCL(DCL){
     })
 
     const minCoordinate = findMinCoordinate(coordinates);
-    
-   // console.log(JSON.parse(JSON.stringify(coordinates)))
-    
-    for (let i = 0; i < coordinates.length; i++){
+
+    // console.log(JSON.parse(JSON.stringify(coordinates)))
+
+    for (let i = 0; i < coordinates.length; i++) {
         coordinates[i][0] -= minCoordinate[0];
         coordinates[i][1] -= minCoordinate[1];
     }
@@ -3146,23 +3272,23 @@ function standarizeDCL(DCL){
     return DCL
 }
 
-function areDclEqual(dcl1,dcl2) {
+function areDclEqual(dcl1, dcl2) {
 
     const coordinates = [];
 
 
     const allNodes = [dcl1, ...dcl1.getAllDecendents()]
-        allNodes.forEach(node => {
+    allNodes.forEach(node => {
         delete node.id;
         delete node.konvaObjects;
         delete node.parent;
         delete node.name;
         delete node.turnedToRealDCL;
     })
-    
+
     const nodesInitialBeam = allNodes.slice(0, 2)
     const otherNodes = allNodes.slice(2)
-    
+
 
     nodesInitialBeam.forEach(node => {
         coordinates.push(node.coordinate);
@@ -3171,10 +3297,10 @@ function areDclEqual(dcl1,dcl2) {
         coordinates.push(node.coordinate);
     })
 
-///
+    ///
 
     const allNodes2 = [dcl2, ...dcl2.getAllDecendents()]
-        allNodes2.forEach(node => {
+    allNodes2.forEach(node => {
         delete node.id;
         delete node.konvaObjects;
         delete node.parent;
@@ -3198,7 +3324,7 @@ function areDclEqual(dcl1,dcl2) {
     stringifyDcl1 = JSON.stringify(dcl1);
     stringifyDcl2 = JSON.stringify(dcl2);
 
-    if (stringifyDcl1 == stringifyDcl2){
+    if (stringifyDcl1 == stringifyDcl2) {
         return true;
     } else {
         return false;
@@ -3206,7 +3332,7 @@ function areDclEqual(dcl1,dcl2) {
 
 }
 
-function getCopyDcl(dcl){
+function getCopyDcl(dcl) {
 
     const info = {}
     nodesHash = {}
@@ -3214,7 +3340,7 @@ function getCopyDcl(dcl){
     const allNodes = [dcl, ...dcl.getAllDecendents()];
     const allNodesCopy = allNodes.map(node => {
         const newCopyNode = new Node();
-        
+
         newCopyNode.setId(node.id);
         newCopyNode.setCoordinate(node.coordinate);
         newCopyNode.setIsOrigin(node.isOrigin);
@@ -3223,12 +3349,20 @@ function getCopyDcl(dcl){
         newCopyNode.setName(node.name);
 
         if (node.forces) node.forces.forEach(force => {
-            newCopyNode.addForce(force);
+            newCopyNode.addForce(force[0], force[1], force[2]);
         });
 
         if (node.moment) node.moment.forEach(moment => {
-            newCopyNode.addMoment(moment);
+            newCopyNode.addMoment(moment[0], moment[1]);
         });
+
+        if (node.step3.forcesX) newCopyNode.step3.forcesX = node.step3.forcesX;
+        if (node.step3.forcesY) newCopyNode.step3.forcesY = node.step3.forcesY;
+        if (node.step3.moments) newCopyNode.step3.moments = node.step3.moments;
+        if (node.step3.axisXsupport) newCopyNode.step3.axisXsupport = node.step3.axisXsupport;
+        if (node.step3.axisYsupport) newCopyNode.step3.axisYsupport = node.step3.axisYsupport;
+        if (node.step3.momentsSupport) newCopyNode.step3.momentsSupport = node.step3.momentsSupport;
+
         const nodeInfo = {}
         nodeInfo.parentId = node.parent ? node.parent.id : undefined
         nodeInfo.childNodes = node.childNodes.map(child => child.id);
@@ -3242,18 +3376,19 @@ function getCopyDcl(dcl){
         const nodeInfo = info[`${node.id}`];
         node.parent = nodeInfo.parentId ? nodesHash[`${nodeInfo.parentId}`] : undefined;
         node.childNodes = nodeInfo.childNodes.map(childId => nodesHash[`${childId}`]);
+        removeAttributesForJSON(node);
     });
-    
+
     return allNodesCopy[0];
-    
+
 }
 
-function removePaintIsMouseOver(node){
+function removePaintIsMouseOver(node) {
     if (node.konvaObjects.link) {
         node.konvaObjects.link.getChildren().forEach(child => {
             child.off("mouseenter");
             child.off("mouseleave");
-        });  
+        });
     }
 
     if (node.konvaObjects.circle) {
@@ -3282,6 +3417,574 @@ function removePaintIsMouseOver(node){
         });
     });
 }
+
+
+function createPanelStep3(container, layer, dcl, choiceForceModal, choiceMomentModal, listenUpdate=true) {
+    const widthPanel = WIDTHPANEL;
+    const heightPanel = HEIGHTPANEL / 3;
+
+    const heightPanelElement = heightPanel / 4;
+
+    const panel = document.createElement("div");
+    panel.style.position = "absolute";
+    panel.style.left = divKonvaContainer.getBoundingClientRect().left + "px";
+    panel.style.top = divKonvaContainer.getBoundingClientRect().left + "px";
+    panel.style.width = widthPanel + "px";
+    panel.style.height = heightPanel + "px";
+    panel.style.backgroundColor = "rgb(0, 83, 56)";
+    panel.style.border = "10px outset rgb(128, 70, 16)";
+    panel.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    panel.style.borderRadius = "10px";
+
+    const headerPanel = document.createElement("div");
+    headerPanel.style.width = "100%";
+    headerPanel.style.height = "15%";
+    headerPanel.style.backgroundColor = "rgb(128, 70, 16)";
+    headerPanel.style.display = "flex";
+    headerPanel.style.justifyContent = "center";
+    headerPanel.style.alignItems = "center";
+    headerPanel.innerText = "Elementos";
+    headerPanel.style.fontSize = "20px";
+    headerPanel.style.color = "white";
+
+    const bodyPanel = document.createElement("div");
+
+    bodyPanel.style.width = "100%";
+    bodyPanel.style.height = "75%";
+    bodyPanel.style.padding = "7px";
+    bodyPanel.style.backgroundColor = "rgb(0, 83, 56)";
+    bodyPanel.style.display = "grid";
+    bodyPanel.style.gridTemplateColumns = "1fr 1fr";
+    bodyPanel.style.gridTemplateRows = "1fr 1fr 1fr 1fr";
+
+    const imgMoment = `url(${imagesFolder}/moment.png)`;
+    const imgForce = `url(${imagesFolder}/force.png)`;
+
+    const btnForce = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Force", showModal, image = imgForce, null, null, null, null, choiceForceModal, null, listenUpdate);
+    const btnMoment = createButton(container, layer, dcl, widthPanel / 2, heightPanelElement, "modalBtn", "Moment", showModal, image = imgMoment, null, null, null, null, choiceMomentModal, null, listenUpdate = listenUpdate);
+
+    styleForElementGridPanel(btnForce, "1", "1");
+    styleForElementGridPanel(btnMoment, "1", "2");
+
+    bodyPanel.appendChild(btnForce);
+    bodyPanel.appendChild(btnMoment);
+
+    panel.appendChild(headerPanel);
+    panel.appendChild(bodyPanel);
+
+    return panel;
+}
+
+
+function createGenericModalChoice(container, layer, dcl, listenUpdate=true) {
+    const widthModal = 200;
+    const heightModal = 160;
+
+    const modal = document.createElement("div");
+    modal.style.position = "absolute";
+    modal.style.left = container.getBoundingClientRect().left + "px";
+    modal.style.top = container.getBoundingClientRect().left + "px";
+    modal.style.width = widthModal + "px";
+    modal.style.height = heightModal + "px";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.borderRadius = "5px";
+    modal.style.padding = "10px";
+    modal.style.visibility = "visible";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr";
+
+    return modal;
+}
+
+
+
+function createModalChoiceForce(container, layer, dcl, modalReactionForce, modalpointForce, listenUpdate=true) {
+    const modal = createGenericModalChoice(container, layer, dcl, listenUpdate);
+    console.log(modalpointForce)
+    const pointForce = createButton(container, layer, dcl, 0, 0, "choiceBtn", "Fuerza puntual", showModal, null, null, null, null, null, modalpointForce, null, listenUpdate);
+    const reactionForce = createButton(container, layer, dcl, 0, 0, "choiceBtn", "Reaccion apoyo", showModal, null, null, null, null, null, modalReactionForce, null, listenUpdate);
+
+    pointForce.innerText = "Fuerza puntual";
+    reactionForce.innerText = "Reaccion apoyo";
+
+    styleForElementGridPanel(pointForce, "1", "1");
+    styleForElementGridPanel(reactionForce, "2", "1");
+
+    modal.appendChild(pointForce);
+    modal.appendChild(reactionForce);
+
+    return modal;
+}
+
+function createModalChoiceMoment(container, layer, dcl, modalPointMoment, listenUpdate=true) {
+    const modal = createGenericModalChoice(container, layer, dcl, listenUpdate);
+
+    const pointMoment = createButton(container, layer, dcl, 0, 0, "choiceBtn", "Momento puntual", showModal, null, null, null, null, modalPointMoment, null, listenUpdate);
+    const reactionMoment = createButton(container, layer, dcl, 0, 0, "choiceBtn", "Reaccion apoyo", showModal, null, null, null, null, null, null, listenUpdate);
+    
+    pointMoment.innerText = "Momento puntual";
+    reactionMoment.innerText = "Reaccion apoyo";
+
+    styleForElementGridPanel(pointMoment, "1", "1");
+    styleForElementGridPanel(reactionMoment, "2", "1");
+
+    modal.appendChild(pointMoment);
+
+    return modal;
+
+}
+
+function createModalReactionForce(container, layer, dcl, listenUpdate=true) {
+    console.log(listenUpdate)
+    const widthModal = 200;
+    const heightModal = 160;
+
+    const modal = document.createElement("div");
+    modal.style.position = "absolute";
+    modal.style.left = container.getBoundingClientRect().left + "px";
+    modal.style.top = container.getBoundingClientRect().left + "px";
+    modal.style.width = widthModal + "px";
+    modal.style.height = heightModal + "px";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.borderRadius = "5px";
+    modal.style.padding = "10px";
+    modal.style.visibility = "hidden";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr";
+
+    const textAngle = createBelementForGrid("Angulo (sexagesimal)", "1", "1")
+
+    const inputContainer = createContainerForElementGrid("2", "1");
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = 0;
+    input.max = 359;
+    input.value = 0;
+    input.style.width = "80px"
+    input.style.gridRow = "2";
+    input.className = "form-control";
+    inputContainer.appendChild(input);
+
+    const textType = createBelementForGrid("Reaccion (Rx/Ry)", "3", "1")
+    const typeContainer = createContainerForElementGrid("2", "1");
+
+    const select = document.createElement("select");
+    select.className = "form-select"
+    select.style.fontSize = "14px";
+
+    const optionRx = document.createElement("option");
+    const optionRy = document.createElement("option");
+
+    optionRx.value = "Rx";
+    optionRy.value = "Ry";
+    optionRx.innerText = "Rx";
+    optionRy.innerText = "Ry";
+
+    select.appendChild(optionRx);
+    select.appendChild(optionRy);
+    typeContainer.appendChild(select);
+
+    const button = createButton(container, layer, dcl, widthModal / 2, heightModal / 4, "createForeceReactionStep3", "Crear", createForce, null, select, input, null, null, modal, null, listenUpdate);
+
+    modal.appendChild(textAngle);
+    modal.appendChild(inputContainer);
+    modal.appendChild(textType);
+    modal.appendChild(typeContainer);
+    modal.appendChild(button);
+
+    return modal;
+
+}
+
+
+function createModalChoiceMoment(container, layer, dcl, modalPointMoment, modalReactionSupport, listenUpdate=true) {
+    console.log(modalPointMoment)
+    const modal = createGenericModalChoice(container, layer, dcl, listenUpdate);
+
+    const pointMoment = createButton(container, layer, dcl, 0, 0, "choiceBtn", "Momento puntual", showModal, null, null, null, null, null, modalPointMoment, null, listenUpdate);
+    const reactionMoment = createButton(container, layer, dcl, 0, 0, "createMomentReactionStep3", "Reaccion apoyo", createMoment, null, null, null, null, null, modalReactionSupport, null, listenUpdate = listenUpdate);
+
+    pointMoment.innerText = "Momento puntual";
+    reactionMoment.innerText = "Reaccion apoyo";
+
+    styleForElementGridPanel(pointMoment, "1", "1");
+    styleForElementGridPanel(reactionMoment, "2", "1");
+
+    modal.appendChild(pointMoment);
+    modal.appendChild(reactionMoment);
+
+    return modal;
+}
+
+
+function createModalPointForce(container, layer, dcl, listenUpdate=false) {
+    const widthModal = 250;
+    const heightModal = 300;
+
+    const modal = document.createElement("div");
+    modal.style.position = "absolute";
+    modal.style.left = container.getBoundingClientRect().left + "px";
+    modal.style.top = container.getBoundingClientRect().left + "px";
+    modal.style.width = widthModal + "px";
+    modal.style.height = heightModal + "px";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.borderRadius = "5px";
+    modal.style.padding = "10px";
+    // modal.style.visibility = "hidden";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr 1fr";
+
+    modal.style.placeItems = "center";
+    modal.style.justifyContent = "center";
+    
+
+    const textProyection = createBelementForGrid("Proyeccion", "1", "1")
+    modal.appendChild(textProyection);
+
+    const proyection = document.createElement("select");
+    proyection.className = "form-select"
+    proyection.style.fontSize = "14px";
+    proyection.style.width = "90px"
+    proyection.style.height = "30px"
+    proyection.style.gridRow = "1";
+    proyection.style.gridColumn = "2";
+    const optionX = document.createElement("option");
+    const optionY = document.createElement("option");
+    optionX.value = "vertical";
+    optionY.value = "horizontal";
+    optionX.innerText = "Vertical";
+    optionY.innerText = "Horizontal";
+    proyection.appendChild(optionX);
+    proyection.appendChild(optionY);
+
+    modal.appendChild(proyection);
+
+    const signProyection = createBelementForGrid("Signo", "2", "1")
+    modal.appendChild(signProyection);
+
+    const sign = document.createElement("select");
+    sign.className = "form-select"
+    sign.style.fontSize = "14px";
+    sign.style.width = "90px"
+    sign.style.height = "30px"
+    sign.style.gridRow = "2";
+    sign.style.gridColumn = "2";
+    const optionPositive = document.createElement("option");
+    const optionNegative = document.createElement("option");
+    optionPositive.value = "+";
+    optionNegative.value = "-";
+    optionPositive.innerText = "Positivo";
+    optionNegative.innerText = "Negativo";
+    sign.appendChild(optionPositive);
+    sign.appendChild(optionNegative);
+
+    modal.appendChild(sign);
+
+    const textTrigonometry = createBelementForGrid("Trigonometria", "3", "1")
+    modal.appendChild(textTrigonometry);
+    
+    const trigonometry = document.createElement("select");
+    trigonometry.className = "form-select"
+    trigonometry.style.fontSize = "14px";
+    trigonometry.style.width = "90px"
+    trigonometry.style.height = "30px"
+    trigonometry.style.gridRow = "3";
+    trigonometry.style.gridColumn = "2";
+    const optionSin = document.createElement("option");
+    const optionCos = document.createElement("option");
+    const optionNone = document.createElement("option");
+
+    optionSin.value = "sin";
+    optionCos.value = "cos";
+    optionNone.value = "none";
+
+    optionSin.innerText = "Seno";
+    optionCos.innerText = "Coseno";
+    optionNone.innerText = "Ninguno";
+
+    trigonometry.appendChild(optionSin);
+    trigonometry.appendChild(optionCos);
+    trigonometry.appendChild(optionNone);
+
+    modal.appendChild(trigonometry);
+
+    const textAngle = createBelementForGrid("Angulo", "4", "1")
+    modal.appendChild(textAngle);
+
+    const angle = document.createElement("input");
+    angle.type = "number";
+    angle.min = 0;
+    angle.max = 359;
+    angle.value = 0;
+    angle.className = "form-control";
+    angle.style.fontSize = "14px";
+    angle.style.width = "90px"
+    angle.style.height = "30px"
+    angle.style.gridRow = "4";
+    angle.style.gridColumn = "2";
+
+    modal.appendChild(angle);
+
+    trigonometry.addEventListener("change", (e) => {
+        if (e.target.value === "none") {
+            angle.disabled = true;
+            angle.value = null;
+        } else {
+            angle.disabled = false;
+
+            angle.value = 0;
+        }
+    });
+
+    const textMagnitud = createBelementForGrid("Magnitud", "5", "1")
+    modal.appendChild(textMagnitud);
+
+    const magnitud = document.createElement("input");
+    magnitud.type = "number";
+    magnitud.min = 0;
+    magnitud.max = 1000;
+    magnitud.value = 0;
+    magnitud.className = "form-control";
+    magnitud.style.fontSize = "14px";
+    magnitud.style.width = "90px"
+    magnitud.style.height = "30px"
+    magnitud.style.gridRow = "5";
+    magnitud.style.gridColumn = "2";
+
+    modal.appendChild(magnitud);
+
+    const textType = createBelementForGrid("Unidad", "6", "1")
+    modal.appendChild(textType);
+
+    const type = document.createElement("select");
+    type.className = "form-select"
+    type.style.fontSize = "14px";
+    type.style.width = "90px"
+    type.style.height = "30px"
+    type.style.gridRow = "6";
+    type.style.gridColumn = "2";
+
+    const optionKip = document.createElement("option");
+    const optionN = document.createElement("option");
+    const optionKN = document.createElement("option");
+
+    optionKip.value = "kip";
+    optionN.value = "N";
+    optionKN.value = "kN";
+
+    optionKip.innerText = "Kip";
+    optionN.innerText = "N";
+    optionKN.innerText = "kN";
+
+    type.appendChild(optionKip);
+    type.appendChild(optionN);
+    type.appendChild(optionKN);
+
+    modal.appendChild(type);
+
+    const extra = {
+        proyection: proyection,
+        sign: sign,
+        trigonometry: trigonometry,
+        angle: angle,
+        magnitud: magnitud,
+        type: type
+    }
+    const button = createButton(container, layer, dcl, 0, 0, "createPointForceStep3", "Crear", createForce, null, null, null, null, null, null, null, listenUpdate, extra)
+    button.style.gridRow = "7";
+    button.style.gridColumn = "2";
+
+    button.style.width = "120px";
+    button.style.height = "40px";
+    button.style.margin = "5px";
+    button.style.color = "white";
+    button.innerHTML = "Crear";
+
+    modal.appendChild(button);
+
+    return modal;
+}
+
+
+function createModalReactionForce2(container, layer, dcl, listenUpdate=false) {
+    const widthModal = 250;
+    const heightModal = 300;
+
+    const modal = document.createElement("div");
+    modal.style.position = "absolute";
+    modal.style.left = container.getBoundingClientRect().left + "px";
+    modal.style.top = container.getBoundingClientRect().left + "px";
+    modal.style.width = widthModal + "px";
+    modal.style.height = heightModal + "px";
+    modal.style.backgroundColor = "rgb(0, 83, 56)";
+    modal.style.border = "10px outset rgb(128, 70, 16)";
+    modal.style.borderRadius = "5px";
+    modal.style.padding = "10px";
+    // modal.style.visibility = "hidden";
+    modal.style.boxShadow = "10px 10px 5px 0px rgba(0,0,0,0.75)";
+    modal.style.display = "grid";
+    modal.style.gridTemplateRows = "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr";
+    modal.style.gridTemplateColumns = "1fr 1fr";
+
+    modal.style.placeItems = "center";
+    modal.style.justifyContent = "center";
+
+    const textReaction = createBelementForGrid("Reaccion", "1", "1")
+    modal.appendChild(textReaction);
+
+    const reaction = document.createElement("select");
+    reaction.className = "form-select"
+    reaction.style.fontSize = "14px";
+    reaction.style.width = "90px"
+    reaction.style.height = "30px"
+    reaction.style.gridRow = "1";
+    reaction.style.gridColumn = "2";
+    const optionRx = document.createElement("option");
+    const optionRy = document.createElement("option");
+    optionRx.value = "Rx";
+    optionRy.value = "Ry";
+    optionRx.innerText = "Rx";
+    optionRy.innerText = "Ry";
+    reaction.appendChild(optionRx);
+    reaction.appendChild(optionRy);
+
+    modal.appendChild(reaction);
+    
+
+    const textProyection = createBelementForGrid("Proyeccion", "2", "1")
+    modal.appendChild(textProyection);
+
+    const proyection = document.createElement("select");
+    proyection.className = "form-select"
+    proyection.style.fontSize = "14px";
+    proyection.style.width = "90px"
+    proyection.style.height = "30px"
+    proyection.style.gridRow = "2";
+    proyection.style.gridColumn = "2";
+    const optionX = document.createElement("option");
+    const optionY = document.createElement("option");
+    optionX.value = "vertical";
+    optionY.value = "horizontal";
+    optionX.innerText = "Vertical";
+    optionY.innerText = "Horizontal";
+    proyection.appendChild(optionX);
+    proyection.appendChild(optionY);
+
+    modal.appendChild(proyection);
+
+    const signProyection = createBelementForGrid("Signo", "3", "1")
+    modal.appendChild(signProyection);
+
+    const sign = document.createElement("select");
+    sign.className = "form-select"
+    sign.style.fontSize = "14px";
+    sign.style.width = "90px"
+    sign.style.height = "30px"
+    sign.style.gridRow = "3";
+    sign.style.gridColumn = "2";
+    const optionPositive = document.createElement("option");
+    const optionNegative = document.createElement("option");
+    optionPositive.value = "+";
+    optionNegative.value = "-";
+    optionPositive.innerText = "Positivo";
+    optionNegative.innerText = "Negativo";
+    sign.appendChild(optionPositive);
+    sign.appendChild(optionNegative);
+
+    modal.appendChild(sign);
+
+    const textTrigonometry = createBelementForGrid("Trigonometria", "4", "1")
+    modal.appendChild(textTrigonometry);
+    
+    const trigonometry = document.createElement("select");
+    trigonometry.className = "form-select"
+    trigonometry.style.fontSize = "14px";
+    trigonometry.style.width = "90px"
+    trigonometry.style.height = "30px"
+    trigonometry.style.gridRow = "4";
+    trigonometry.style.gridColumn = "2";
+    const optionSin = document.createElement("option");
+    const optionCos = document.createElement("option");
+    const optionNone = document.createElement("option");
+
+    optionSin.value = "sin";
+    optionCos.value = "cos";
+    optionNone.value = "none";
+
+    optionSin.innerText = "Seno";
+    optionCos.innerText = "Coseno";
+    optionNone.innerText = "Ninguno";
+
+    trigonometry.appendChild(optionSin);
+    trigonometry.appendChild(optionCos);
+    trigonometry.appendChild(optionNone);
+
+    modal.appendChild(trigonometry);
+
+
+    const textAngle = createBelementForGrid("Angulo", "5", "1")
+    modal.appendChild(textAngle);
+
+    const angle = document.createElement("input");
+    angle.type = "number";
+    angle.min = 0;
+    angle.max = 359;
+    angle.value = 0;
+    angle.className = "form-control";
+    angle.style.fontSize = "14px";
+    angle.style.width = "90px"
+    angle.style.height = "30px"
+    angle.style.gridRow = "5";
+    angle.style.gridColumn = "2";
+
+    modal.appendChild(angle);
+    
+    trigonometry.addEventListener("change", (e) => {
+        if (e.target.value === "none") {
+            angle.disabled = true;
+            angle.value = null;
+        } else {
+            angle.disabled = false;
+
+            angle.value = 0;
+        }
+    });
+
+    const extra = {
+        reaction: reaction,
+        proyection: proyection,
+        sign: sign,
+        trigonometry: trigonometry,
+        angle: angle
+    }
+
+    const button = createButton(container, layer, dcl, 0, 0, "createForeceReactionStep32", "Crear", createForce, null, null, null, null, null, null, null, listenUpdate, extra)
+    button.style.gridRow = "7";
+    button.style.gridColumn = "2";
+
+    button.style.width = "120px";
+    button.style.height = "40px";
+    button.style.margin = "5px";
+    button.style.color = "white";
+    button.innerHTML = "Crear";
+
+    modal.appendChild(button);
+
+    return modal;
+}
+
+
+
+
 
 
 

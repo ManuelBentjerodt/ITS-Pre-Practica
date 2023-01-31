@@ -29,6 +29,15 @@ class Node {
         this.name = null;
 
         this.turnedToRealDCL = false;
+
+        this.step3 = {
+            forcesX: [],
+            forcesY: [],
+            moments: [],
+            axisXsupport: [],
+            axisYsupport: [],
+            momentsSupport: [],
+        }
     }
 
     setNodeWithObject({
@@ -41,6 +50,7 @@ class Node {
         moments,
         isOrigin,
         linkRotation,
+        name,
         }, _id=this.id, setChilds=true) {
 
         
@@ -49,6 +59,7 @@ class Node {
         this.setLink(link);
         this.setIsOrigin(isOrigin);
         this.setLinkRotation(linkRotation);
+        this.setName(name);
 
         forces.forEach(force => {
             this.addForce(force[0], force[1],force[2])
@@ -133,7 +144,7 @@ class Node {
     }
 
     addKonvaMoment(object) {
-        this.konvaObjects.forces.push(object);
+        this.konvaObjects.moments.push(object);
     }
 
     setKonvaShadowBeam(object) {
@@ -289,7 +300,7 @@ class Node {
             node.childNodes[i] = inside_copy;
             console.log("hijos:: ",node.childNodes);
             this.algo(inside_copy);
-     }
+        }
     }
 
     getCopy2(root=this) {

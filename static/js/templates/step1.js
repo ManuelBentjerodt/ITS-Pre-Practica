@@ -72,7 +72,7 @@ listenPanelMovement(modalPinnedSupport);
 
 
 listenNodeMovement(dcl, group, shadowLine, "initialBeam", listenUpdate=false);
-listenCreateElement(divKonvaContainer);
+listenCreateElement(divKonvaContainer, panel);
 listenDeleteElement(divKonvaContainer);
 listenHiddePanels();
 

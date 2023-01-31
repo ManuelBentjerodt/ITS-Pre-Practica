@@ -1,40 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.http import JsonResponse
-from ..models import Task
+from ...models import Task
 from django.conf import settings
 import json
 import os
 
 
 
-class TeacherHomeView(View):
-    def get(self, request):
-        tasks = Task.objects.all()
-        context = {
-            'tasks': tasks,
-            'user': request.user
-        }
-        return render(request, 'teacher/teacher_home.html', context)
-    
-
-@login_required(login_url="sign_in")
-def delete_task(request, id=None):
-    task = Task.objects.get(id = id)
-    task.delete()
-    return redirect('teacher_home')
-
-
-class CreateTaskView(View):
-    def get(self, request):
-        task = Task()
-        task.save()
-
-        return redirect('edit_task', id=task.id)
-
-
 class EditTaskView(View):
+    @method_decorator(login_required(login_url='sign_in'))
     def get(self, request, id):
         task = Task.objects.get(id = id)
 
@@ -56,7 +33,7 @@ class EditTaskView(View):
 
         return render (request, 'teacher/edit_task.html', context)
 
-
+    @method_decorator(login_required(login_url='sign_in'))
     def post(self, request, id):
         task = Task.objects.get(id = id)
 
@@ -76,7 +53,7 @@ class EditTaskView(View):
             
             return JsonResponse({'success': True})
 
-
+    @method_decorator(login_required(login_url='sign_in'))
     def delete(self, request, id): # delete image
         task = Task.objects.get(id = id)
 
@@ -91,7 +68,4 @@ class EditTaskView(View):
         task.save()
 
         return JsonResponse({'success': True})
-
-
-
 

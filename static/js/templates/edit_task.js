@@ -83,21 +83,15 @@ listenPanelMovement(modalRollerSupport);
 listenPanelMovement(modalPinnedSupport);
 listenPanelMovement(anglePanel); 
 
-listenCreateElement(divKonvaContainer);
+listenCreateElement(divKonvaContainer, panel);
 listenDeleteElement(divKonvaContainer);
 listenAngleReference(divKonvaContainer); 
 listenHiddePanels();
 
-hideAllPanels();
-
-
 x_reference.hideAll();
 y_reference.hideAll();
 
-
 showReferences();
-
-
 
 updateDificulty();
 updateClassification();
@@ -112,8 +106,6 @@ const sizeFactor = taskInfo.dataset.sizefactor;
 document.querySelector("#dim").value = sizeFactor;
 
 const applySizeFactor = document.querySelector("#dimSubmit");
-
-
 
 x_reference.newUnitSize(sizeFactor);
 y_reference.newUnitSize(sizeFactor);
@@ -133,6 +125,7 @@ else{
     dimensionValue = "m";
     distanceMultiplier = sizeFactor;
 }
+
 updateEquations();
 
 dclJSON == "null" ?  null : drawDcl(dcl, layer), initialBeam = dcl.childNodes[0].konvaObjects.beam 
