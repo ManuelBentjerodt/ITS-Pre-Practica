@@ -133,26 +133,16 @@ class FourthStepView(View):
             fyTeacher = task.fyEquation
             mTeacher = task.mEquation
             
-            print("fx: ",fxTeacher)
-            print("fy: ",fyTeacher)
-            print("m: ",mTeacher)
             
             jsondata = json.loads(request.body)
 
-            print("\nesto es la respuesta: ")
 
-            print("Ecuacion Fx: ")
             fxCorrect = task.checkEquations(fxTeacher,jsondata['fxEquation'])
             task.fxCorrect = fxCorrect
-            print(fxCorrect)
-            print("Ecuacion Fy: ")
             fyCorrect = task.checkEquations(fyTeacher,jsondata['fyEquation'])
             task.fyCorrect = fyCorrect
-            print(fyCorrect)
-            print("Ecuacion M: ")
             mCorrect = task.checkEquations(mTeacher,jsondata['mEquation'])
             task.mCorrect = mCorrect
-            print(mCorrect)
 
             context = {
                 'taskid': task.id,
@@ -166,8 +156,6 @@ class FourthStepView(View):
             }
 
             return JsonResponse ({'success': True, 'redirect': '/teacher_home','data':context})
-
-            return JsonResponse({'success': True, 'redirect': '/teacher_home'})
 
 
 
