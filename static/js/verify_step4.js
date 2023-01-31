@@ -32,10 +32,18 @@ function verifyTask() {
         
     })
     .then((data) => {
-        //window.location.href = data.redirect
-    })    
- 
+        console.log("dataaa: ",data["data"]["fxCorrect"]);
+        if (data["data"]["fxCorrect"] ) 
+            document.getElementById("fxCorrectness").innerText= "Correcto";
+        else document.getElementById("fxCorrectness").innerText= "Incorrecto";
+        if (data["data"]["fyCorrect"] ) 
+        document.getElementById("fyCorrectness").innerText= "Correcto";
+        else document.getElementById("fyCorrectness").innerText= "Incorrecto";
+        if (data["data"]["mCorrect"] ) 
+        document.getElementById("mCorrectness").innerText= "Correcto";
+        else document.getElementById("mCorrectness").innerText= "Incorrecto";
 
+    })    
     
 
 }   

@@ -25,6 +25,10 @@ class Task(models.Model):
     fyEquation = models.CharField(max_length=50, null=True)
     mEquation = models.CharField(max_length=50, null=True)
 
+    fxCorrect  = models.BooleanField(default=False)
+    fyCorrect  = models.BooleanField(default=False)
+    mCorrect  = models.BooleanField(default=False)
+
     def save(self, *args, **kwargs):
         super(Task, self).save(*args, **kwargs)
         self.updateTags()

@@ -53,7 +53,10 @@ class EditTaskView(View):
             'imageUrl': taskImageUrl,
             'fxEquation': task.fxEquation,
             'fyEquation': task.fyEquation,
-            'mEquation': task.mEquation
+            'mEquation': task.mEquation,
+            'fxCorrect': task.fxCorrect,
+            'fyCorrect': task.fyCorrect,
+            'mCorrect': task.mCorrect,
         }
 
         return render (request, 'teacher/edit_task.html', context)
