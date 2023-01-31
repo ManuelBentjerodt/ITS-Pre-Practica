@@ -351,7 +351,6 @@ def verify_step_3(correct_graph, test_graph):
         sameAYS = True
         for i in range(len(correct_node.step3["axisYsupport"])):
             correctForce = sorted(correct_node.step3["axisYsupport"])[i]
-            print(f"correctForce: {correctForce}")
             try:
                 testForce = sorted(test_node.step3["axisYsupport"])[i]
                 sameAYS = sameAYS and correctForce[0] == testForce[0] and correctForce[1] == testForce[1] and eval(correctForce[2], {"cos": cosInDegrees, "sin": sinInDegrees}) == eval(testForce[2], {"cos": cosInDegrees, "sin": sinInDegrees})
